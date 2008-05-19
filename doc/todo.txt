@@ -12,10 +12,12 @@ DONE - Support named arcs for flow control
 DONE - Database persistence
        Implemented relatively space efficient means of storing composed workflows in database
        Tokens provide flow history
+DONE - Allow the token to carry state - will allow more interesting guards
+
 
 In Progress:
 ---------------------------------------------------------------------
-Allow the token to carry state - will allow more interesting guards
+
 
 Next steps:
 ---------------------------------------------------------------------

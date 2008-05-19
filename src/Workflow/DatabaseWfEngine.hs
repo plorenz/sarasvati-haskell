@@ -109,19 +109,20 @@ deleteTokenAttr conn nodeTokenId name =
 createDatabaseWfProcess :: DatabaseWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfProcess a)
 createDatabaseWfProcess (DatabaseWfEngine conn) graph nodeTypes userData =
     do wfRunId <- insertWfProcess conn graph
-       return $ WfProcess wfRunId nodeTypes graph [] [] userData
+       return $ WfProcess wfRunId nodeTypes graph [] [] Map.empty userData
 
-createDatabaseNodeToken :: DatabaseWfEngine -> WfProcess a -> Node -> [ArcToken] -> IO NodeToken
-createDatabaseNodeToken (DatabaseWfEngine conn) wfRun node arcTokens =
-    do nextTokenId <- insertNodeToken conn wfRun node
+createDatabaseNodeToken :: DatabaseWfEngine -> WfProcess a -> Node -> [ArcToken] -> IO (WfProcess a, NodeToken)
+createDatabaseNodeToken (DatabaseWfEngine conn) process node arcTokens =
+    do nextTokenId <- insertNodeToken conn process node
        mapM (insertNodeTokenParent conn nextTokenId) arcTokens
-       attrs <- databaseMergeTokenAttrs conn nextTokenId arcTokens
-       return $ NodeToken nextTokenId (nodeId node) attrs
+       attrs <- databaseMergeTokenAttrs conn process nextTokenId arcTokens
+       let newToken = NodeToken nextTokenId (nodeId node)
+       return (replaceTokenAttrs process newToken attrs, newToken)
 
-createDatabaseArcToken :: DatabaseWfEngine -> WfProcess a -> Arc -> NodeToken -> IO ArcToken
-createDatabaseArcToken (DatabaseWfEngine conn) wfRun arc nodeToken =
-    do nextTokenId <- insertArcToken conn wfRun arc nodeToken
-       return $ ArcToken nextTokenId arc nodeToken
+createDatabaseArcToken :: DatabaseWfEngine -> WfProcess a -> Arc -> NodeToken -> IO (WfProcess a, ArcToken)
+createDatabaseArcToken (DatabaseWfEngine conn) process arc nodeToken =
+    do nextTokenId <- insertArcToken conn process arc nodeToken
+       return (process, ArcToken nextTokenId arc nodeToken)
 
 completeDatabaseNodeToken :: DatabaseWfEngine -> NodeToken -> IO ()
 completeDatabaseNodeToken (DatabaseWfEngine conn) token =
@@ -135,24 +136,24 @@ databaseTransactionBoundary :: DatabaseWfEngine -> IO ()
 databaseTransactionBoundary (DatabaseWfEngine conn) =
     do commit conn
 
-databaseMergeTokenAttrs :: (IConnection conn) => conn -> Int -> [ArcToken] -> IO [TokenAttr]
-databaseMergeTokenAttrs _    _          []         = return []
+databaseMergeTokenAttrs :: (IConnection conn) => conn -> WfProcess a -> Int -> [ArcToken] -> IO [TokenAttr]
+databaseMergeTokenAttrs _    _       _          []         = return []
 
-databaseMergeTokenAttrs conn newTokenId [arcToken]
+databaseMergeTokenAttrs conn process newTokenId [arcToken]
     | null attrs = return attrs
     | otherwise  = do updateNodeTokenAttrSet conn newTokenId (tokenId (parentToken arcToken))
                       return attrs
     where
-       attrs = parentAttrs arcToken
+       attrs = parentAttrs process arcToken
 
-databaseMergeTokenAttrs conn newTokenId (x1:x2:xs)
-    | null $ parentAttrs x1 = databaseMergeTokenAttrs conn newTokenId (x2:xs)
-    | null $ parentAttrs x2 = databaseMergeTokenAttrs conn newTokenId (x1:xs)
-    | otherwise             = do updateNodeTokenAttrSet conn newTokenId newTokenId
-                                 mapM (insertTokenAttr conn) mergedAttrs
-                                 return mergedAttrs
+databaseMergeTokenAttrs conn process newTokenId (x1:x2:xs)
+    | null $ parentAttrs process x1 = databaseMergeTokenAttrs conn process newTokenId (x2:xs)
+    | null $ parentAttrs process x2 = databaseMergeTokenAttrs conn process newTokenId (x1:xs)
+    | otherwise                     = do updateNodeTokenAttrSet conn newTokenId newTokenId
+                                         mapM (insertTokenAttr conn) mergedAttrs
+                                         return mergedAttrs
     where
-       mergedAttrs = map (updateAttrId newTokenId) $ TokenUtil.mergeTokenAttrs (x1:x2:xs)
+       mergedAttrs = map (updateAttrId newTokenId) $ TokenUtil.mergeTokenAttrs process (x1:x2:xs)
 
 updateAttrId :: Int -> TokenAttr -> TokenAttr
 updateAttrId newId tokenAttr = tokenAttr { attrSetId = newId }
@@ -163,21 +164,21 @@ updateTokenAttrId newSetId attrList = map (updateAttrId newSetId) attrList
 setDatabaseTokenAttr :: DatabaseWfEngine-> WfProcess a -> NodeToken -> String -> String -> IO (WfProcess a)
 setDatabaseTokenAttr (DatabaseWfEngine conn) process nodeToken key value
     | firstChange = do updateNodeTokenAttrSet conn (tokenId nodeToken) (tokenId nodeToken)
-                       mapM (insertTokenAttr conn) (tokenAttrs finalToken)
+                       mapM (insertTokenAttr conn) finalAttrs
                        return newProcess
     | isUpdate    = do updateTokenAttr conn newAttr
                        return newProcess
     | otherwise   = do insertTokenAttr conn newAttr
                        return newProcess
     where
-        newProcess  = replaceTokenAttrs process finalToken
-        finalToken  = case (firstChange) of
-                          True  -> updateTokenAttrId setToken
-                          False -> setToken
-        setToken    = TokenUtil.setTokenAttr nodeToken newAttr
+        newProcess  = replaceTokenAttrs process nodeToken finalAttrs
+        finalAttrs  = case (firstChange) of
+                          True  -> updateTokenAttrId (tokenId nodeToken) newAttrs
+                          False -> newAttrs
+        newAttrs    = TokenUtil.setOrReplaceTokenAttr attrs newAttr
         newAttr     = TokenAttr (tokenId nodeToken) key value
-        attrs       = tokenAttrs nodeToken
-        isUpdate    = TokenUtil.nodeHasAttr nodeToken key
+        attrs       = tokenAttrs process nodeToken
+        isUpdate    = TokenUtil.nodeHasAttr process nodeToken key
         firstChange = null attrs || ((attrSetId.head) attrs) /= (tokenId nodeToken)
 
 removeDatabaseTokenAttr :: DatabaseWfEngine-> WfProcess a -> NodeToken -> String -> IO (WfProcess a)

@@ -118,12 +118,12 @@ tokenAttrs :: WfProcess a -> NodeToken -> [TokenAttr]
 tokenAttrs wfProcess token = (tokenAttrMap wfProcess) Map.! (tokenId token)
 
 attrValue :: WfProcess a -> NodeToken -> String -> Maybe String
-attrValue wfProcess nodeToken key =
+attrValue process nodeToken key =
     case (attr) of
         [(TokenAttr _ _ value)] -> Just value
         _                       -> Nothing
     where
-        attr  = filter (\tokenAttr -> tokenAttrKey tokenAttr == key) (tokenAttrs wfProcess nodeToken)
+        attr  = filter (\tokenAttr -> tokenAttrKey tokenAttr == key) (tokenAttrs process nodeToken)
 
 instance Token (NodeToken) where
     tokenId (NodeToken tokId _) = tokId
@@ -300,12 +300,12 @@ acceptToken engine token wf
 --   Moves the token into the node and calls the guard function
 
 acceptSingle :: (WfEngine e) => e -> ArcToken -> WfProcess a -> IO (WfProcess a)
-acceptSingle engine token wf =
-  do (wf,newToken) <- createNodeToken engine wf node [token]
+acceptSingle engine token process =
+  do (process,newToken) <- createNodeToken engine process node [token]
      completeArcToken engine token
-     acceptWithGuard engine newToken wf { nodeTokens = newToken:(nodeTokens wf) }
+     acceptWithGuard engine newToken process { nodeTokens = newToken:(nodeTokens process) }
   where
-    graph = wfGraph wf
+    graph = wfGraph process
     node  = (graphNodes graph) Map.! ((endNodeId.arcForToken) token)
 
 -- acceptJoin
@@ -316,14 +316,14 @@ acceptSingle engine token wf =
 --   instance and returns.
 
 acceptJoin :: (WfEngine e) => e -> ArcToken -> WfProcess a -> IO (WfProcess a)
-acceptJoin engine token wf@(WfProcess runId nodeTypes graph nodeTokens arcTokens tokenAttrMap userData)
-    | areAllInputsPresent = do (wf,newToken) <- createNodeToken engine wf targetNode inputTokens
-                               let newWf = WfProcess runId nodeTypes graph (newToken:nodeTokens) outputTokenList tokenAttrMap userData
+acceptJoin engine token process
+    | areAllInputsPresent = do (process,newToken) <- createNodeToken engine process targetNode inputTokens
+                               let newProcess = process { nodeTokens = newToken:(nodeTokens process), arcTokens = outputArcTokens }
                                mapM (completeArcToken engine) inputTokens
-                               acceptWithGuard engine newToken newWf
-    | otherwise           = return $ WfProcess runId nodeTypes graph nodeTokens allArcTokens tokenAttrMap userData
+                               acceptWithGuard engine newToken newProcess
+    | otherwise           = return process { arcTokens = allArcTokens }
   where
-    allArcTokens          = token:arcTokens
+    allArcTokens          = token:(arcTokens process)
     areAllInputsPresent   = length inputTokens == length inputArcs
 
     fstInputArcToken arc  = ListUtil.firstMatch (\arcToken -> (arcId.arcForToken) arcToken == arcId arc) allArcTokens
@@ -331,10 +331,10 @@ acceptJoin engine token wf@(WfProcess runId nodeTypes graph nodeTokens arcTokens
     inputTokens           = ListUtil.removeNothings $ map (fstInputArcToken) inputArcs
 
     targetNodeId          = (endNodeId.arcForToken) token
-    targetNode            = (graphNodes graph) Map.! targetNodeId
-    allInputArcs          = (graphInputArcs graph) Map.! targetNodeId
+    targetNode            = (graphNodes (wfGraph process)) Map.! targetNodeId
+    allInputArcs          = (graphInputArcs (wfGraph process)) Map.! targetNodeId
     inputArcs             = filter (\arc-> arcName arc == (arcName.arcForToken) token) allInputArcs
-    outputTokenList       = filter (\t -> not $ elem t inputTokens) arcTokens
+    outputArcTokens       = filter (\t -> not $ elem t inputTokens) (arcTokens process)
 
 -- acceptWithGuard
 --   This is only called once the node is ready to fire. The given token is now in the node
