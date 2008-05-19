@@ -15,10 +15,10 @@ DONE - Database persistence
 
 In Progress:
 ---------------------------------------------------------------------
+Allow the token to carry state - will allow more interesting guards
 
 Next steps:
 ---------------------------------------------------------------------
-Allow the token to carry state - will allow more interesting guards
 Investigate moving token marking from one version to next
 More work with workflow graph composition.
 
