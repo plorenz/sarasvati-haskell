@@ -16,7 +16,7 @@
 
 > data Task =
 >   Task {
->     getTokId       :: [Int],
+>     getTokId       :: Int,
 >     taskId         :: String,
 >     taskName       :: String,
 >     taskDesc       :: String,
@@ -37,9 +37,11 @@
 >  do putStrLn $ show counter ++ ": " ++ (taskName task) ++ " - " ++ show (taskState task)
 >     showTasks rest (counter + 1)
 
-> acceptAndCreateTask :: NodeToken -> WfInstance [Task] -> IO (WfInstance [Task])
-> acceptAndCreateTask token wf =
->     return wf { userData = (newTask wf token): (userData wf) }
+> acceptAndCreateTask :: (WfEngine e) => e -> NodeToken -> WfInstance [Task] -> IO (WfInstance [Task])
+> acceptAndCreateTask _ token wf =
+>     do return wf { userData = task: (userData wf) }
+>     where
+>         task = newTask wf token
 
 > newTask :: WfInstance [Task] -> NodeToken -> Task
 > newTask wf token = Task (tokenId token) (show theNodeId) taskName taskDesc Open hasReject
@@ -62,12 +64,12 @@
 >                            else t
 >
 
-> completeTask :: Task -> WfInstance [Task] -> IO (WfInstance [Task])
-> completeTask task wf = completeDefaultExecution token (closeTask task wf Complete)
+> completeTask :: (WfEngine e) => e -> Task -> WfInstance [Task] -> IO (WfInstance [Task])
+> completeTask engine task wf = completeDefaultExecution engine token (closeTask task wf Complete)
 >   where
 >     token = getNodeTokenForId (getTokId task) wf
 
-> rejectTask :: Task -> WfInstance [Task] -> IO (WfInstance [Task])
-> rejectTask task wf = completeExecution token "reject" (closeTask task wf Rejected)
+> rejectTask :: (WfEngine e) => e -> Task -> WfInstance [Task] -> IO (WfInstance [Task])
+> rejectTask engine task wf = completeExecution engine token "reject" (closeTask task wf Rejected)
 >   where
 >     token = getNodeTokenForId (getTokId task) wf
