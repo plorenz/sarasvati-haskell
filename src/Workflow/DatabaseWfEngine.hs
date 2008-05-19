@@ -34,7 +34,7 @@ insertArcToken conn wfProcess arc prevToken =
                      toSql (tokenId prevToken)]
        return nextId
     where
-        sql = "insert into wf_arc_token (id, process_id, arc_id, prev_token_id) " ++
+        sql = "insert into wf_arc_token (id, process_id, arc_id, parent_token_id) " ++
               " values ( ?, ?, ?, ? )"
 
 markArcTokenComplete :: (IConnection conn) => conn -> ArcToken -> IO ()
