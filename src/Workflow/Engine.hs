@@ -298,7 +298,7 @@ acceptJoin engine token wf@(WfProcess runId nodeTypes graph nodeTokens arcTokens
     fstInputArcToken arc  = ListUtil.firstMatch (\arcToken -> (arcId.arcForToken) arcToken == arcId arc) allArcTokens
 
     inputTokens           = ListUtil.removeNothings $ map (fstInputArcToken) inputArcs
---
+
     targetNodeId          = (endNodeId.arcForToken) token
     targetNode            = (graphNodes graph) Map.! targetNodeId
     allInputArcs          = (graphInputArcs graph) Map.! targetNodeId

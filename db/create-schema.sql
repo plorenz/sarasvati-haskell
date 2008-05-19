@@ -60,6 +60,11 @@ create table wf_arc
   name          varchar(255) NOT NULL
 );
 
+create table wf_token_attr
+(
+  name  varchar(64) NOT NULL
+);
+
 create table wf_node_token
 (
   id            serial    NOT NULL PRIMARY KEY,
