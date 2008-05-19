@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE workflow SYSTEM "wf.dtd">
 
-<workflow id="one-node" version="1">
+<workflow id="many-tasks" version="1">
   <start>
     <arc to="1"/>
     <arc to="2"/>
@@ -41,7 +41,7 @@
   </task>
 
   <task name="5">
-    <name>Converse</name>
+    <task-name>Converse</task-name>
     <description>
       Start a conversation
     </description>
