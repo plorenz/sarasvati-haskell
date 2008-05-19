@@ -18,4 +18,4 @@
 >                              otherwise       -> True
 >
 >         taskDef        = TaskDef name desc
->         nodeExtra      = mkNodeExtra taskDef
+>         nodeExtra      = makeNodeExtra taskDef

@@ -1,3 +1,4 @@
+drop table if exists wf_node_token_parent;
 drop table if exists wf_arc_token;
 drop table if exists wf_node_token;
 drop table if exists wf_arc;
@@ -15,6 +16,10 @@ create table wf_graph
   name    varchar(255) NOT NULL,
   version int          NOT NULL
 );
+
+ALTER TABLE wf_graph
+  ADD CONSTRAINT wf_graph_unique
+    UNIQUE(name,version);
 
 create table wf_instance
 (
@@ -54,22 +59,30 @@ create table wf_arc
 
 create table wf_node_token
 (
-  id           serial NOT NULL PRIMARY KEY,
-  instance_id  int    NOT NULL REFERENCES wf_instance,
-  node_ref_id  int    NOT NULL REFERENCES wf_node_ref
+  id            serial    NOT NULL PRIMARY KEY,
+  instance_id   int       NOT NULL REFERENCES wf_instance,
+  node_ref_id   int       NOT NULL REFERENCES wf_node_ref,
+  complete_date timestamp NULL
 );
 
 create table wf_arc_token
 (
-  id            serial NOT NULL PRIMARY KEY,
-  instance_id   int    NOT NULL REFERENCES wf_instance,
-  arc_id        int    NOT NULL REFERENCES wf_arc,
-  prev_token_id int    NOT NULL REFERENCES wf_node_token
+  id            serial    NOT NULL PRIMARY KEY,
+  instance_id   int       NOT NULL REFERENCES wf_instance,
+  arc_id        int       NOT NULL REFERENCES wf_arc,
+  prev_token_id int       NOT NULL REFERENCES wf_node_token,
+  complete_date timestamp NULL
+);
+
+create table wf_node_token_parent
+(
+   node_token_id INT NOT NULL REFERENCES wf_node_token,
+   arc_token_id  INT NOT NULL REFERENCES wf_arc_token
 );
 
 create table wf_node_task
 (
-  id int NOT NULL PRIMARY KEY REFERENCES wf_node,
-  name varchar(255) NOT NULL,
-  description text NOT NULL
+  id          int          NOT NULL PRIMARY KEY REFERENCES wf_node,
+  name        varchar(255) NOT NULL,
+  description text         NOT NULL
 );

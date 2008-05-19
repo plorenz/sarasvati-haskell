@@ -1,6 +1,6 @@
 
 module Main where
-import ConsoleUI
+import ConsoleXmlFileUI
 
 main :: IO ()
 main = consoleMain

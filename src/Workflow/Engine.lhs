@@ -33,8 +33,8 @@ so it can encapsulated in a Dynamic
 
 > data NodeExtra = NoNodeExtra | NodeExtra Dynamic
 
-> mkNodeExtra :: (Typeable a) => a -> NodeExtra
-> mkNodeExtra extra = NodeExtra $ toDyn extra
+> makeNodeExtra :: (Typeable a) => a -> NodeExtra
+> makeNodeExtra extra = NodeExtra $ toDyn extra
 
 Node
   Represents a node in a workflow graph.

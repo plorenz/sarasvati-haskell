@@ -1,6 +1,6 @@
 Author: Paul Lorenz
 
-> module ConsoleUI where
+> module ConsoleXmlFileUI where
 > import Workflow.Engine
 > import Workflow.Task.Task
 > import IO
@@ -9,7 +9,6 @@ Author: Paul Lorenz
 > import Workflow.Loaders.WorkflowLoadXml
 > import Workflow.Task.TaskXml
 > import qualified Data.Map as Map
-> import Test.DbTest
 
 > handleTask :: Task -> WfInstance [Task] -> IO (WfInstance [Task])
 > handleTask task wf =
@@ -73,16 +72,13 @@ Author: Paul Lorenz
 >            BadCmd -> do putStrLn $ cmd ++ " is not a valid command or task entry"
 >                         processTasks wf
 >            NoCmd  -> processTasks wf
->            PersistCmd -> do persistGraph graph
->                             processTasks wf
 
-> data CmdType = ShowTokenCmd | TaskCmd | BadCmd | NoCmd | PersistCmd
+> data CmdType = ShowTokenCmd | TaskCmd | BadCmd | NoCmd
 
 > getCmdType :: String -> CmdType
 > getCmdType input
 >     | null input                   = NoCmd
 >     | (map (toUpper) input) == "T" = ShowTokenCmd
->     | (map (toUpper) input) == "P" = PersistCmd
 >     | all (isDigit) input          = TaskCmd
 >     | otherwise                    = BadCmd
 

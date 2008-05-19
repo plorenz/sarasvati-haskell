@@ -9,12 +9,12 @@
 > import Database.HDBC.PostgreSQL
 > import qualified Data.Map as Map
 > import Workflow.Util.XmlUtil as XmlUtil
+> import qualified Workflow.Util.DbUtil as DbUtil
 > import Data.Dynamic
 
 ================================================================================
 = Data Type Definitions
 ================================================================================
-
 
 ArcType enumerates the kind of external allows, which are just outgoing arcs and incoming arcs.
 General arcs are all defined as outgoing, but because external arcs must add outgoing arcs to
@@ -217,7 +217,7 @@ import it into the currently loading workflow.
 >         refA = fromSql $ row !! 1
 >         refZ = fromSql $ row !! 2
 
-> openConn = connectPostgreSQL "port=5433"
+
 
 ================================================================================
 = Load Functions
@@ -341,7 +341,7 @@ import it into the currently loading workflow.
 >      Map.Map Name (Element -> Connection -> Int -> IO (Int,String)) ->
 >      IO (Either String Int)
 > loadFromXmlToDB filename funcMap =
->     do conn <- openConn
+>     do conn <- DbUtil.openDbConnection
 >        maybeDoc <- loadDocFromFile filename
 >        case maybeDoc of
 >            Left msg -> return $ Left msg
