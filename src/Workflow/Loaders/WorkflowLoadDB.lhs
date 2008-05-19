@@ -41,7 +41,7 @@ import it into the currently loading workflow.
 
 > data ExternalArc =
 >     ExternalArc {
->       targetNodeRef  :: String,
+>       targetNodeName :: String,
 >       targetWf       :: String,
 >       targetVersion  :: String,
 >       targetInstance :: String,
@@ -50,10 +50,11 @@ import it into the currently loading workflow.
 >     }
 >  deriving (Show)
 
-> data RefNode =
->     RefNode {
->         name :: String,
->         refId :: Int
+> data LoadArc =
+>     LoadArc {
+>         loadArcName  :: String,
+>         loadArcRefA  :: Int,
+>         loadArcRefZ  :: Int
 >     }
 >   deriving (Show)
 
@@ -128,13 +129,27 @@ import it into the currently loading workflow.
 >        nextNodeRefId <- nextSeqVal conn "wf_node_ref_id_seq"
 >        run conn nodeRefSql
 >                  [toSql nextNodeRefId,
->                   toSql nextNodeId]
+>                   toSql nextNodeId,
+>                   toSql graphId]
 >        return nextNodeRefId
 >     where
 >         nodeSql    = "insert into wf_node (id, graph_id, name, is_join, type) " ++
 >                      " values ( ?, ?, ?, ?, ? )"
->         nodeRefSql = "insert into wf_node_ref (id, node_id, instance) " ++
->                      " values (?, ?, 1 )"
+>         nodeRefSql = "insert into wf_node_ref (id, node_id, graph_id, instance) " ++
+>                      " values (?, ?, ?, '' )"
+
+> insertNodeRef :: (IConnection conn) => conn -> Int -> Int -> String -> IO Int
+> insertNodeRef conn graphId copyRefId instanceName =
+>     do nextNodeRefId <- nextSeqVal conn "wf_node_ref_id_seq"
+>        run conn nodeRefSql
+>                  [toSql nextNodeRefId,
+>                   toSql graphId,
+>                   toSql copyRefId,
+>                   toSql instanceName]
+>        return nextNodeRefId
+>     where
+>         nodeRefSql = "insert into wf_node_ref (id, node_id, graph_id, instance) " ++
+>                      " select ?, node_id, ?, ? from wf_node_ref where id = ? "
 
 > insertArc conn graphId startNode endNode arcName =
 >     do nextArcId <- nextSeqVal conn "wf_arc_id_seq"
@@ -162,22 +177,37 @@ import it into the currently loading workflow.
 >     where
 >         sql = "select coalesce( max(version), 0) from wf_graph where name = ?"
 
-> getNodeRefId :: (IConnection a) => a-> String -> String -> Int -> IO Int
-> getNodeRefId conn graphName nodeName inst =
+> getNodeRefId :: (IConnection a) => a-> Int -> String -> String -> String -> IO Int
+> getNodeRefId conn newGraphId graphName nodeName instanceName =
 >     do graphId <- getMaxGraphId conn graphName
->        rows <- quickQuery conn sql [toSql nodeName, toSql inst, toSql graphId]
->        return $ (fromSql.head.head) rows
+>        rows <- quickQuery conn sql
+>                  [toSql newGraphId,
+>                   toSql instanceName,
+>                   toSql nodeName,
+>                   toSql graphId]
+>        case (null rows) of
+>            True -> loadError $ "Node with name " ++ nodeName ++ " for instance " ++ instanceName ++ " not found"
+>            False -> return $ (fromSql.head.head) rows
 >     where
->         sql = "select nref.id from wf_node_ref nref " ++
->               "               join wf_node n on (nref.node_id = n.id) " ++
->               "               join wf_graph g on (n.graph_id = g.id) " ++
->               "  where n.name = ? and nref.instance = ? and g.id = ? "
+>         sql = "select ref.id from wf_node_ref ref " ++
+>               "               join wf_node node on (ref.node_id = node.id) " ++
+>               "  where ref.graph_id = ? and ref.instance = ? " ++
+>               "    and node.name = ? and node.graph_id = ? "
+
+> getLoadArcs conn graphName =
+>     do graphId <- getMaxGraphId conn graphName
+>        rows <- quickQuery conn sql [toSql graphId]
+>        return $ map (rowToLoadArc) rows
+>     where
+>         sql = "select name, a_node_ref_id, z_node_ref_id from wf_arc where graph_id = ?"
+
+> rowToLoadArc row = LoadArc name refA refZ
+>     where
+>         name = fromSql $ row !! 0
+>         refA = fromSql $ row !! 1
+>         refZ = fromSql $ row !! 2
 
 > openConn = connectPostgreSQL "port=5433"
-
-> getGraphArcs :: (IConnection a) => a-> String -> IO [RefNode]
-> getGraphArcs conn name =
->     do return []
 
 ================================================================================
 = Load Functions
@@ -186,40 +216,66 @@ import it into the currently loading workflow.
 > processDoc doc funcMap conn =
 >     do graphId   <- insertNewGraph conn (graphName doc)
 >        loadNodes <- mapM (processChildNode graphId funcMap conn) childNodes
+>        putStrLn $ "Load nodes: " ++ (show loadNodes)
 >        let resolvedLoadNodes = resolveArcs loadNodes
+>        putStrLn $ "\nResolved load nodes: " ++ (show resolvedLoadNodes)
 >        mapM (processArcs conn graphId) resolvedLoadNodes
+>        processAllExternals conn graphId resolvedLoadNodes
 >        return $ Right graphId
 >     where
 >         childNodes = getChildren (rootElement doc)
 
 > processAllExternals conn graphId nodes =
->     foldr (processNodeExternals conn graphId) initialMaps nodes
+>     foldr (processNodeExternals conn graphId) initialMap nodes
 >     where
->         initialMaps = return $ (Map.empty, Map.empty)
+>         initialMap = return $ Map.empty
 
-> processNodeExternals conn graphId node maps =
->     foldr (processExternal conn graphId node) maps (externalArcs node)
+> processNodeExternals conn graphId node instanceMap =
+>     foldr (processExternal conn graphId node) instanceMap (externalArcs node)
 
-> processExternal conn graphId node extArc mapsIO =
->     do (localInstances, dbInstances) <- ensureInstanceLoaded conn mapsIO instanceName
->        let instanceId = localInstances Map.! instanceName
->        targetNodeId <- getNodeRefId conn wfName (nodeName node) instanceId
+> processExternal conn graphId node extArc mapIO =
+>     do putStrLn $ "Loading external: " ++ (show extArc)
+>        instanceMap <- ensureInstanceLoaded conn mapIO graphId extArc
+>        targetNodeId <- getNodeRefId conn graphId wfName targetName instanceName
 >        case (arcType extArc) of
 >            InArc  -> insertArc conn graphId targetNodeId (nodeId node) (extArcName extArc)
 >            OutArc -> insertArc conn graphId (nodeId node) targetNodeId (extArcName extArc)
->        return (localInstances, dbInstances)
+>        return instanceMap
 >     where
 >        wfName       = targetWf extArc
 >        instanceName = targetInstance extArc
+>        targetName   = targetNodeName extArc
 
-> ensureInstanceLoaded conn mapsIO instId =
->     do (localInstance, dbInstances) <- mapsIO
->        case (Map.member instId localInstance) of
->            True  -> mapsIO
->            False -> importInstance conn mapsIO
+> ensureInstanceLoaded conn instanceMapIO graphId extArc =
+>     do instanceMap <- instanceMapIO
+>        case (Map.member instanceName instanceMap) of
+>            True  -> instanceMapIO
+>            False -> importInstance conn instanceMap graphId extArc
+>     where
+>         instanceName = targetInstance extArc
 
-> importInstance conn mapsIO = mapsIO
+> importInstance conn instanceMap graphId extArc =
+>     do putStrLn $ "Importing: " ++ wfName
+>        loadArcs <- getLoadArcs conn wfName
+>        foldr (importArc conn graphId instanceName) startMap loadArcs
+>        return $ Map.insert instanceName True instanceMap
+>     where
+>        wfName = targetWf extArc
+>        instanceName = targetInstance extArc
+>        startMap = return $ Map.empty
 
+> importArc conn graphId instanceName (LoadArc arcName refA refZ) refMapIO =
+>     do refMap  <- refMapIO
+>        refMapA <- importNode conn graphId instanceName refA refMap
+>        refMapZ <- importNode conn graphId instanceName refZ refMapA
+>        insertArc conn graphId (refMapZ Map.! refA) (refMapZ Map.! refZ) arcName
+>        return refMapZ
+
+> importNode conn graphId instanceName refId refMap =
+>     case (Map.member refId refMap) of
+>         True  -> return refMap
+>         False -> do newRefId <- insertNodeRef conn graphId refId instanceName
+>                     return $ Map.insert refId newRefId refMap
 
 ================================================================================
 = Load Functions - Arc related

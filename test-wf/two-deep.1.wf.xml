@@ -3,11 +3,11 @@
 
 <workflow id="two-deep" version="1">
 
-  <node nodeId="1">
+  <node name="1">
     <externalArc workflow="one-node" version="1" instance="1" nodeId="1" type="out"/>
   </node>
 
-  <node nodeId="2">
+  <node name="2">
     <externalArc workflow="one-node" version="1" instance="1" nodeId="1" type="in"/>
   </node>
 

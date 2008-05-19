@@ -225,7 +225,7 @@ completeExecution
   token.
 
 > completeExecution :: NodeToken -> String -> WfInstance a -> IO (WfInstance a)
-> completeExecution token outputArcName wf@(WfInstance nodeTypes graph nodeTokens arcTokens userData)
+> completeExecution token outputArcName wf
 >   | hasNoOutputs = return newWf
 >   | hasOneOutput = if (firstOutputName == outputArcName)
 >                        then acceptToken newToken newWf
@@ -235,6 +235,7 @@ completeExecution
 >     hasNoOutputs                   = null outputArcs
 >     hasOneOutput                   = null $ tail outputArcs
 >
+>     graph                          = wfGraph wf
 >     currentNode                    = nodeForToken token graph
 >     outputArcs                     = (graphOutputArcs graph) Map.! (nodeId currentNode)
 >
