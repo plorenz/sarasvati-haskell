@@ -27,7 +27,7 @@ create table wf_node
   graph_id        int          NOT NULL REFERENCES wf_graph,
   source_id       int          NOT NULL REFERENCES wf_node_source,
   name            varchar(255) NOT NULL,
-  require_all     boolean      NOT NULL,
+  is_join         boolean      NOT NULL,
   type            varchar(255) NOT NULL
 );
 

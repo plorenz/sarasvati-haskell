@@ -8,6 +8,7 @@ Author: Paul Lorenz
 > import System.Directory
 > import WorkflowXml
 > import TaskXml
+> import qualified Data.Map as Map
 
 > handleTask :: Task -> WfInstance [Task] -> IO (WfInstance [Task])
 > handleTask task wf =
@@ -46,8 +47,8 @@ Author: Paul Lorenz
 > showTokens (x:xs) = do putStrLn (show x)
 >                        showTokens xs
 
-> processTasks wf@(WfInstance graph []         []        tasks) = putStrLn "Workflow complete!"
-> processTasks wf@(WfInstance graph nodeTokens arcTokens tasks) =
+> processTasks wf@(WfInstance _         _     []         []        _    ) = putStrLn "Workflow complete!"
+> processTasks wf@(WfInstance nodeTypes graph nodeTokens arcTokens tasks) =
 >     do putStrLn ""
 >        showTaskList tasks
 >        putStr "> "
@@ -66,10 +67,12 @@ Author: Paul Lorenz
 >                                     processTasks newWf
 >            BadCmd -> do putStrLn $ cmd ++ " is not a valid command or task entry"
 >                         processTasks wf
+>            NoCmd  -> processTasks wf
 
-> data CmdType = ShowTokenCmd | TaskCmd | BadCmd
+> data CmdType = ShowTokenCmd | TaskCmd | BadCmd | NoCmd
 
 > getCmdType input
+>     | null input                   = NoCmd
 >     | (map (toUpper) input) == "T" = ShowTokenCmd
 >     | all (isDigit) input          = TaskCmd
 >     | otherwise                    = BadCmd
@@ -101,10 +104,15 @@ Author: Paul Lorenz
 >        elemFunctionMap = elemMapWith [ ("task", processTaskElement) ]
 
 > runWorkflow wfGraph =
->     case (startWorkflow wfGraph []) of
+>     case (startWorkflow nodeTypeMap wfGraph []) of
 >            Left msg -> putStrLn msg
 >            Right wfInstanceIO -> do wf <- wfInstanceIO
 >                                     processTasks wf
+
+> nodeTypeMap = Map.fromList
+>                 [ ( "start", NodeType defaultGuard completeDefaultExecution ),
+>                   ( "node",  NodeType defaultGuard completeDefaultExecution ),
+>                   ( "task",  NodeType defaultGuard acceptAndCreateTask ) ]
 
 > showWorkflows []        _       = return ()
 > showWorkflows (wf:rest) counter =

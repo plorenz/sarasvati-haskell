@@ -2,6 +2,14 @@
 > module Task where
 > import Workflow
 > import qualified Data.Map as Map
+> import Data.Dynamic
+
+> data TaskDef =
+>     TaskDef {
+>        taskDefName :: String,
+>        taskDefDesc :: String
+>    }
+>    deriving (Typeable)
 
 > data TaskState = Open | Complete | Rejected
 >  deriving (Show,Eq)
@@ -27,13 +35,18 @@
 >  do putStrLn $ show counter ++ ": " ++ (taskName task) ++ " - " ++ show (taskState task)
 >     showTasks rest (counter + 1)
 
-> acceptAndCreateTask taskId name desc token wf@(WfInstance graph nodeTokens arcTokens tasks) =
->     return wf { userData = (newTask wf token taskId name desc):tasks }
+> acceptAndCreateTask token wf =
+>     return wf { userData = (newTask wf token): (userData wf) }
 
-> newTask wf token taskId name desc = Task (tokenId token) taskId name desc Open hasReject
+> newTask wf token = Task (tokenId token) (show theNodeId) taskName taskDesc Open hasReject
 >     where
->         nodeId = case token of (NodeToken _ nodeId) -> nodeId
->         hasReject     = not.null $ filter (\arc -> arcName arc =="reject") $ ((graphOutputArcs.wfGraph) wf) Map.! nodeId
+>         node      = nodeForToken token (wfGraph wf)
+>         theNodeId = nodeId node
+>         taskDef   = case (nodeExtra node) of
+>                          NodeExtra dyn -> fromDyn dyn (TaskDef "default" "default")
+>         taskName  = taskDefName taskDef
+>         taskDesc  = taskDefDesc taskDef
+>         hasReject = not.null $ filter (\arc -> arcName arc =="reject") $ ((graphOutputArcs.wfGraph) wf) Map.! theNodeId
 
 > closeTask task wf newState = wf { userData = newTaskList }
 >   where

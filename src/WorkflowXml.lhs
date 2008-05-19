@@ -85,16 +85,15 @@ Function for processing the start element. There should be exactly one of these
 per workflow definition. It should contain only arc and externalArc elements. It
 has no attributes
 
-> processStartElement element source = Node 0 "start" "start" source False defaultGuard completeDefaultExecution
+> processStartElement element source = Node 0 "start" "start" source False NoNodeExtra
 
 Function for processing node elements. There can be any number of these in each
 workflow. They have no logic associated with them. They have a nodeId, which
 should be unique in that workflow and a type, which corresponds to the NodeType
 type in Workflow. Nodes should contain only arc and externalArc elements.
 
-> processNodeElement element source = newNode nodeId nodeType
+> processNodeElement element source = Node 0 "node" nodeId source isJoinNode NoNodeExtra
 >     where
->         newNode nodeId nodeType = Node 0 "node" nodeId source isJoinNode defaultGuard completeDefaultExecution
 >         nodeId      = readAttr element "nodeId"
 >         nodeTypeS   = readAttr element "type"
 >         isJoinNode  = case ( nodeTypeS ) of

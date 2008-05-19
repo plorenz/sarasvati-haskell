@@ -4,8 +4,9 @@
 > import XmlUtil
 > import Workflow
 > import Task
+> import Data.Dynamic
 
-> processTaskElement element source = Node 0 "task" nodeId source isJoinNode defaultGuard acceptFunction
+> processTaskElement element source = Node 0 "task" nodeId source isJoinNode nodeExtra
 >     where
 >         nodeId         = readAttr element "nodeId"
 >         nodeTypeStr    = readAttr element "type"
@@ -16,4 +17,5 @@
 >                              "requireSingle" -> False
 >                              otherwise       -> True
 >
->         acceptFunction = acceptAndCreateTask nodeId name desc
+>         taskDef        = TaskDef name desc
+>         nodeExtra      = mkNodeExtra taskDef

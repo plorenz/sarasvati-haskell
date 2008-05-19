@@ -16,7 +16,7 @@ definition node mostly likely looks like.
 
 > data LoadNode a =
 >     LoadNode {
->         wfNode       :: Workflow.Node a,
+>         wfNode       :: Workflow.Node,
 >         arcs         :: [(String,Int)],
 >         arcRefs      :: [(String,String)],
 >         externalArcs :: [ExternalArc]
@@ -126,7 +126,7 @@ To import an external workflow into loading workflow, we must take the following
 >         arcList node            = map (makeArcRef) (arcRefs node)
 >         makeArcRef (name, ref)  = (name, lookupArcRef ref)
 >         lookupArcRef ref        = (wfNodeId.head) $ filter (isRefNode ref) (Map.elems nodeMap)
->         isRefNode ref loadNode  = ref == (Workflow.nodeRefId.wfNode) loadNode
+>         isRefNode ref loadNode  = ref == (Workflow.nodeName.wfNode) loadNode
 
 > resolveAllExternalArcs nodeMap = foldr (resolveNodeExternals) nodeMap (Map.elems nodeMap)
 
@@ -138,7 +138,7 @@ To import an external workflow into loading workflow, we must take the following
 >                                OutArc -> node { arcs = newEntry targetNode:(arcs node) }
 >                                InArc  -> targetNode { arcs = newEntry node:(arcs targetNode) }
 >         targetNode       = head $ filter (isMatch) (Map.elems nodeMap)
->         isMatch loadNode = (Workflow.nodeRefId.wfNode)         loadNode == (targetNodeRef  extArc) &&
+>         isMatch loadNode = (Workflow.nodeName.wfNode)                       loadNode == (targetNodeRef  extArc) &&
 >                            (Workflow.wfInstance.Workflow.nodeSource.wfNode) loadNode == (targetInstance extArc) &&
 >                            (Workflow.wfDepth.Workflow.nodeSource.wfNode)    loadNode == 1
 >         newEntry n       = (arcName extArc, wfNodeId n)
