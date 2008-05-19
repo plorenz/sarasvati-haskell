@@ -29,7 +29,7 @@ Author: Paul Lorenz
 >                                              return wf
 >                           otherwise -> do putStrLn "Ok. Leaving open"
 >                                           return wf
->            Complete -> do return wf
+>            Complete -> return wf
 >     where
 >         rejectable = taskRejectable task
 >         prompt = case (rejectable) of
@@ -42,7 +42,7 @@ Author: Paul Lorenz
 >     | taskNumber == 1 = Right first
 >     | otherwise       = getTask (taskNumber - 1) rest
 
-> showTokens []     = do return ()
+> showTokens []     = return ()
 > showTokens (x:xs) = do putStrLn (show x)
 >                        showTokens xs
 
@@ -103,7 +103,7 @@ Author: Paul Lorenz
 >            Right wfInstanceIO -> do wf <- wfInstanceIO
 >                                     processTasks wf
 
-> showWorkflows [] _ = do return ()
+> showWorkflows []        _       = return ()
 > showWorkflows (wf:rest) counter =
 >  do putStrLn $ "  " ++ (show counter) ++ ": " ++ wf
 >     showWorkflows rest (counter + 1)

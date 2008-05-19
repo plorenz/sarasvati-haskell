@@ -76,6 +76,7 @@ Node
 >         inNodeId  :: Int,
 >         outNodeId :: Int
 >     }
+>  deriving (Show)
 
 > arcInNode  graph arc = (graphNodes graph) Map.! (inNodeId arc)
 
@@ -119,7 +120,9 @@ WFGraph
 >        graphOutputArcs :: Map Int [Arc]
 >     }
 
-> showGraph graph = concatMap (\a->show a ++ "\n") (Map.elems (graphNodes graph))
+> showGraph graph = concatMap (\a->show a ++ "\n") (Map.elems (graphNodes graph)) ++ "\n" ++
+>                   concatMap (\a->show a ++ "\n") (Map.elems (graphInputArcs graph)) ++ "\n" ++
+>                   concatMap (\a->show a ++ "\n") (Map.elems (graphOutputArcs graph))
 
 graphFromNodesAndArcs
   Generates a WFGraph from a list of NodeArcs
@@ -129,10 +132,10 @@ graphFromNodesAndArcs
 >         nodeMap  = Map.fromList $ zip (map nodeId nodes) nodes
 >
 >         inputsMap             = Map.fromList $ zip (map nodeId nodes) (map inputArcsForNode nodes)
->         inputArcsForNode node = filter (\arc -> inNodeId arc == nodeId node) arcs
+>         inputArcsForNode node = filter (\arc -> outNodeId arc == nodeId node) arcs
 >
 >         outputsMap = Map.fromList $ zip (map nodeId nodes) (map outputArcsForNode nodes)
->         outputArcsForNode node = filter (\arc -> outNodeId arc == nodeId node) arcs
+>         outputArcsForNode node = filter (\arc -> inNodeId arc == nodeId node) arcs
 
 > data WfInstance a =
 >     WfInstance {
@@ -149,7 +152,7 @@ inputs
 outputs
   Returns the Nodes which are outputs of the given node
 
-> outputs graph node = (graphInputArcs graph) Map.! (nodeId node)
+> outputs graph node = (graphOutputArcs graph) Map.! (nodeId node)
 
 getTokenForId
   Given a token id and a workflow instance gives back the actual token
@@ -293,24 +296,24 @@ acceptJoin
 
 > acceptJoin :: Token a -> WfInstance a -> IO (WfInstance a)
 > acceptJoin token wf@(WfInstance graph tokenList userData)
->   | areAllInputsPresent = acceptWithGuard newToken newWf
->   | otherwise           = do return $ WfInstance graph (token:tokenList) userData
+>     | areAllInputsPresent = acceptWithGuard newToken newWf
+>     | otherwise           = return $ WfInstance graph (token:tokenList) userData
 >   where
->     areAllInputsPresent           = all (inputHasToken (token:tokenList)) inputArcs
+>     areAllInputsPresent          = all (inputHasToken (token:tokenList)) inputArcs
 >
 >     inputHasToken []         arc = False
 >     inputHasToken (tok:rest) arc = arcName arc /= tokenArcName token ||
 >                                    ( nextNode tok == targetNode &&
->                                      prevNode tok == arcInNode graph arc &&
+>                                      (nodeId.prevNode) tok == inNodeId arc &&
 >                                      tokenArcName  tok == tokenArcName token ) ||
 >                                      inputHasToken rest arc
 >
->     targetNode                     = nextNode token
->     inputArcs                      = inputs graph targetNode
->     outputTokenList                = removeInputTokens inputArcs targetNode tokenList
+>     targetNode                   = nextNode token
+>     inputArcs                    = inputs graph targetNode
+>     outputTokenList              = removeInputTokens inputArcs targetNode tokenList
 >
->     newToken                       = Token (tokenId token) (tokenArcName token) (prevNode token) (nextNode token) NullNode
->     newWf                          = WfInstance graph (newToken:outputTokenList) userData
+>     newToken                     = Token (tokenId token) (tokenArcName token) (prevNode token) (nextNode token) NullNode
+>     newWf                        = WfInstance graph (newToken:outputTokenList) userData
 
 acceptWithGuard
   This is only called once the node is ready to fire. The given token is now in the node
