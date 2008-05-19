@@ -11,7 +11,6 @@ Author: Paul Lorenz
 > import Workflow.Task.TaskXml
 > import qualified Data.Map as Map
 > import Workflow.UI.ConsoleCommon
-> import Data.IORef
 > import Workflow.MemoryWfEngine
 
 > consoleMain :: IO ()
@@ -45,8 +44,7 @@ Author: Paul Lorenz
 
 > runWorkflow :: WfGraph -> IO ()
 > runWorkflow graph =
->     do tokenCounter <- newIORef 1
->        let engine = MemoryWfEngine tokenCounter
+>     do engine <- newMemoryWfEngine
 >        result <- startWorkflow engine nodeTypeMap graph []
 >        case (result) of
 >            Left msg -> putStrLn msg

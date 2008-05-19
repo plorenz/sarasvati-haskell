@@ -4,7 +4,6 @@ Author: Paul Lorenz
 
 > import IO
 > import Data.Char
-> import Data.IORef
 > import Workflow.Loaders.DatabaseToEngineLoader
 > import Workflow.Loaders.LoadError
 > import qualified Data.Map as Map
@@ -13,7 +12,7 @@ Author: Paul Lorenz
 > import Database.HDBC.Types
 > import Workflow.Engine
 > import Workflow.DatabaseWfEngine
-> import Workflow.MemoryWfEngine
+> -- import Workflow.MemoryWfEngine
 > import Workflow.Task.Task
 > import Workflow.Task.TaskDB
 > import Workflow.UI.ConsoleCommon
@@ -52,11 +51,13 @@ Author: Paul Lorenz
 > runWorkflow :: WfGraph -> IO ()
 > runWorkflow graph =
 >     do conn <- DbUtil.openDbConnection
->        let engine = DatabaseWfEngine (ConnWrapper conn)
+>        let engine = DatabaseWfEngine conn
 >        result <- startWorkflow engine nodeTypeMap graph []
 >        case (result) of
->            Left msg -> putStrLn msg
->            Right wf -> processTasks engine wf
+>            Left msg -> do rollback conn
+>                           putStrLn msg
+>            Right wf -> do commit conn
+>                           processTasks engine wf
 
 > nodeTypeMap :: Map.Map String (NodeType [Task])
 > nodeTypeMap = Map.fromList

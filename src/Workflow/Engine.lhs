@@ -143,9 +143,12 @@ as the tokens representing the current state. A slot for user data is also defin
 >     }
 
 > class WfEngine a where
->     createWfRun     :: a -> WfGraph -> Map.Map String (NodeType b) -> b -> IO (WfRun b)
->     createNodeToken :: a -> WfRun b -> Node -> [ArcToken] -> IO NodeToken
->     createArcToken  :: a -> WfRun b -> Arc  -> NodeToken  -> IO ArcToken
+>     createWfRun         :: a -> WfGraph   -> Map.Map String (NodeType b) -> b -> IO (WfRun b)
+>     createNodeToken     :: a -> WfRun b   -> Node -> [ArcToken] -> IO NodeToken
+>     createArcToken      :: a -> WfRun b   -> Arc  -> NodeToken  -> IO ArcToken
+>     completeNodeToken   :: a -> NodeToken -> IO ()
+>     completeArcToken    :: a -> ArcToken  -> IO ()
+>     transactionBoundary :: a -> IO ()
 
 showGraph
   Print prints a graph
@@ -241,9 +244,11 @@ completeExecution
 >     | hasNoOutputs = return newWf
 >     | hasOneOutput = if (firstOutputName == outputArcName)
 >                          then do arcToken <- createArcToken engine wf (head outputArcs) token
+>                                  completeNodeToken engine token
 >                                  acceptToken engine arcToken newWf
 >                          else return newWf
->     | otherwise    = split outputArcs newWf
+>     | otherwise    = do completeNodeToken engine token
+>                         split outputArcs newWf
 >   where
 >     hasNoOutputs        = null outputArcs
 >     hasOneOutput        = null $ tail outputArcs
@@ -283,6 +288,7 @@ acceptSingle
 > acceptSingle :: (WfEngine e) => e -> ArcToken -> WfRun a -> IO (WfRun a)
 > acceptSingle engine token wf =
 >   do newToken <- createNodeToken engine wf node [token]
+>      completeArcToken engine token
 >      acceptWithGuard engine newToken wf { nodeTokens = newToken:(nodeTokens wf) }
 >   where
 >     graph = wfGraph wf
@@ -299,6 +305,7 @@ acceptJoin
 > acceptJoin engine token wf@(WfRun runId nodeTypes graph nodeTokens arcTokens userData)
 >     | areAllInputsPresent = do newToken <- createNodeToken engine wf targetNode inputTokens
 >                                let newWf = WfRun runId nodeTypes graph (newToken:nodeTokens) outputTokenList userData
+>                                mapM (completeArcToken engine) inputTokens
 >                                acceptWithGuard engine newToken newWf
 >     | otherwise           = return $ WfRun runId nodeTypes graph nodeTokens allArcTokens userData
 >   where
@@ -325,7 +332,8 @@ acceptWithGuard
 > acceptWithGuard engine token wf =
 >     case (guard token wf) of
 >         AcceptToken  -> accept engine token wf
->         DiscardToken -> return $ removeNodeToken token wf
+>         DiscardToken -> do completeNodeToken engine token
+>                            return $ removeNodeToken token wf
 >         SkipNode     -> completeDefaultExecution engine token wf
 >     where
 >         currentNode  = nodeForToken token (wfGraph wf)

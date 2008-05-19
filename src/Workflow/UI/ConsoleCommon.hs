@@ -14,10 +14,12 @@ handleTask engine task wf =
                       response <- getLine
                       case (response) of
                           "1" -> do newWf <- completeTask engine task wf
+                                    transactionBoundary engine
                                     putStrLn "Task Completed"
                                     return newWf
                           "2" -> if (rejectable)
                                      then do newWf <- rejectTask engine task wf
+                                             transactionBoundary engine
                                              putStrLn "Task Rejected"
                                              return newWf
                                      else do putStrLn "Ok. Leaving open"
