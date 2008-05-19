@@ -99,7 +99,12 @@ data Arc =
 class Token a where
    tokenId   :: a -> Int
 
-data TokenAttr = TokenAttr Int String TokenAttrValue
+data TokenAttr =
+    TokenAttr {
+        tokenAttrId    :: Int,
+        tokenAttrKey   :: String,
+        tokenAttrValue :: TokenAttrValue
+    }
   deriving (Show)
 
 data TokenAttrValue =
@@ -111,6 +116,7 @@ data TokenAttrValue =
 data NodeToken = NodeToken Int Int [TokenAttr]
     deriving (Show)
 
+tokenAttr :: NodeToken -> [TokenAttr]
 tokenAttr (NodeToken _ _ attr) = attr
 
 instance Token (NodeToken) where
@@ -124,6 +130,7 @@ instance Eq (NodeToken) where
 data ArcToken = ArcToken Int Arc NodeToken
     deriving (Show)
 
+parentToken :: ArcToken -> NodeToken
 parentToken (ArcToken _ _ token) = token
 
 instance Token (ArcToken) where

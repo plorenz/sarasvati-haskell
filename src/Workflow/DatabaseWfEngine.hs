@@ -5,6 +5,7 @@ import Database.HDBC
 import qualified Data.Map as Map
 import Workflow.Engine
 import Workflow.Util.DbUtil as DbUtil
+import Workflow.Util.TokenUtil as TokenUtil
 
 data DatabaseWfEngine = forall conn. IConnection conn => DatabaseWfEngine conn
 
@@ -69,6 +70,23 @@ markNodeTokenComplete conn token =
     where
         sql = "update wf_node_token set complete_date = current_timestamp where id = ?"
 
+updateNodeTokenAttrSet :: (IConnection conn) => conn -> Int -> Int -> IO ()
+updateNodeTokenAttrSet conn tokenId attrSetId =
+    do run conn sql [toSql attrSetId,
+                     toSql tokenId]
+       return ()
+    where
+        sql = "update wf_node_token set attr_set_id = ? where id = ?"
+
+insertTokenAttr :: (IConnection conn) => conn -> TokenAttr -> IO ()
+insertTokenAttr conn (TokenAttr nodeTokenId name (TokenAttrString value)) =
+    do run conn sql [toSql nodeTokenId,
+                     toSql name,
+                     toSql value]
+       return ()
+    where
+        sql = "insert into wf_token_string_attr (attr_set_id, name, value) values (?, ?, ?)"
+
 createDatabaseWfProcess :: DatabaseWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfProcess a)
 createDatabaseWfProcess (DatabaseWfEngine conn) graph nodeTypes userData =
     do wfRunId <- insertWfProcess conn graph
@@ -78,7 +96,8 @@ createDatabaseNodeToken :: DatabaseWfEngine -> WfProcess a -> Node -> [ArcToken]
 createDatabaseNodeToken (DatabaseWfEngine conn) wfRun node arcTokens =
     do nextTokenId <- insertNodeToken conn wfRun node
        mapM (insertNodeTokenParent conn nextTokenId) arcTokens
-       return $ NodeToken nextTokenId (nodeId node) []
+       attrs <- tokenAttrs conn nextTokenId arcTokens
+       return $ NodeToken nextTokenId (nodeId node) attrs
 
 createDatabaseArcToken :: DatabaseWfEngine -> WfProcess a -> Arc -> NodeToken -> IO ArcToken
 createDatabaseArcToken (DatabaseWfEngine conn) wfRun arc nodeToken =
@@ -97,7 +116,24 @@ databaseTransactionBoundary :: DatabaseWfEngine -> IO ()
 databaseTransactionBoundary (DatabaseWfEngine conn) =
     do commit conn
 
-parentAttr = tokenAttr.parentToken
+tokenAttrs :: (IConnection conn) => conn -> Int -> [ArcToken] -> IO [TokenAttr]
+tokenAttrs _    _          []         = return []
 
-tokenAttrs []    = []
-tokenAttrs [arcToken] = parentAttr arcToken
+tokenAttrs conn newTokenId [arcToken]
+    | null attrs = return attrs
+    | otherwise  = do updateNodeTokenAttrSet conn newTokenId (tokenId (parentToken arcToken))
+                      return attrs
+    where
+       attrs = parentAttr arcToken
+
+tokenAttrs conn newTokenId (x1:x2:xs)
+    | null $ parentAttr x1 = tokenAttrs conn newTokenId (x2:xs)
+    | null $ parentAttr x2 = tokenAttrs conn newTokenId (x1:xs)
+    | otherwise            = do updateNodeTokenAttrSet conn newTokenId newTokenId
+                                mapM (insertTokenAttr conn) mergedAttrs
+                                return mergedAttrs
+    where
+       mergedAttrs = map (updateAttrId newTokenId) $ TokenUtil.mergeTokenAttrs (x1:x2:xs)
+
+updateAttrId :: Int -> TokenAttr -> TokenAttr
+updateAttrId newId tokenAttr = tokenAttr { tokenAttrId = newId }
