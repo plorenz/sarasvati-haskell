@@ -10,7 +10,7 @@ NodeType
   RequireSingle - Node will fire for every token that arrives
   RequireAll    - Node will only fire when there tokens at every input
 
-> data NodeType = RequireSingle | RequireAll
+> data NodeRequireType = RequireSingle | RequireAll
 >   deriving (Show)
 
 > nodeTypeFromString "requireSingle" = RequireSingle
@@ -47,19 +47,21 @@ Node
 
   Connections between Nodes are represented by Arcs and WFGraph
 
-> data Node a = NullNode
->             | Node {
->                 nodeId         :: Int,
->                 nodeRefId      :: String,
->                 source         :: NodeSource,
->                 nodeType       :: NodeType,
->                 guardFunction  :: (NodeToken -> WfInstance a -> GuardResponse),
->                 acceptFunction :: (NodeToken -> WfInstance a -> IO (WfInstance a))
->               }
+> data Node a =
+>     Node {
+>         nodeId         :: Int,
+>         nodeType       :: String,
+>         nodeRefId      :: String,
+>         source         :: NodeSource,
+>         nodeRequires   :: NodeRequireType,
+>         guardFunction  :: (NodeToken -> WfInstance a -> GuardResponse),
+>         acceptFunction :: (NodeToken -> WfInstance a -> IO (WfInstance a))
+>     }
 
 > instance Show (Node a) where
->     show NullNode = "[Node: NullNode]"
->     show a        = "[Node id: " ++ (show.nodeId) a ++ " ref: " ++ nodeRefId a ++ " depth: " ++ (show.wfDepth.source) a ++ "]"
+>     show a = "[Node id: " ++ (show.nodeId) a ++
+>              " ref: " ++ nodeRefId a ++
+>              " depth: " ++ (show.wfDepth.source) a ++ "]"
 
 Arc
   An Arc represents an directed edge in a workflow graph.
@@ -83,6 +85,8 @@ The Token class allows NodeTokens and ArcTokens to share an id lookup function
 > class Token a where
 >    tokenId :: a -> [Int]
 
+NodeToken represents tokens which are at node
+
 > data NodeToken = NodeToken [Int] Int
 >     deriving (Show)
 
@@ -90,9 +94,9 @@ The Token class allows NodeTokens and ArcTokens to share an id lookup function
 >     tokenId (NodeToken id _ ) = id
 
 > instance Eq (NodeToken) where
->   tok1 == tok2 = (tokenId tok1) == (tokenId tok2)
+>     tok1 == tok2 = (tokenId tok1) == (tokenId tok2)
 
-> nodeForToken (NodeToken _ nodeId) graph = (graphNodes graph) Map.! nodeId
+ArcToken represents tokens which are between nodes (on an arc)
 
 > data ArcToken = ArcToken [Int] Arc
 >     deriving (Show)
@@ -100,7 +104,6 @@ The Token class allows NodeTokens and ArcTokens to share an id lookup function
 > instance Token (ArcToken) where
 >     tokenId (ArcToken id _) = id
 
-> arcForToken (ArcToken _ arc) = arc
 
 WFGraph
   Has the set of nodes as well as maps of node input arcs and node output arcs
@@ -112,6 +115,20 @@ WFGraph
 >        graphInputArcs  :: Map.Map Int [Arc],
 >        graphOutputArcs :: Map.Map Int [Arc]
 >     }
+
+A WfInstance tracks the current state of the workflow. It has the workflow graph as well
+as the tokens representing the current state. A slot for user data is also defined.
+
+> data WfInstance a =
+>     WfInstance {
+>         wfGraph    :: WfGraph a,
+>         nodeTokens :: [NodeToken],
+>         arcTokens  :: [ArcToken],
+>         userData   :: a
+>     }
+
+showGraph
+  Print prints a graph
 
 > showGraph graph = concatMap (\a->show a ++ "\n") (Map.elems (graphNodes graph)) ++ "\n" ++
 >                   concatMap (\a->show a ++ "\n") (Map.elems (graphInputArcs graph)) ++ "\n" ++
@@ -130,23 +147,17 @@ graphFromNodesAndArcs
 >         outputsMap = Map.fromList $ zip (map nodeId nodes) (map outputArcsForNode nodes)
 >         outputArcsForNode node = filter (\arc -> inNodeId arc == nodeId node) arcs
 
-A WfInstance tracks the current state of the workflow. It has the workflow graph as well
-as the tokens representing the current state. A slot for user data is also defined.
-
-> data WfInstance a =
->     WfInstance {
->         wfGraph    :: WfGraph a,
->         nodeTokens :: [NodeToken],
->         arcTokens  :: [ArcToken],
->         userData   :: a
->     }
-
 getTokenForId
   Given a token id and a workflow instance gives back the actual token
   corresponding to that id
 
 > getNodeTokenForId id (WfInstance _ nodeTokens _ _) =
 >   head $ filter (\t -> (tokenId t) == id) nodeTokens
+
+Convenience lookup methods for the data pointed to by tokens
+
+> nodeForToken (NodeToken _ nodeId) graph = (graphNodes graph) Map.! nodeId
+> arcForToken (ArcToken _ arc) = arc
 
 startWorkflow
   Given a workflow definition (WfGraph) and initial userData, gives
@@ -250,7 +261,7 @@ acceptToken
 >     | isAcceptSingle = acceptSingle token wf
 >     | otherwise      = acceptJoin   token wf
 >   where
->     isAcceptSingle = case (nodeType targetNode) of
+>     isAcceptSingle = case (nodeRequires targetNode) of
 >                        RequireAll    -> False
 >                        RequireSingle -> True
 >     targetNode     = (graphNodes graph) Map.! ((outNodeId.arcForToken) token)
