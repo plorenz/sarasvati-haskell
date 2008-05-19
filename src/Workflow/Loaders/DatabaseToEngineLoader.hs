@@ -45,7 +45,7 @@ rowToNode conn typeMap row =
         nodeId       = fromSql (row !! 1) :: Int
         nodeName     = fromSql (row !! 2)
         nodeType     = fromSql (row !! 3)
-        isJoin       = fromSql (row !! 4)
+        isJoin       = "Y" == fromSql (row !! 4)
         nodeInstance = fromSql (row !! 5)
         graphName    = fromSql (row !! 6)
         graphVersion = fromSql (row !! 7)

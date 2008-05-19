@@ -1,3 +1,5 @@
+drop table if exists wf_task;
+drop table if exists wf_task_state;
 drop table if exists wf_node_token_parent;
 drop table if exists wf_arc_token;
 drop table if exists wf_node_token;
@@ -10,7 +12,6 @@ drop table if exists wf_instance;
 drop table if exists wf_run;
 drop table if exists wf_process;
 drop table if exists wf_graph;
-
 
 create table wf_graph
 (
@@ -34,7 +35,7 @@ create table wf_node
   id              serial       NOT NULL PRIMARY KEY,
   graph_id        int          NOT NULL REFERENCES wf_graph,
   name            varchar(255) NOT NULL,
-  is_join         boolean      NOT NULL,
+  is_join         char(1)      NOT NULL,
   type            varchar(255) NOT NULL
 );
 
@@ -89,4 +90,23 @@ create table wf_node_task
   id          int          NOT NULL PRIMARY KEY REFERENCES wf_node,
   name        varchar(255) NOT NULL,
   description text         NOT NULL
+);
+
+create table wf_task_state
+(
+   id          int         NOT NULL  PRIMARY KEY,
+   description varchar(10) NOT NULL
+);
+
+insert into wf_task_state values ( 0, 'Open' );
+insert into wf_task_state values ( 1, 'Complete' );
+insert into wf_task_state values ( 2, 'Rejected' );
+
+create table wf_task
+(
+  id            serial       NOT NULL PRIMARY KEY,
+  node_token_id int          NOT NULL REFERENCES wf_node_token,
+  name          varchar(255) NOT NULL,
+  description   varchar(255) NOT NULL,
+  state         int          NOT NULL REFERENCES wf_task_state
 );

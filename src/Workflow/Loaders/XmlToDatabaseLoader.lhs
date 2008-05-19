@@ -115,7 +115,7 @@ import it into the currently loading workflow.
 >                  [toSql nextNodeId,
 >                   toSql graphId,
 >                   toSql nodeName,
->                   toSql isJoin,
+>                   toSql $ if isJoin then "Y" else "N",
 >                   toSql nodeType]
 >        nextNodeRefId <- DbUtil.nextSeqVal conn "wf_node_ref_id_seq"
 >        run conn nodeRefSql
