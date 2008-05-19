@@ -14,6 +14,7 @@ import Data.Char
     else      { TokenELSE      }
     and       { TokenAND       }
     or        { TokenOR        }
+    not       { TokenNOT       }
     symbol    { TokenSymbol $$ }
     accept    { TokenAccept    }
     discard   { TokenDiscard   }
@@ -26,10 +27,13 @@ import Data.Char
 Stmt : if Expr then Stmt else Stmt { StmtIF $2 $4 $6   }
      | Result                      { StmtResult $1     }
 
-Expr : symbol or Expr  { ExprOR  $1 $3 }
-     | symbol and Expr { ExprAND $1 $3 }
-     | '(' Expr ')'    { $2            }
-     | symbol          { ExprSymbol $1 }
+Expr : UnitExpr or Expr  { ExprOR  $1 $3 }
+     | UnitExpr and Expr { ExprAND $1 $3 }
+     | not UnitExpr      { ExprNOT $2    }
+     | UnitExpr          { $1            }
+
+UnitExpr : symbol       { ExprSymbol $1 }
+         | '(' Expr ')' { $2            }
 
 Result : accept      { EngineTypes.AcceptToken  }
        | discard     { EngineTypes.DiscardToken }
@@ -45,9 +49,10 @@ data Stmt = StmtIF Expr Stmt Stmt
           | StmtResult EngineTypes.GuardResponse
   deriving Show
 
-data Expr = ExprOR  String Expr
-          | ExprAND String Expr
+data Expr = ExprOR  Expr Expr
+          | ExprAND Expr Expr
           | ExprSymbol String
+          | ExprNOT Expr
   deriving Show
 
 data Token = TokenIF
@@ -55,6 +60,7 @@ data Token = TokenIF
            | TokenELSE
            | TokenAND
            | TokenOR
+           | TokenNOT
            | TokenSymbol String
            | TokenAccept
            | TokenDiscard
@@ -82,10 +88,10 @@ lexWord cs = case span isLegalSymbolChar cs of
                  ("ELSE",cs)    -> TokenELSE        : lexer cs
                  ("AND",cs)     -> TokenAND         : lexer cs
                  ("OR",cs)      -> TokenOR          : lexer cs
+                 ("NOT",cs)     -> TokenNOT         : lexer cs
                  ("Accept",cs)  -> TokenAccept      : lexer cs
                  ("Discard",cs) -> TokenDiscard     : lexer cs
                  ("Skip",cs)    -> TokenSkip        : lexer cs
                  (name,cs)      -> TokenSymbol name : lexer cs
 
 }
-

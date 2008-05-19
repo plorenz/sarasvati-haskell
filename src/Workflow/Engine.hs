@@ -222,16 +222,19 @@ evalGuardLangStmt token wf (GuardLang.StmtIF expr ifStmt elseStmt) =
 
 evalGuardLangExpr :: NodeToken -> WfProcess a -> GuardLang.Expr -> IO Bool
 evalGuardLangExpr token wf (GuardLang.ExprSymbol symbol)   = evalGuardLangPred token wf symbol
-evalGuardLangExpr token wf (GuardLang.ExprOR  symbol expr) =
-    do result <- evalGuardLangPred token wf symbol
+evalGuardLangExpr token wf (GuardLang.ExprOR  exprL exprR) =
+    do result <- evalGuardLangExpr token wf exprL
        case result of
            True  -> return True
-           False -> evalGuardLangExpr token wf expr
-evalGuardLangExpr token wf (GuardLang.ExprAND symbol expr) =
-    do result <- evalGuardLangPred token wf symbol
+           False -> evalGuardLangExpr token wf exprR
+evalGuardLangExpr token wf (GuardLang.ExprAND exprL exprR) =
+    do result <- evalGuardLangExpr token wf exprL
        case result of
-           True  -> evalGuardLangExpr token wf expr
+           True  -> evalGuardLangExpr token wf exprR
            False -> return False
+evalGuardLangExpr token wf (GuardLang.ExprNOT expr) =
+    do result <- evalGuardLangExpr token wf expr
+       return $ not result
 
 evalGuardLangPred :: NodeToken -> WfProcess a -> String -> IO Bool
 evalGuardLangPred token wf predicate

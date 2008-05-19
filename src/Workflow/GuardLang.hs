@@ -10,193 +10,226 @@ import GlaExts
 
 -- parser produced by Happy Version 1.16
 
-data HappyAbsSyn t4 t5 t6
-	= HappyTerminal Token
-	| HappyErrorToken Int
-	| HappyAbsSyn4 t4
-	| HappyAbsSyn5 t5
-	| HappyAbsSyn6 t6
+data HappyAbsSyn t4 t5 t6 t7
+  = HappyTerminal Token
+  | HappyErrorToken Int
+  | HappyAbsSyn4 t4
+  | HappyAbsSyn5 t5
+  | HappyAbsSyn6 t6
+  | HappyAbsSyn7 t7
 
-action_0 (7#) = happyShift action_2
-action_0 (13#) = happyShift action_5
-action_0 (14#) = happyShift action_6
-action_0 (15#) = happyShift action_7
+action_0 (8#) = happyShift action_2
+action_0 (15#) = happyShift action_5
+action_0 (16#) = happyShift action_6
+action_0 (17#) = happyShift action_7
 action_0 (4#) = happyGoto action_3
-action_0 (6#) = happyGoto action_4
+action_0 (7#) = happyGoto action_4
 action_0 x = happyTcHack x happyFail
 
-action_1 (7#) = happyShift action_2
+action_1 (8#) = happyShift action_2
 action_1 x = happyTcHack x happyFail
 
-action_2 (12#) = happyShift action_10
-action_2 (16#) = happyShift action_11
+action_2 (13#) = happyShift action_11
+action_2 (14#) = happyShift action_12
+action_2 (18#) = happyShift action_13
 action_2 (5#) = happyGoto action_9
+action_2 (6#) = happyGoto action_10
 action_2 x = happyTcHack x happyFail
 
-action_3 (18#) = happyAccept
+action_3 (20#) = happyAccept
 action_3 x = happyTcHack x happyFail
 
 action_4 x = happyTcHack x happyReduce_2
 
-action_5 x = happyTcHack x happyReduce_7
+action_5 x = happyTcHack x happyReduce_9
 
-action_6 x = happyTcHack x happyReduce_8
+action_6 x = happyTcHack x happyReduce_10
 
-action_7 (12#) = happyShift action_8
-action_7 x = happyTcHack x happyReduce_10
+action_7 (14#) = happyShift action_8
+action_7 x = happyTcHack x happyReduce_12
 
-action_8 x = happyTcHack x happyReduce_9
+action_8 x = happyTcHack x happyReduce_11
 
-action_9 (8#) = happyShift action_15
+action_9 (9#) = happyShift action_18
 action_9 x = happyTcHack x happyFail
 
-action_10 (10#) = happyShift action_13
-action_10 (11#) = happyShift action_14
+action_10 (11#) = happyShift action_16
+action_10 (12#) = happyShift action_17
 action_10 x = happyTcHack x happyReduce_6
 
-action_11 (12#) = happyShift action_10
-action_11 (16#) = happyShift action_11
-action_11 (5#) = happyGoto action_12
+action_11 (14#) = happyShift action_12
+action_11 (18#) = happyShift action_13
+action_11 (6#) = happyGoto action_15
 action_11 x = happyTcHack x happyFail
 
-action_12 (17#) = happyShift action_19
-action_12 x = happyTcHack x happyFail
+action_12 x = happyTcHack x happyReduce_7
 
-action_13 (12#) = happyShift action_10
-action_13 (16#) = happyShift action_11
-action_13 (5#) = happyGoto action_18
+action_13 (13#) = happyShift action_11
+action_13 (14#) = happyShift action_12
+action_13 (18#) = happyShift action_13
+action_13 (5#) = happyGoto action_14
+action_13 (6#) = happyGoto action_10
 action_13 x = happyTcHack x happyFail
 
-action_14 (12#) = happyShift action_10
-action_14 (16#) = happyShift action_11
-action_14 (5#) = happyGoto action_17
+action_14 (19#) = happyShift action_22
 action_14 x = happyTcHack x happyFail
 
-action_15 (7#) = happyShift action_2
-action_15 (13#) = happyShift action_5
-action_15 (14#) = happyShift action_6
-action_15 (15#) = happyShift action_7
-action_15 (4#) = happyGoto action_16
-action_15 (6#) = happyGoto action_4
-action_15 x = happyTcHack x happyFail
+action_15 x = happyTcHack x happyReduce_5
 
-action_16 (9#) = happyShift action_20
+action_16 (13#) = happyShift action_11
+action_16 (14#) = happyShift action_12
+action_16 (18#) = happyShift action_13
+action_16 (5#) = happyGoto action_21
+action_16 (6#) = happyGoto action_10
 action_16 x = happyTcHack x happyFail
 
-action_17 x = happyTcHack x happyReduce_3
+action_17 (13#) = happyShift action_11
+action_17 (14#) = happyShift action_12
+action_17 (18#) = happyShift action_13
+action_17 (5#) = happyGoto action_20
+action_17 (6#) = happyGoto action_10
+action_17 x = happyTcHack x happyFail
 
-action_18 x = happyTcHack x happyReduce_4
+action_18 (8#) = happyShift action_2
+action_18 (15#) = happyShift action_5
+action_18 (16#) = happyShift action_6
+action_18 (17#) = happyShift action_7
+action_18 (4#) = happyGoto action_19
+action_18 (7#) = happyGoto action_4
+action_18 x = happyTcHack x happyFail
 
-action_19 x = happyTcHack x happyReduce_5
+action_19 (10#) = happyShift action_23
+action_19 x = happyTcHack x happyFail
 
-action_20 (7#) = happyShift action_2
-action_20 (13#) = happyShift action_5
-action_20 (14#) = happyShift action_6
-action_20 (15#) = happyShift action_7
-action_20 (4#) = happyGoto action_21
-action_20 (6#) = happyGoto action_4
-action_20 x = happyTcHack x happyFail
+action_20 x = happyTcHack x happyReduce_3
 
-action_21 x = happyTcHack x happyReduce_1
+action_21 x = happyTcHack x happyReduce_4
+
+action_22 x = happyTcHack x happyReduce_8
+
+action_23 (8#) = happyShift action_2
+action_23 (15#) = happyShift action_5
+action_23 (16#) = happyShift action_6
+action_23 (17#) = happyShift action_7
+action_23 (4#) = happyGoto action_24
+action_23 (7#) = happyGoto action_4
+action_23 x = happyTcHack x happyFail
+
+action_24 x = happyTcHack x happyReduce_1
 
 happyReduce_1 = happyReduce 6# 4# happyReduction_1
 happyReduction_1 ((HappyAbsSyn4  happy_var_6) `HappyStk`
-	_ `HappyStk`
-	(HappyAbsSyn4  happy_var_4) `HappyStk`
-	_ `HappyStk`
-	(HappyAbsSyn5  happy_var_2) `HappyStk`
-	_ `HappyStk`
-	happyRest)
-	 = HappyAbsSyn4
-		 (StmtIF happy_var_2 happy_var_4 happy_var_6
-	) `HappyStk` happyRest
+  _ `HappyStk`
+  (HappyAbsSyn4  happy_var_4) `HappyStk`
+  _ `HappyStk`
+  (HappyAbsSyn5  happy_var_2) `HappyStk`
+  _ `HappyStk`
+  happyRest)
+   = HappyAbsSyn4
+     (StmtIF happy_var_2 happy_var_4 happy_var_6
+  ) `HappyStk` happyRest
 
 happyReduce_2 = happySpecReduce_1  4# happyReduction_2
-happyReduction_2 (HappyAbsSyn6  happy_var_1)
-	 =  HappyAbsSyn4
-		 (StmtResult happy_var_1
-	)
-happyReduction_2 _  = notHappyAtAll 
+happyReduction_2 (HappyAbsSyn7  happy_var_1)
+   =  HappyAbsSyn4
+     (StmtResult happy_var_1
+  )
+happyReduction_2 _  = notHappyAtAll
 
 happyReduce_3 = happySpecReduce_3  5# happyReduction_3
 happyReduction_3 (HappyAbsSyn5  happy_var_3)
-	_
-	(HappyTerminal (TokenSymbol happy_var_1))
-	 =  HappyAbsSyn5
-		 (ExprOR  happy_var_1 happy_var_3
-	)
-happyReduction_3 _ _ _  = notHappyAtAll 
+  _
+  (HappyAbsSyn6  happy_var_1)
+   =  HappyAbsSyn5
+     (ExprOR  happy_var_1 happy_var_3
+  )
+happyReduction_3 _ _ _  = notHappyAtAll
 
 happyReduce_4 = happySpecReduce_3  5# happyReduction_4
 happyReduction_4 (HappyAbsSyn5  happy_var_3)
-	_
-	(HappyTerminal (TokenSymbol happy_var_1))
-	 =  HappyAbsSyn5
-		 (ExprAND happy_var_1 happy_var_3
-	)
-happyReduction_4 _ _ _  = notHappyAtAll 
+  _
+  (HappyAbsSyn6  happy_var_1)
+   =  HappyAbsSyn5
+     (ExprAND happy_var_1 happy_var_3
+  )
+happyReduction_4 _ _ _  = notHappyAtAll
 
-happyReduce_5 = happySpecReduce_3  5# happyReduction_5
-happyReduction_5 _
-	(HappyAbsSyn5  happy_var_2)
-	_
-	 =  HappyAbsSyn5
-		 (happy_var_2
-	)
-happyReduction_5 _ _ _  = notHappyAtAll 
+happyReduce_5 = happySpecReduce_2  5# happyReduction_5
+happyReduction_5 (HappyAbsSyn6  happy_var_2)
+  _
+   =  HappyAbsSyn5
+     (ExprNOT happy_var_2
+  )
+happyReduction_5 _ _  = notHappyAtAll
 
 happyReduce_6 = happySpecReduce_1  5# happyReduction_6
-happyReduction_6 (HappyTerminal (TokenSymbol happy_var_1))
-	 =  HappyAbsSyn5
-		 (ExprSymbol happy_var_1
-	)
-happyReduction_6 _  = notHappyAtAll 
+happyReduction_6 (HappyAbsSyn6  happy_var_1)
+   =  HappyAbsSyn5
+     (happy_var_1
+  )
+happyReduction_6 _  = notHappyAtAll
 
 happyReduce_7 = happySpecReduce_1  6# happyReduction_7
-happyReduction_7 _
-	 =  HappyAbsSyn6
-		 (EngineTypes.AcceptToken
-	)
+happyReduction_7 (HappyTerminal (TokenSymbol happy_var_1))
+   =  HappyAbsSyn6
+     (ExprSymbol happy_var_1
+  )
+happyReduction_7 _  = notHappyAtAll
 
-happyReduce_8 = happySpecReduce_1  6# happyReduction_8
+happyReduce_8 = happySpecReduce_3  6# happyReduction_8
 happyReduction_8 _
-	 =  HappyAbsSyn6
-		 (EngineTypes.DiscardToken
-	)
+  (HappyAbsSyn5  happy_var_2)
+  _
+   =  HappyAbsSyn6
+     (happy_var_2
+  )
+happyReduction_8 _ _ _  = notHappyAtAll
 
-happyReduce_9 = happySpecReduce_2  6# happyReduction_9
-happyReduction_9 (HappyTerminal (TokenSymbol happy_var_2))
-	_
-	 =  HappyAbsSyn6
-		 (EngineTypes.SkipNode happy_var_2
-	)
-happyReduction_9 _ _  = notHappyAtAll 
+happyReduce_9 = happySpecReduce_1  7# happyReduction_9
+happyReduction_9 _
+   =  HappyAbsSyn7
+     (EngineTypes.AcceptToken
+  )
 
-happyReduce_10 = happySpecReduce_1  6# happyReduction_10
+happyReduce_10 = happySpecReduce_1  7# happyReduction_10
 happyReduction_10 _
-	 =  HappyAbsSyn6
-		 (EngineTypes.SkipNode []
-	)
+   =  HappyAbsSyn7
+     (EngineTypes.DiscardToken
+  )
+
+happyReduce_11 = happySpecReduce_2  7# happyReduction_11
+happyReduction_11 (HappyTerminal (TokenSymbol happy_var_2))
+  _
+   =  HappyAbsSyn7
+     (EngineTypes.SkipNode happy_var_2
+  )
+happyReduction_11 _ _  = notHappyAtAll
+
+happyReduce_12 = happySpecReduce_1  7# happyReduction_12
+happyReduction_12 _
+   =  HappyAbsSyn7
+     (EngineTypes.SkipNode []
+  )
 
 happyNewToken action sts stk [] =
-	action 18# 18# notHappyAtAll (HappyState action) sts stk []
+  action 20# 20# notHappyAtAll (HappyState action) sts stk []
 
 happyNewToken action sts stk (tk:tks) =
-	let cont i = action i i tk (HappyState action) sts stk tks in
-	case tk of {
-	TokenIF -> cont 7#;
-	TokenTHEN -> cont 8#;
-	TokenELSE -> cont 9#;
-	TokenAND -> cont 10#;
-	TokenOR -> cont 11#;
-	TokenSymbol happy_dollar_dollar -> cont 12#;
-	TokenAccept -> cont 13#;
-	TokenDiscard -> cont 14#;
-	TokenSkip -> cont 15#;
-	TokenLP -> cont 16#;
-	TokenRP -> cont 17#;
-	_ -> happyError' (tk:tks)
-	}
+  let cont i = action i i tk (HappyState action) sts stk tks in
+  case tk of {
+  TokenIF -> cont 8#;
+  TokenTHEN -> cont 9#;
+  TokenELSE -> cont 10#;
+  TokenAND -> cont 11#;
+  TokenOR -> cont 12#;
+  TokenNOT -> cont 13#;
+  TokenSymbol happy_dollar_dollar -> cont 14#;
+  TokenAccept -> cont 15#;
+  TokenDiscard -> cont 16#;
+  TokenSkip -> cont 17#;
+  TokenLP -> cont 18#;
+  TokenRP -> cont 19#;
+  }
 
 happyError_ tk tks = happyError' (tk:tks)
 
@@ -231,9 +264,10 @@ data Stmt = StmtIF Expr Stmt Stmt
           | StmtResult EngineTypes.GuardResponse
   deriving Show
 
-data Expr = ExprOR  String Expr
-          | ExprAND String Expr
+data Expr = ExprOR  Expr Expr
+          | ExprAND Expr Expr
           | ExprSymbol String
+          | ExprNOT Expr
   deriving Show
 
 data Token = TokenIF
@@ -241,6 +275,7 @@ data Token = TokenIF
            | TokenELSE
            | TokenAND
            | TokenOR
+           | TokenNOT
            | TokenSymbol String
            | TokenAccept
            | TokenDiscard
@@ -268,6 +303,7 @@ lexWord cs = case span isLegalSymbolChar cs of
                  ("ELSE",cs)    -> TokenELSE        : lexer cs
                  ("AND",cs)     -> TokenAND         : lexer cs
                  ("OR",cs)      -> TokenOR          : lexer cs
+                 ("NOT",cs)     -> TokenNOT         : lexer cs
                  ("Accept",cs)  -> TokenAccept      : lexer cs
                  ("Discard",cs) -> TokenDiscard     : lexer cs
                  ("Skip",cs)    -> TokenSkip        : lexer cs
@@ -276,7 +312,7 @@ lexWord cs = case span isLegalSymbolChar cs of
 {-# LINE 1 "<built-in>" #-}
 {-# LINE 1 "<command line>" #-}
 {-# LINE 1 "GenericTemplate.hs" #-}
--- Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp 
+-- Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp
 
 {-# LINE 28 "GenericTemplate.hs" #-}
 
@@ -308,9 +344,9 @@ happyParse start_state = happyNewToken start_state notHappyAtAll notHappyAtAll
 -- parse (a %partial parser).  We must ignore the saved token on the top of
 -- the stack in this case.
 happyAccept 1# tk st sts (_ `HappyStk` ans `HappyStk` _) =
-	happyReturn1 ans
-happyAccept j tk st sts (HappyStk ans _) = 
-	(happyTcHack j ) (happyReturn1 ans)
+  happyReturn1 ans
+happyAccept j tk st sts (HappyStk ans _) =
+  (happyTcHack j ) (happyReturn1 ans)
 
 -----------------------------------------------------------------------------
 -- Arrays only: do the next action
@@ -372,9 +408,9 @@ happyReduce k i fn 1# tk st sts stk
      = happyFail 1# tk st sts stk
 happyReduce k nt fn j tk st sts stk
      = case happyDrop (k -# (1# :: Int#)) sts of
-	 sts1@(((st1@(HappyState (action))):(_))) ->
-        	let r = fn stk in  -- it doesn't hurt to always seq here...
-       		happyDoSeq r (action nt j tk st1 sts1 r)
+   sts1@(((st1@(HappyState (action))):(_))) ->
+          let r = fn stk in  -- it doesn't hurt to always seq here...
+           happyDoSeq r (action nt j tk st1 sts1 r)
 
 happyMonadReduce k nt fn 1# tk st sts stk
      = happyFail 1# tk st sts stk
@@ -415,25 +451,25 @@ happyGoto action j tk st = action j j tk (HappyState action)
 
 -- parse error if we are in recovery and we fail again
 happyFail  1# tk old_st _ stk =
---	trace "failing" $ 
-    	happyError_ tk
+--	trace "failing" $
+      happyError_ tk
 
 {-  We don't need state discarding for our restricted implementation of
     "error".  In fact, it can cause some bogus parses, so I've disabled it
     for now --SDM
 
 -- discard a state
-happyFail  1# tk old_st (((HappyState (action))):(sts)) 
-						(saved_tok `HappyStk` _ `HappyStk` stk) =
+happyFail  1# tk old_st (((HappyState (action))):(sts))
+            (saved_tok `HappyStk` _ `HappyStk` stk) =
 --	trace ("discarding state, depth " ++ show (length stk))  $
-	action 1# 1# tk (HappyState (action)) sts ((saved_tok`HappyStk`stk))
+  action 1# 1# tk (HappyState (action)) sts ((saved_tok`HappyStk`stk))
 -}
 
 -- Enter error recovery: generate an error token,
 --                       save the old token and carry on.
 happyFail  i tk (HappyState (action)) sts stk =
 --      trace "entering error recovery" $
-	action 1# 1# tk (HappyState (action)) sts ( (HappyErrorToken (I# (i))) `HappyStk` stk)
+  action 1# 1# tk (HappyState (action)) sts ( (HappyErrorToken (I# (i))) `HappyStk` stk)
 
 -- Internal happy errors:
 
@@ -449,7 +485,7 @@ happyTcHack x y = y
 
 
 -----------------------------------------------------------------------------
--- Seq-ing.  If the --strict flag is given, then Happy emits 
+-- Seq-ing.  If the --strict flag is given, then Happy emits
 --	happySeq = happyDoSeq
 -- otherwise it emits
 -- 	happySeq = happyDontSeq
