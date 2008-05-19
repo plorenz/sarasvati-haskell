@@ -9,32 +9,32 @@ import Workflow.Util.DbUtil as DbUtil
 data DatabaseWfEngine = forall conn. IConnection conn => DatabaseWfEngine conn
 
 instance WfEngine DatabaseWfEngine where
-    createWfRun         = createDatabaseWfRun
+    createWfProcess     = createDatabaseWfProcess
     createNodeToken     = createDatabaseNodeToken
     createArcToken      = createDatabaseArcToken
     completeNodeToken   = completeDatabaseNodeToken
     completeArcToken    = completeDatabaseArcToken
     transactionBoundary = databaseTransactionBoundary
 
-insertWfRun :: (IConnection conn) => conn -> WfGraph -> IO Int
-insertWfRun conn graph =
-    do nextId <- DbUtil.nextSeqVal conn "wf_run_id_seq"
+insertWfProcess :: (IConnection conn) => conn -> WfGraph -> IO Int
+insertWfProcess conn graph =
+    do nextId <- DbUtil.nextSeqVal conn "wf_process_id_seq"
        run conn sql [toSql nextId,
                      toSql (graphId graph)]
        return nextId
     where
-        sql = "insert into wf_run (id, graph_id) values ( ?, ? )"
+        sql = "insert into wf_process (id, graph_id) values ( ?, ? )"
 
-insertArcToken :: (IConnection conn) => conn -> WfRun a -> Arc -> NodeToken -> IO Int
-insertArcToken conn wfRun arc prevToken =
+insertArcToken :: (IConnection conn) => conn -> WfProcess a -> Arc -> NodeToken -> IO Int
+insertArcToken conn wfProcess arc prevToken =
     do nextId <- DbUtil.nextSeqVal conn "wf_arc_token_id_seq"
        run conn sql [toSql nextId,
-                     toSql (runId wfRun),
+                     toSql (processId wfProcess),
                      toSql (arcId arc),
                      toSql (tokenId prevToken)]
        return nextId
     where
-        sql = "insert into wf_arc_token (id, run_id, arc_id, prev_token_id) " ++
+        sql = "insert into wf_arc_token (id, process_id, arc_id, prev_token_id) " ++
               " values ( ?, ?, ?, ? )"
 
 markArcTokenComplete :: (IConnection conn) => conn -> ArcToken -> IO ()
@@ -44,15 +44,15 @@ markArcTokenComplete conn token =
     where
         sql = "update wf_arc_token set complete_date = current_timestamp where id = ?"
 
-insertNodeToken :: (IConnection conn) => conn -> WfRun a -> Node -> IO Int
-insertNodeToken conn wfRun node  =
+insertNodeToken :: (IConnection conn) => conn -> WfProcess a -> Node -> IO Int
+insertNodeToken conn wfProcess node  =
     do nextId <- DbUtil.nextSeqVal conn "wf_node_token_id_seq"
        run conn sql [toSql nextId,
-                     toSql (runId wfRun),
+                     toSql (processId wfProcess),
                      toSql (nodeId node)]
        return nextId
     where
-        sql = "insert into wf_node_token (id, run_id, node_ref_id) values ( ?, ?, ? )"
+        sql = "insert into wf_node_token (id, process_id, node_ref_id) values ( ?, ?, ? )"
 
 insertNodeTokenParent :: (IConnection conn) => conn -> Int -> ArcToken -> IO ()
 insertNodeTokenParent conn nodeTokenId arcToken =
@@ -69,18 +69,18 @@ markNodeTokenComplete conn token =
     where
         sql = "update wf_node_token set complete_date = current_timestamp where id = ?"
 
-createDatabaseWfRun :: DatabaseWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfRun a)
-createDatabaseWfRun (DatabaseWfEngine conn) graph nodeTypes userData =
-    do wfRunId <- insertWfRun conn graph
-       return $ WfRun wfRunId nodeTypes graph [] [] userData
+createDatabaseWfProcess :: DatabaseWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfProcess a)
+createDatabaseWfProcess (DatabaseWfEngine conn) graph nodeTypes userData =
+    do wfRunId <- insertWfProcess conn graph
+       return $ WfProcess wfRunId nodeTypes graph [] [] userData
 
-createDatabaseNodeToken :: DatabaseWfEngine -> WfRun a -> Node -> [ArcToken] -> IO NodeToken
+createDatabaseNodeToken :: DatabaseWfEngine -> WfProcess a -> Node -> [ArcToken] -> IO NodeToken
 createDatabaseNodeToken (DatabaseWfEngine conn) wfRun node arcTokens =
     do nextTokenId <- insertNodeToken conn wfRun node
        mapM (insertNodeTokenParent conn nextTokenId) arcTokens
        return $ NodeToken nextTokenId (nodeId node)
 
-createDatabaseArcToken :: DatabaseWfEngine -> WfRun a -> Arc -> NodeToken -> IO ArcToken
+createDatabaseArcToken :: DatabaseWfEngine -> WfProcess a -> Arc -> NodeToken -> IO ArcToken
 createDatabaseArcToken (DatabaseWfEngine conn) wfRun arc nodeToken =
     do nextTokenId <- insertArcToken conn wfRun arc nodeToken
        return $ ArcToken nextTokenId arc

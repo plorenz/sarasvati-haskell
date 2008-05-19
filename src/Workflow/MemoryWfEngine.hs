@@ -15,15 +15,15 @@ newMemoryWfEngine =
        return $ MemoryWfEngine tokenCounter
 
 instance WfEngine MemoryWfEngine where
-    createWfRun         = createMemoryWfRun
+    createWfProcess     = createMemoryWfProcess
     createNodeToken     = createMemoryNodeToken
     createArcToken      = createMemoryArcToken
     completeNodeToken   = completeMemoryNodeToken
     completeArcToken    = completeMemoryArcToken
     transactionBoundary = memoryTransactionBoundary
 
-createMemoryWfRun :: MemoryWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfRun a)
-createMemoryWfRun _ graph nodeTypes userData = return $ WfRun 1 nodeTypes graph [] [] userData
+createMemoryWfProcess :: MemoryWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfProcess a)
+createMemoryWfProcess _ graph nodeTypes userData = return $ WfProcess 1 nodeTypes graph [] [] userData
 
 createMemoryNodeToken :: MemoryWfEngine -> a -> Node -> [ArcToken] -> IO NodeToken
 createMemoryNodeToken engine _ node _ =

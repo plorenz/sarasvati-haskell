@@ -37,13 +37,13 @@
 >  do putStrLn $ show counter ++ ": " ++ (taskName task) ++ " - " ++ show (taskState task)
 >     showTasks rest (counter + 1)
 
-> acceptAndCreateTask :: (WfEngine e) => e -> NodeToken -> WfRun [Task] -> IO (WfRun [Task])
+> acceptAndCreateTask :: (WfEngine e) => e -> NodeToken -> WfProcess [Task] -> IO (WfProcess [Task])
 > acceptAndCreateTask _ token wf =
 >     do return wf { userData = task: (userData wf) }
 >     where
 >         task = newTask wf token
 
-> newTask :: WfRun [Task] -> NodeToken -> Task
+> newTask :: WfProcess [Task] -> NodeToken -> Task
 > newTask wf token = Task (tokenId token) (show theNodeId) taskName taskDesc Open hasReject
 >     where
 >         node      = nodeForToken token (wfGraph wf)
@@ -55,7 +55,7 @@
 >         taskDesc  = taskDefDesc taskDef
 >         hasReject = not.null $ filter (\arc -> arcName arc =="reject") $ ((graphOutputArcs.wfGraph) wf) Map.! theNodeId
 
-> closeTask :: Task -> WfRun [Task] -> TaskState -> WfRun [Task]
+> closeTask :: Task -> WfProcess [Task] -> TaskState -> WfProcess [Task]
 > closeTask task wf newState = wf { userData = newTaskList }
 >   where
 >     newTaskList = map (closeIfMatches) (userData wf)
@@ -64,12 +64,12 @@
 >                            else t
 >
 
-> completeTask :: (WfEngine e) => e -> Task -> WfRun [Task] -> IO (WfRun [Task])
+> completeTask :: (WfEngine e) => e -> Task -> WfProcess [Task] -> IO (WfProcess [Task])
 > completeTask engine task wf = completeDefaultExecution engine token (closeTask task wf Complete)
 >   where
 >     token = getNodeTokenForId (getTokId task) wf
 
-> rejectTask :: (WfEngine e) => e -> Task -> WfRun [Task] -> IO (WfRun [Task])
+> rejectTask :: (WfEngine e) => e -> Task -> WfProcess [Task] -> IO (WfProcess [Task])
 > rejectTask engine task wf = completeExecution engine token "reject" (closeTask task wf Rejected)
 >   where
 >     token = getNodeTokenForId (getTokId task) wf
