@@ -1,0 +1,4 @@
+Notes on how using a functional programming language has influenced the design.
+
+1. History tracking - since we always have to create new objects in haskell, we can do the same for tokens (never update, always create new).
+2. ArcToken vs. NodeToken - again, since always creating new, why not use two types instead of updating a single type

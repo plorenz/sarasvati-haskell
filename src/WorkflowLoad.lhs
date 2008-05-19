@@ -1,7 +1,7 @@
 
 > module WorkflowLoad where
 > import qualified Data.Map as Map
-> import Workflow
+> import qualified Workflow
 
 ArcType enumerates the kind of external allows, which are just outgoing arcs and incoming arcs.
 General arcs are all defined as outgoing, but because external arcs must add outgoing arcs to
@@ -16,7 +16,7 @@ definition node mostly likely looks like.
 
 > data LoadNode a =
 >     LoadNode {
->         wfNode       :: Node a,
+>         wfNode       :: Workflow.Node a,
 >         arcs         :: [(String,Int)],
 >         arcRefs      :: [(String,String)],
 >         externalArcs :: [ExternalArc]
@@ -39,7 +39,7 @@ import it into the currently loading workflow.
 
 Shortcut function to get the nodeId of the Node in a LoadNode
 
-> wfNodeId = nodeId.wfNode
+> wfNodeId = Workflow.nodeId.wfNode
 
 Once we have a raw list of LoadNodes, we can complete loading it. A 'raw' LoadNode will only have it's arcRefs
 populated and not have loaded externalArcs. We can fill in the arcs based on the arcRefs (internal references)
@@ -47,7 +47,7 @@ and externalArcs.
 Once this is done, we can complete the load by converting the LoadNodes to NodeArcs
 
 > completeLoad loadFunction source unlinkedNodeMap =
->     do maybeExternal <- loadExternalWorkflows loadFunction (Map.elems linkedNodeMap) (wfDepth source)
+>     do maybeExternal <- loadExternalWorkflows loadFunction (Map.elems linkedNodeMap) (Workflow.wfDepth source)
 >        case (maybeExternal) of
 >            Left msg  -> return $ Left msg
 >            Right ext -> do putStrLn "Unlinked before externals: "
@@ -88,12 +88,12 @@ loadExternalWorkflows
 >        else do putStrLn $ "Loading " ++ (targetWf extArc) ++ " version: " ++ (targetVersion extArc)
 >                maybeGraph <- loadFunction source
 >                case (maybeGraph) of
->                    Right graph -> do putStrLn $ "Loaded: " ++ (showGraph graph)
+>                    Right graph -> do putStrLn $ "Loaded: " ++ (Workflow.showGraph graph)
 >                                      return $ Right $ Map.insert key graph wfMap
 >                    Left  msg   -> return $ Left msg
 >     where
 >         key = targetInstance extArc
->         source = NodeSource (targetWf extArc) (targetVersion extArc) (targetInstance extArc) (depth + 1)
+>         source = Workflow.NodeSource (targetWf extArc) (targetVersion extArc) (targetInstance extArc) (depth + 1)
 
 
 To import an external workflow into loading workflow, we must take the following steps:
@@ -110,13 +110,15 @@ To import an external workflow into loading workflow, we must take the following
 > importExternal graph nodeMap = foldr (\node nodeMap-> Map.insert (wfNodeId node) node nodeMap) nodeMap xmlNodes
 >     where
 >         nextId   = (Map.size nodeMap) + 1
->         xmlNodes = map (importXmlNode (nextId - 1)) $ zip [nextId..] (Map.elems graph)
+>         xmlNodes = map (importXmlNode (nextId - 1) outputMap) $ zip [nextId..] nodeList
+>         outputMap = Workflow.graphOutputArcs graph
+>         nodeList  = Map.elems (Workflow.graphNodes graph)
 
-> importXmlNode baseIncr (nextId, nodeArcs) = LoadNode node (map (toFixedIdOutput) (nodeOutputs nodeArcs)) [] []
+> importXmlNode baseIncr outputMap (nextId, extNode) = LoadNode node (map (toFixedIdOutput) outputList) [] []
 >     where
->         node       = (fixId.arcsNode) nodeArcs
->         fixId node = node { nodeId = nextId }
->         toFixedIdOutput (n,x) = (n,((+baseIncr).nodeId) x)
+>         node       =  extNode { Workflow.nodeId = nextId }
+>         toFixedIdOutput arc = (Workflow.arcName arc, baseIncr + (Workflow.outNodeId arc))
+>         outputList = outputMap Map.! (Workflow.nodeId extNode)
 
 > findNodeArcs nodeMap = foldr (lookupArcs) nodeMap (Map.elems nodeMap)
 >     where
@@ -124,7 +126,7 @@ To import an external workflow into loading workflow, we must take the following
 >         arcList node            = map (makeArcRef) (arcRefs node)
 >         makeArcRef (name, ref)  = (name, lookupArcRef ref)
 >         lookupArcRef ref        = (wfNodeId.head) $ filter (isRefNode ref) (Map.elems nodeMap)
->         isRefNode ref loadNode  = ref == (nodeRefId.wfNode) loadNode
+>         isRefNode ref loadNode  = ref == (Workflow.nodeRefId.wfNode) loadNode
 
 > resolveAllExternalArcs nodeMap = foldr (resolveNodeExternals) nodeMap (Map.elems nodeMap)
 
@@ -136,25 +138,29 @@ To import an external workflow into loading workflow, we must take the following
 >                                OutArc -> node { arcs = newEntry targetNode:(arcs node) }
 >                                InArc  -> targetNode { arcs = newEntry node:(arcs targetNode) }
 >         targetNode       = head $ filter (isMatch) (Map.elems nodeMap)
->         isMatch loadNode = (nodeRefId.wfNode)         loadNode == (targetNodeRef  extArc) &&
->                            (wfInstance.source.wfNode) loadNode == (targetInstance extArc) &&
->                            (wfDepth.source.wfNode)    loadNode == 1
+>         isMatch loadNode = (Workflow.nodeRefId.wfNode)         loadNode == (targetNodeRef  extArc) &&
+>                            (Workflow.wfInstance.Workflow.source.wfNode) loadNode == (targetInstance extArc) &&
+>                            (Workflow.wfDepth.Workflow.source.wfNode)    loadNode == 1
 >         newEntry n       = (arcName extArc, wfNodeId n)
 
 The following function deal with converting a map of XmlNode instances to
 a WfGraph. Since XmlNode instances only track outgoing nodes, we need to
 infer the incoming nodes.
 
-> loadNodesToWfGraph = graphFromArcs.loadNodesToNodeArcs
-
-> loadNodesToNodeArcs nodeMap = map (loadNodeToNodeArcs nodeMap) (Map.elems nodeMap)
-
-> loadNodeToNodeArcs nodeMap loadNode = NodeArcs (wfNode loadNode) inputs outputs
+> loadNodesToWfGraph nodeMap = Workflow.graphFromArcs (map (wfNode) nodeList) (loadNodesToArcs 1 nodeList)
 >     where
->         inputs            = loadNodeInputs loadNode nodeMap
->         outputs           = map (toNode) $ arcs loadNode
->         mapLookup         = (Map.!) nodeMap
->         toNode (name, id) = (name, (wfNode.mapLookup) id)
+>         nodeList = Map.elems nodeMap
+
+
+> loadNodesToArcs _       []              = []
+> loadNodesToArcs startId (loadNode:rest) = arcList ++ (loadNodesToArcs (startId + length arcList) rest)
+>     where
+>         arcList = makeArcList startId ((Workflow.nodeId.wfNode) loadNode) (arcs loadNode)
+
+
+> makeArcList _       _        []                         = []
+> makeArcList startId inNodeId ((name, outNodeId) : rest) =
+>     (Workflow.Arc startId name inNodeId outNodeId) : makeArcList (startId + 1) inNodeId rest
 
 > loadNodeInputs loadNode nodeMap = foldr (scanArcs) [] $ Map.elems nodeMap
 >     where

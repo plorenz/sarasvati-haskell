@@ -15,17 +15,22 @@ create table wf_node
   type            varchar(255) NOT NULL
 )
 
-create table wf_node_arc
+create table wf_arc
 (
+  id        serial       NOT NULL PRIMARY KEY,
   a_node_id int          NOT NULL REFERENCES wf_node,
   z_node_id int          NOT NULL REFERENCES wf_node,
   name      varchar(255) NOT NULL
 )
 
-create table wf_token
+create table wf_node_token
 (
   id           serial NOT NULL PRIMARY KEY,
-  prev_node_id int    NOT NULL REFERENCES wf_node,
-  curr_node_id int    NOT NULL REFERENCES wf_node,
-  next_node_id int    NOT NULL REFERENCES wf_node
+  node_id      int    NOT NULL REFERENCES wf_node
+)
+
+create table wf_arc_token
+(
+  id     serial NOT NULL PRIMARY KEY,
+  arc_id int    NOT NULL REFERENCES wf_arc
 )

@@ -32,7 +32,7 @@
 > newTask wf token taskId name desc = Task (tokenId token) taskId name desc Open hasReject
 >     where
 >         currentNode = currNode token
->         hasReject   = not.null $ filter (\(name,node) -> name=="reject") (outputs (wfGraph wf) currentNode)
+>         hasReject   = not.null $ filter (\arc -> arcName arc =="reject") (outputs (wfGraph wf) currentNode)
 
 > closeTask task wf newState = wf { userData = newTaskList }
 >   where
