@@ -1,8 +1,6 @@
 Author: Paul Lorenz
 
 > module Workflow where
-> import Data.Map (Map)
-> import Data.Ord
 > import qualified Data.Map as Map
 
 NodeType
@@ -59,12 +57,6 @@ Node
 >                 acceptFunction :: (NodeToken -> WfInstance a -> IO (WfInstance a))
 >               }
 
-> instance Eq (Node a) where
->     NullNode  == NullNode = True
->     NullNode  == _        = False
->     _         == NullNode = False
->     node1     == node2    = (nodeId node1) == (nodeId node2)
-
 > instance Show (Node a) where
 >     show NullNode = "[Node: NullNode]"
 >     show a        = "[Node id: " ++ (show.nodeId) a ++ " ref: " ++ nodeRefId a ++ " depth: " ++ (show.wfDepth.source) a ++ "]"
@@ -106,7 +98,7 @@ The Token class allows NodeTokens and ArcTokens to share an id lookup function
 >     deriving (Show)
 
 > instance Token (ArcToken) where
->     tokenId (ArcToken id _ ) = id
+>     tokenId (ArcToken id _) = id
 
 > arcForToken (ArcToken _ arc) = arc
 
@@ -116,9 +108,9 @@ WFGraph
 
 > data WfGraph a =
 >     WfGraph {
->        graphNodes      :: Map Int (Node a),
->        graphInputArcs  :: Map Int [Arc],
->        graphOutputArcs :: Map Int [Arc]
+>        graphNodes      :: Map.Map Int (Node a),
+>        graphInputArcs  :: Map.Map Int [Arc],
+>        graphOutputArcs :: Map.Map Int [Arc]
 >     }
 
 > showGraph graph = concatMap (\a->show a ++ "\n") (Map.elems (graphNodes graph)) ++ "\n" ++
@@ -214,7 +206,7 @@ removeInputTokens
 defaultGuard
   Guard function which always accepts the token
 
-> defaultGuard token wf = AcceptToken
+> defaultGuard _ _ = AcceptToken
 
 > completeDefaultExecution token wf = completeExecution token [] wf
 
