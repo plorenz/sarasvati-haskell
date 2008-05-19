@@ -9,6 +9,7 @@
 > import Workflow.Util.XmlUtil as XmlUtil
 > import Control.Monad.Error
 > import Workflow.Loaders.WorkflowLoad
+> import Workflow.Util.ListUtil
 
 > readArcs :: Element -> [(String, String)]
 > readArcs element = map (toArc) arcChildren
@@ -99,8 +100,10 @@ Function for processing the start element. There should be exactly one of these
 per workflow definition. It should contain only arc and externalArc elements. It
 has no attributes
 
-> processStartElement :: a -> NodeSource -> Node
-> processStartElement _ source = Node 0 "start" "start" source False NoNodeExtra
+> processStartElement :: Element -> NodeSource -> Node
+> processStartElement element source = Node 0 "start" "start" source False guard NoNodeExtra
+>     where
+>         guard = trim $ readText element "guard"
 
 Function for processing node elements. There can be any number of these in each
 workflow. They have no logic associated with them. They have a nodeId, which
@@ -108,10 +111,11 @@ should be unique in that workflow and a type, which corresponds to the NodeType
 type in Workflow. Nodes should contain only arc and externalArc elements.
 
 > processNodeElement :: Element -> NodeSource -> Node
-> processNodeElement element source = Node 0 "node" nodeId source isJoinNode NoNodeExtra
+> processNodeElement element source = Node 0 "node" nodeId source isJoinNode guard NoNodeExtra
 >     where
 >         nodeId      = readAttr element "nodeId"
 >         nodeTypeS   = readAttr element "type"
+>         guard       = readText element "guard"
 >         isJoinNode  = case ( nodeTypeS ) of
 >                           "requireSingle" -> False
 >                           _               -> True

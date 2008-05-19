@@ -1,6 +1,7 @@
 module Workflow.EngineTypes where
 import Data.Dynamic
 import qualified Data.Map as Map
+
 -- GuardResponse
 --   Nodes have guard functions which determine if the accept function when a token
 --   arrives and the node is ready to be activated. Guard functions must return a
@@ -46,6 +47,7 @@ data Node =
         nodeName     :: String,
         nodeSource   :: NodeSource,
         nodeIsJoin   :: Bool,
+        nodeGuard    :: String,
         nodeExtra    :: NodeExtra
     }
 
@@ -127,11 +129,16 @@ data WfProcess a =
         nodeTokens   :: [NodeToken],
         arcTokens    :: [ArcToken],
         tokenAttrMap :: Map.Map Int [TokenAttr],
+        predicateMap :: Map.Map String (NodeToken -> WfProcess a -> GuardResponse),
         userData     :: a
     }
 
 class WfEngine a where
-    createWfProcess     :: a -> WfGraph     -> Map.Map String (NodeType b) -> b -> IO (WfProcess b)
+    createWfProcess     :: a -> WfGraph ->
+                                Map.Map String (NodeType b) ->
+                                Map.Map String (NodeToken -> WfProcess b -> GuardResponse) ->
+                                b ->
+                                IO (WfProcess b)
     createNodeToken     :: a -> WfProcess b -> Node -> [ArcToken] -> IO (WfProcess b, NodeToken)
     createArcToken      :: a -> WfProcess b -> Arc  -> NodeToken  -> IO (WfProcess b, ArcToken)
     completeNodeToken   :: a -> NodeToken   -> IO ()

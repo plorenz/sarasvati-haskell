@@ -31,7 +31,7 @@ loadNodes conn graphId typeMap =
     do rows <- quickQuery conn sql [toSql graphId]
        mapM (rowToNode conn typeMap) rows
     where
-        sql = "select r.id, n.id, n.name, n.type, n.is_join, r.instance, g.name, g.version " ++
+        sql = "select r.id, n.id, n.name, n.type, n.is_join, r.instance, g.name, g.version, n.guard " ++
               "  from wf_node_ref r " ++
               "  join wf_node n on (r.node_id = n.id) " ++
               "  join wf_graph g on (n.graph_id = g.id)" ++
@@ -40,7 +40,7 @@ loadNodes conn graphId typeMap =
 rowToNode :: (IConnection conn) => conn -> Map.Map String (conn -> Int -> IO NodeExtra) -> [SqlValue] -> IO Node
 rowToNode conn typeMap row =
     do nodeExtra <- nodeExtraIO
-       return $ Node nodeRefId nodeType nodeName nodeSource isJoin nodeExtra
+       return $ Node nodeRefId nodeType nodeName nodeSource isJoin guard nodeExtra
     where
         nodeRefId    = fromSql (row !! 0)
         nodeId       = fromSql (row !! 1) :: Int
@@ -50,6 +50,7 @@ rowToNode conn typeMap row =
         nodeInstance = fromSql (row !! 5)
         graphName    = fromSql (row !! 6)
         graphVersion = fromSql (row !! 7)
+        guard        = fromSql (row !! 8)
 
         nodeSource   = NodeSource graphName graphVersion nodeInstance (nodeDepth nodeInstance)
         nodeExtraIO  = case (Map.member nodeType typeMap) of

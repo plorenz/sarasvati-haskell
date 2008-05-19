@@ -8,9 +8,6 @@ drop table if exists wf_arc;
 drop table if exists wf_node_ref;
 drop table if exists wf_node_task;
 drop table if exists wf_node;
-drop table if exists wf_node_source;
-drop table if exists wf_instance;
-drop table if exists wf_run;
 drop table if exists wf_process;
 drop table if exists wf_graph;
 
@@ -31,13 +28,18 @@ create table wf_process
   graph_id int    NOT NULL
 );
 
+create table wf_guard_type
+(
+
+
 create table wf_node
 (
   id              serial       NOT NULL PRIMARY KEY,
   graph_id        int          NOT NULL REFERENCES wf_graph,
   name            varchar(255) NOT NULL,
   is_join         char(1)      NOT NULL,
-  type            varchar(255) NOT NULL
+  type            varchar(255) NOT NULL,
+  guard           varchar(255) NOT NULL
 );
 
 ALTER TABLE wf_node

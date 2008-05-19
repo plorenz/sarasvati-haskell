@@ -72,11 +72,15 @@ arcForToken  (ArcToken _ arc _)           = arc
 --   Given a workflow definition (WfGraph) and initial userData, gives
 --   back a new in progress workflow instance for that definition.
 
-startWorkflow :: (WfEngine e) => e -> Map.Map String (NodeType a) -> WfGraph -> a -> IO ( Either String (WfProcess a))
-startWorkflow engine nodeTypes graph userData
+startWorkflow :: (WfEngine engine) =>
+                   engine ->
+                   Map.Map String (NodeType a) ->
+                   Map.Map String (NodeToken -> WfProcess a -> GuardResponse) ->
+                   WfGraph -> a -> IO ( Either String (WfProcess a))
+startWorkflow engine nodeTypes predicates graph userData
     | null startNodes       = return $ Left "Error: Workflow has no start node"
     | length startNodes > 1 = return $ Left "Error: Workflow has more than one start node"
-    | otherwise             = do wfRun <- createWfProcess engine graph nodeTypes userData
+    | otherwise             = do wfRun <- createWfProcess engine graph nodeTypes predicates userData
                                  (wfRun,startToken) <- createNodeToken engine wfRun startNode []
                                  wfRun <- acceptWithGuard engine startToken (wfRun { nodeTokens = [startToken] })
                                  return $ Right wfRun
@@ -86,8 +90,9 @@ startWorkflow engine nodeTypes graph userData
     isStartNode node = (nodeName node == "start") && ((wfDepth.nodeSource) node == 0)
 
 isWfComplete :: WfProcess a -> Bool
-isWfComplete (WfProcess _ _ _ [] [] _ _) = True
-isWfComplete _                         = False
+isWfComplete process
+    | null (nodeTokens process) && null (arcTokens process) = True
+    | otherwise                                             = False
 
 -- removeNodeToken
 --   Removes the node token from the list of active node tokens in the given process

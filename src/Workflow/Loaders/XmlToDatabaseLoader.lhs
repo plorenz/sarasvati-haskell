@@ -9,6 +9,7 @@
 > import qualified Data.Map as Map
 > import Workflow.Util.XmlUtil as XmlUtil
 > import qualified Workflow.Util.DbUtil as DbUtil
+> import qualified Workflow.Util.ListUtil as ListUtil
 > import Workflow.Loaders.LoadError
 
 ================================================================================
@@ -108,15 +109,16 @@ import it into the currently loading workflow.
 >     where
 >         sql = "insert into wf_graph (id, name, version) values ( ?, ?, ? )"
 
-> insertNodeWithRef :: (IConnection conn) => conn -> Int -> String -> Bool -> String -> IO (Int,Int)
-> insertNodeWithRef conn graphId nodeName isJoin nodeType =
+> insertNodeWithRef :: (IConnection conn) => conn -> Int -> String -> Bool -> String -> String -> IO (Int,Int)
+> insertNodeWithRef conn graphId nodeName isJoin nodeType guard =
 >     do nextNodeId <- DbUtil.nextSeqVal conn "wf_node_id_seq"
 >        run conn nodeSql
 >                  [toSql nextNodeId,
 >                   toSql graphId,
 >                   toSql nodeName,
 >                   toSql $ if isJoin then "Y" else "N",
->                   toSql nodeType]
+>                   toSql nodeType,
+>                   toSql guard]
 >        nextNodeRefId <- DbUtil.nextSeqVal conn "wf_node_ref_id_seq"
 >        run conn nodeRefSql
 >                  [toSql nextNodeRefId,
@@ -124,7 +126,7 @@ import it into the currently loading workflow.
 >                   toSql graphId]
 >        return (nextNodeId, nextNodeRefId)
 >     where
->         nodeSql    = "insert into wf_node (id, graph_id, name, is_join, type) " ++
+>         nodeSql    = "insert into wf_node (id, graph_id, name, is_join, type, guard) " ++
 >                      " values ( ?, ?, ?, ?, ? )"
 >         nodeRefSql = "insert into wf_node_ref (id, node_id, graph_id, instance) " ++
 >                      " values (?, ?, ?, '' )"
@@ -332,19 +334,22 @@ import it into the currently loading workflow.
 >         extArcs      = readExternalArcs e
 
 > processStart :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
-> processStart _ conn graphId =
->     do (_, nodeRefId) <- insertNodeWithRef conn graphId "start" False "start"
+> processStart element conn graphId =
+>     do (_, nodeRefId) <- insertNodeWithRef conn graphId "start" False "start" guard
 >        return (nodeRefId, "start")
+>     where
+>         guard = ListUtil.trim $ readText element "guard"
 
 > processNode :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
 > processNode element conn graphId =
->    do (_, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin "node"
+>    do (_, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin "node" guard
 >       return (nodeRefId, nodeName)
 >     where
 >         nodeName = readRequiredAttr element "name"
 >         isJoin = case (readOptionalAttr element "isJoin" "false" ) of
 >                      "false" -> False
 >                      _       -> True
+>         guard = ListUtil.trim $ readText element "guard"
 
 > loadFromXmlToDB ::
 >      FilePath ->

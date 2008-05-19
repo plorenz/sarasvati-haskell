@@ -107,10 +107,15 @@ deleteTokenAttr conn nodeTokenId name =
     where
         sql = "delete from wf_token_string_attr where attr_set_id = ? and name = ?"
 
-createDatabaseWfProcess :: DatabaseWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfProcess a)
-createDatabaseWfProcess (DatabaseWfEngine conn) graph nodeTypes userData =
+createDatabaseWfProcess :: DatabaseWfEngine ->
+                           WfGraph ->
+                           Map.Map String (NodeType a) ->
+                           Map.Map String (NodeToken -> WfProcess a -> GuardResponse) ->
+                           a ->
+                           IO (WfProcess a)
+createDatabaseWfProcess (DatabaseWfEngine conn) graph nodeTypes predicates userData =
     do wfRunId <- insertWfProcess conn graph
-       return $ WfProcess wfRunId nodeTypes graph [] [] Map.empty userData
+       return $ WfProcess wfRunId nodeTypes graph [] [] Map.empty predicates userData
 
 createDatabaseNodeToken :: DatabaseWfEngine -> WfProcess a -> Node -> [ArcToken] -> IO (WfProcess a, NodeToken)
 createDatabaseNodeToken (DatabaseWfEngine conn) process node arcTokens =

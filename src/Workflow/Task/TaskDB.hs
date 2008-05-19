@@ -7,6 +7,7 @@ import Workflow.Loaders.LoadError
 import Workflow.Loaders.XmlToDatabaseLoader
 import Workflow.Task.Task
 import Workflow.Util.XmlUtil
+import Workflow.Util.ListUtil
 import Workflow.EngineTypes
 import Workflow.Engine
 
@@ -36,13 +37,14 @@ insertNewNodeTask conn nodeId taskName taskDesc =
 
 processTask :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
 processTask element conn graphId =
-    do (nodeId, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin "task"
+    do (nodeId, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin "task" guard
        insertNewNodeTask conn nodeId taskName taskDesc
        return (nodeRefId, nodeName)
     where
         nodeName = readRequiredAttr element "name"
         taskName = readText         element "task-name"
         taskDesc = readText         element "description"
+        guard    = trim $ readText  element "guard"
 
         isJoin = case (readOptionalAttr element "isJoin" "false" ) of
                      "false" -> False

@@ -47,8 +47,8 @@ showTokens (x:xs) = do putStrLn (show x)
                        showTokens xs
 
 processTasks :: (WfEngine e) => e -> WfProcess [Task] -> IO ()
-processTasks _         (WfProcess _ _ _ [] [] _ _    ) = putStrLn "Workflow complete!"
-processTasks engine wf@(WfProcess _ _ _ _  _  _ tasks) =
+processTasks _         (WfProcess _ _ _ [] [] _ _ _    ) = putStrLn "Workflow complete!"
+processTasks engine wf@(WfProcess _ _ _ _  _  _ _ tasks) =
     do putStrLn ""
        showTaskList tasks
        putStr "> "

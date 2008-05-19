@@ -26,8 +26,13 @@ instance WfEngine MemoryWfEngine where
     setTokenAttr        = setMemoryTokenAttr
     removeTokenAttr     = removeMemoryTokenAttr
 
-createMemoryWfProcess :: MemoryWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfProcess a)
-createMemoryWfProcess _ graph nodeTypes userData = return $ WfProcess 1 nodeTypes graph [] [] Map.empty userData
+createMemoryWfProcess :: (WfEngine engine) => engine ->
+                         WfGraph ->
+                         Map.Map String (NodeType a) ->
+                         Map.Map String (NodeToken -> WfProcess a -> GuardResponse) ->
+                         a ->
+                         IO (WfProcess a)
+createMemoryWfProcess _ graph nodeTypes predicates userData = return $ WfProcess 1 nodeTypes graph [] [] Map.empty predicates userData
 
 createMemoryNodeToken :: MemoryWfEngine -> WfProcess a -> Node -> [ArcToken] -> IO (WfProcess a, NodeToken)
 createMemoryNodeToken engine process node parentTokens =
