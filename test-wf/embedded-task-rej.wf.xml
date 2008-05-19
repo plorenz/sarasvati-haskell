@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE workflow SYSTEM "wf.dtd">
 
-<workflow id="embedded-task" version="1">
+<workflow id="embedded-task-rej" version="1">
   <start>
     <arc to="1"/>
   </start>
