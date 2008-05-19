@@ -139,8 +139,8 @@ To import an external workflow into loading workflow, we must take the following
 >                                InArc  -> targetNode { arcs = newEntry node:(arcs targetNode) }
 >         targetNode       = head $ filter (isMatch) (Map.elems nodeMap)
 >         isMatch loadNode = (Workflow.nodeRefId.wfNode)         loadNode == (targetNodeRef  extArc) &&
->                            (Workflow.wfInstance.Workflow.source.wfNode) loadNode == (targetInstance extArc) &&
->                            (Workflow.wfDepth.Workflow.source.wfNode)    loadNode == 1
+>                            (Workflow.wfInstance.Workflow.nodeSource.wfNode) loadNode == (targetInstance extArc) &&
+>                            (Workflow.wfDepth.Workflow.nodeSource.wfNode)    loadNode == 1
 >         newEntry n       = (arcName extArc, wfNodeId n)
 
 The following function deal with converting a map of XmlNode instances to

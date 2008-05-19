@@ -85,7 +85,7 @@ Function for processing the start element. There should be exactly one of these
 per workflow definition. It should contain only arc and externalArc elements. It
 has no attributes
 
-> processStartElement element source = Node 0 "start" "start" source RequireSingle defaultGuard completeDefaultExecution
+> processStartElement element source = Node 0 "start" "start" source False defaultGuard completeDefaultExecution
 
 Function for processing node elements. There can be any number of these in each
 workflow. They have no logic associated with them. They have a nodeId, which
@@ -94,10 +94,12 @@ type in Workflow. Nodes should contain only arc and externalArc elements.
 
 > processNodeElement element source = newNode nodeId nodeType
 >     where
->         newNode nodeId nodeType = Node 0 "node" nodeId source nodeType defaultGuard completeDefaultExecution
->         nodeId    = readAttr element "nodeId"
->         nodeTypeS = readAttr element "type"
->         nodeType  = nodeTypeFromString nodeTypeS
+>         newNode nodeId nodeType = Node 0 "node" nodeId source isJoinNode defaultGuard completeDefaultExecution
+>         nodeId      = readAttr element "nodeId"
+>         nodeTypeS   = readAttr element "type"
+>         isJoinNode  = case ( nodeTypeS ) of
+>                           "requireSingle" -> False
+>                           otherwise       -> True
 
 
 > defaultElemFunctionMap = Map.fromList [ ("start", processStartElement),

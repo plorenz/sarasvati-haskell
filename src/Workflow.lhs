@@ -2,19 +2,7 @@ Author: Paul Lorenz
 
 > module Workflow where
 > import qualified Data.Map as Map
-
-NodeType
-  Determines if a node will wait for tokens on all inputs before firing, or will fire as soon as
-  any token arrives.
-
-  RequireSingle - Node will fire for every token that arrives
-  RequireAll    - Node will only fire when there tokens at every input
-
-> data NodeRequireType = RequireSingle | RequireAll
->   deriving (Show)
-
-> nodeTypeFromString "requireSingle" = RequireSingle
-> nodeTypeFromString _               = RequireAll
+> import qualified Util
 
 GuardResponse
   Nodes have guard functions which determine if the accept function when a token
@@ -23,7 +11,7 @@ GuardResponse
 
   AcceptToken  - The token is passed on to the accept function
   DiscardToken - The token is discarded and the accept function is not called
-  SkipNode     - The accept function is not called. The toke is not discarded,
+  SkipNode     - The accept function is not called. The token is not discarded,
                  the completeExecution function is called instead.
 
 > data GuardResponse = AcceptToken | DiscardToken | SkipNode
@@ -52,16 +40,15 @@ Node
 >         nodeId         :: Int,
 >         nodeType       :: String,
 >         nodeRefId      :: String,
->         source         :: NodeSource,
->         nodeRequires   :: NodeRequireType,
+>         nodeSource     :: NodeSource,
+>         nodeIsJoin     :: Bool,
 >         guardFunction  :: (NodeToken -> WfInstance a -> GuardResponse),
 >         acceptFunction :: (NodeToken -> WfInstance a -> IO (WfInstance a))
 >     }
 
 > instance Show (Node a) where
->     show a = "[Node id: " ++ (show.nodeId) a ++
->              " ref: " ++ nodeRefId a ++
->              " depth: " ++ (show.wfDepth.source) a ++ "]"
+>     show a = "[Node id: " ++ (show.nodeId) a ++ " ref: " ++ nodeRefId a ++
+>              " depth: " ++ (show.wfDepth.nodeSource) a ++ "]"
 
 Arc
   An Arc represents an directed edge in a workflow graph.
@@ -135,8 +122,9 @@ showGraph
 >                   concatMap (\a->show a ++ "\n") (Map.elems (graphOutputArcs graph))
 
 graphFromNodesAndArcs
-  Generates a WFGraph from a list of NodeArcs
+  Generates a WFGraph from a list of Nodes and Arcs
 
+> graphFromArcs :: [Node a] -> [Arc] -> WfGraph a
 > graphFromArcs nodes arcs = WfGraph nodeMap inputsMap outputsMap
 >     where
 >         nodeMap  = Map.fromList $ zip (map nodeId nodes) nodes
@@ -169,26 +157,15 @@ startWorkflow
 >     | length startNodes > 1 = Left "Error: Workflow has more than one start node"
 >     | otherwise             = Right $ acceptWithGuard token wf
 >   where
->     startNodes = filter (isStartNode) $ Map.keys (graphNodes graph)
->     startNode  = (graphNodes graph) Map.! (head startNodes)
+>     startNodes = filter (isStartNode) $ Map.elems (graphNodes graph)
+>     startNode  = head startNodes
 >     token      = NodeToken [1] (nodeId startNode)
 >     wf         = WfInstance graph [token] [] userData
 >
->     isStartNode (-1) = True
->     isStartNode _    = False
+>     isStartNode node = (nodeRefId node == "start") && ((wfDepth.nodeSource) node == 0)
 
 > isWfComplete (WfInstance graph [] [] userData) = True
 > isWfComplete _                                 = False
-
-removeFirst
-  Removes the first instance in a list for which the given predicate
-  function returns true
-
-> removeFirst :: (a->Bool) -> [a] -> [a]
-> removeFirst predicate [] = []
-> removeFirst predicate (x:xs)
->     | predicate x = xs
->     | otherwise = x : (removeFirst predicate xs)
 
 nextForkId
   Generates the token id for the next token for in the case where we have multiple outputs.
@@ -210,7 +187,7 @@ removeInputTokens
 
 > removeInputTokens []         _          tokenList = tokenList
 > removeInputTokens (arc:arcs) targetNodeId tokenList =
->     removeInputTokens arcs targetNodeId $ removeFirst (isInputToken) tokenList
+>     removeInputTokens arcs targetNodeId $ Util.removeFirst (isInputToken) tokenList
 >   where
 >     isInputToken tok = (arcId.arcForToken) tok == arcId arc
 
@@ -243,7 +220,7 @@ completeExecution
 >     newToken                       = ArcToken (tokenId token) (head outputArcs)
 >     newForkToken arc counter       = ArcToken (nextForkId token counter) arc
 >
->     newWf                          = WfInstance graph (removeFirst (\t->t == token) nodeTokens) arcTokens userData
+>     newWf                          = WfInstance graph (Util.removeFirst (\t->t == token) nodeTokens) arcTokens userData
 >
 >     split [] wf _                  = return wf
 >     split (arc:arcs) wf counter = if ( arcName arc == outputArcName)
@@ -261,9 +238,7 @@ acceptToken
 >     | isAcceptSingle = acceptSingle token wf
 >     | otherwise      = acceptJoin   token wf
 >   where
->     isAcceptSingle = case (nodeRequires targetNode) of
->                        RequireAll    -> False
->                        RequireSingle -> True
+>     isAcceptSingle = not $ nodeIsJoin targetNode
 >     targetNode     = (graphNodes graph) Map.! ((outNodeId.arcForToken) token)
 
 acceptSingle
@@ -309,10 +284,9 @@ acceptWithGuard
 
 > acceptWithGuard token wf@(WfInstance graph nodeTokens arcTokens userData) =
 >     case (guard token wf) of
->       AcceptToken  -> do -- putStrLn $ "Token accepted into " ++ show currentNode
->                          accept token wf
->       DiscardToken -> return $ WfInstance graph (removeFirst (\t->t == token) nodeTokens) arcTokens userData
->       SkipNode     -> completeExecution token [] wf
+>       AcceptToken  -> accept token wf
+>       DiscardToken -> return $ WfInstance graph (Util.removeFirst (\t->t == token) nodeTokens) arcTokens userData
+>       SkipNode     -> completeDefaultExecution token wf
 >  where
 >    currentNode = nodeForToken token graph
 >    guard       = guardFunction currentNode
