@@ -1,13 +1,13 @@
 Author: Paul Lorenz
 
 > module Main where
-> import Workflow
-> import Task
+> import Workflow.Workflow
+> import Workflow.Task.Task
 > import IO
 > import Data.Char
 > import System.Directory
-> import WorkflowLoadXml
-> import TaskXml
+> import Workflow.Loaders.WorkflowLoadXml
+> import Workflow.Task.TaskXml
 > import qualified Data.Map as Map
 > import Test.DbTest
 

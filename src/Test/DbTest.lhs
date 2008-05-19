@@ -2,10 +2,10 @@
 > module Test.DbTest where
 > import Database.HDBC.PostgreSQL
 > import Database.HDBC
-> import Workflow
+> import Workflow.Workflow
 > import qualified Data.Map as Map
 > import qualified Control.Exception as Ex
-> import Util
+> import Workflow.Util.ListUtil
 
 > openConn = connectPostgreSQL "port=5433"
 

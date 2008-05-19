@@ -1,8 +1,8 @@
 Author: Paul Lorenz
 
-> module Workflow where
+> module Workflow.Workflow where
 > import qualified Data.Map as Map
-> import qualified Util
+> import qualified Workflow.Util.ListUtil as ListUtil
 > import Data.Dynamic
 
 GuardResponse
@@ -207,11 +207,11 @@ removeInputTokens
 
 > removeInputTokens []         _          tokenList = tokenList
 > removeInputTokens (arc:arcs) targetNodeId tokenList =
->     removeInputTokens arcs targetNodeId $ Util.removeFirst (isInputToken) tokenList
+>     removeInputTokens arcs targetNodeId $ ListUtil.removeFirst (isInputToken) tokenList
 >   where
 >     isInputToken tok = (arcId.arcForToken) tok == arcId arc
 
-> removeNodeToken token wf = wf { nodeTokens = Util.removeFirst (\t->t == token) (nodeTokens wf) }
+> removeNodeToken token wf = wf { nodeTokens = ListUtil.removeFirst (\t->t == token) (nodeTokens wf) }
 
 defaultGuard
   Guard function which always accepts the token

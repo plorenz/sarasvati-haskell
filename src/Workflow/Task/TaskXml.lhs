@@ -1,9 +1,9 @@
 
-> module TaskXml where
-> import WorkflowLoadXml
-> import XmlUtil
-> import Workflow
-> import Task
+> module Workflow.Task.TaskXml where
+> import Workflow.Loaders.WorkflowLoadXml
+> import Workflow.Util.XmlUtil
+> import Workflow.Workflow
+> import Workflow.Task.Task
 > import Data.Dynamic
 
 > processTaskElement element source = Node 0 "task" nodeId source isJoinNode nodeExtra

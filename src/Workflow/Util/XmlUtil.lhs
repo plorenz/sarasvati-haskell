@@ -1,5 +1,5 @@
 
-> module XmlUtil where
+> module Workflow.Util.XmlUtil where
 > import Text.XML.HaXml.Combinators
 > import Text.XML.HaXml.Types
 > import Control.Monad.Error

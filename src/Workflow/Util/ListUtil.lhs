@@ -1,4 +1,4 @@
-> module Util where
+> module Workflow.Util.ListUtil where
 
   Removes the first instance in a list for which the given predicate
   function returns true
