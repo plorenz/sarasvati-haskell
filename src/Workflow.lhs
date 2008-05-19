@@ -47,7 +47,7 @@ Node
     nodeId - An integer id, which should be unique. Used for testing equality
     accept - function which handles incoming tokens.
 
-  Connections between Nodes are represented by NodeArcs and WFGraph
+  Connections between Nodes are represented by Arcs and WFGraph
 
 > data Node a = NullNode
 >             | Node {
@@ -69,6 +69,10 @@ Node
 >     show NullNode = "[Node: NullNode]"
 >     show a        = "[Node id: " ++ (show.nodeId) a ++ " ref: " ++ nodeRefId a ++ " depth: " ++ (show.wfDepth.source) a ++ "]"
 
+Arc
+  An Arc represents an directed edge in a workflow graph.
+  It has an id, a label and two node id endpoints.
+
 > data Arc =
 >     Arc {
 >         arcId     :: Int,
@@ -78,24 +82,14 @@ Node
 >     }
 >  deriving (Show)
 
-> arcInNode  graph arc = (graphNodes graph) Map.! (inNodeId arc)
+Tokens are split into NodeTokens and ArcTokens. NodeTokens are sitting at
+nodes in the workflow graph while ArcTokens are 'in-transit' and are on
+Arcs.
 
-> arcOutNode graph arc = (graphNodes graph) Map.! (outNodeId arc)
+The Token class allows NodeTokens and ArcTokens to share an id lookup function
 
 > class Token a where
 >    tokenId :: a -> [Int]
-
-Token
-  The set of current tokens gives the current state of the workflow.
-
-  Members:
-    tokenId: A list of int, giving a unique id across all tokens
-    tokenArcName: The name of arc we are traversing or just traversed
-    prevNode: The input node the token came from/is coming from
-    currNode: If the token is being processed by a node, this will be set
-              to that node. Otherwise it will be set to NullNode
-    nextNode: If the token is between nodes, this will be set to the node
-              it is going to. Otherwise it will be set to NullNode
 
 > data NodeToken = NodeToken [Int] Int
 >     deriving (Show)
@@ -116,11 +110,9 @@ Token
 
 > arcForToken (ArcToken _ arc) = arc
 
-> defaultArc = ""
-
 WFGraph
-  This is just a container for NodeArcs, which can be queried
-  for the inputs and outputs of a given node
+  Has the set of nodes as well as maps of node input arcs and node output arcs
+  keyed by node id.
 
 > data WfGraph a =
 >     WfGraph {
@@ -146,6 +138,9 @@ graphFromNodesAndArcs
 >         outputsMap = Map.fromList $ zip (map nodeId nodes) (map outputArcsForNode nodes)
 >         outputArcsForNode node = filter (\arc -> inNodeId arc == nodeId node) arcs
 
+A WfInstance tracks the current state of the workflow. It has the workflow graph as well
+as the tokens representing the current state. A slot for user data is also defined.
+
 > data WfInstance a =
 >     WfInstance {
 >         wfGraph    :: WfGraph a,
@@ -154,28 +149,12 @@ graphFromNodesAndArcs
 >         userData   :: a
 >     }
 
-inputs
-  Returns the Nodes which are inputs to the given node
-
-> inputs graph nodeId = (graphInputArcs graph) Map.! nodeId
-
-outputs
-  Returns the Nodes which are outputs of the given node
-
-> outputs graph nodeId = (graphOutputArcs graph) Map.! nodeId
-
 getTokenForId
   Given a token id and a workflow instance gives back the actual token
   corresponding to that id
 
 > getNodeTokenForId id (WfInstance _ nodeTokens _ _) =
 >   head $ filter (\t -> (tokenId t) == id) nodeTokens
-
-getNodeForId
-  Given a node id and a workflow instance gives back the actual node
-  corresponding to that id
-
-> nodeForId nodeId (WfInstance graph _ _ _) = (graphNodes graph) Map.! nodeId
 
 startWorkflow
   Given a workflow definition (WfGraph) and initial userData, gives
@@ -190,13 +169,13 @@ startWorkflow
 >     startNodes = filter (isStartNode) $ Map.keys (graphNodes graph)
 >     startNode  = (graphNodes graph) Map.! (head startNodes)
 >     token      = NodeToken [1] (nodeId startNode)
->     wf         = WfInstance graph [] [] userData
+>     wf         = WfInstance graph [token] [] userData
 >
 >     isStartNode (-1) = True
 >     isStartNode _    = False
 
 > isWfComplete (WfInstance graph [] [] userData) = True
-> isWfComplete _                              = False
+> isWfComplete _                                 = False
 
 removeFirst
   Removes the first instance in a list for which the given predicate
@@ -205,8 +184,8 @@ removeFirst
 > removeFirst :: (a->Bool) -> [a] -> [a]
 > removeFirst predicate [] = []
 > removeFirst predicate (x:xs)
->   | predicate x = xs
->   | otherwise = x : (removeFirst predicate xs)
+>     | predicate x = xs
+>     | otherwise = x : (removeFirst predicate xs)
 
 nextForkId
   Generates the token id for the next token for in the case where we have multiple outputs.
@@ -255,7 +234,7 @@ completeExecution
 >     hasOneOutput                   = null $ tail outputArcs
 >
 >     currentNode                    = nodeForToken token graph
->     outputArcs                     = outputs graph (nodeId currentNode)
+>     outputArcs                     = (graphOutputArcs graph) Map.! (nodeId currentNode)
 >
 >     firstOutputName                = (arcName.head) outputArcs
 >     newToken                       = ArcToken (tokenId token) (head outputArcs)
@@ -282,7 +261,7 @@ acceptToken
 >     isAcceptSingle = case (nodeType targetNode) of
 >                        RequireAll    -> False
 >                        RequireSingle -> True
->     targetNode     = nodeForId ((outNodeId.arcForToken) token) wf
+>     targetNode     = (graphNodes graph) Map.! ((outNodeId.arcForToken) token)
 
 acceptSingle
   Called when a node requires only a single incoming token to activate.
@@ -313,7 +292,7 @@ acceptJoin
 >                             any (\arcToken -> (arcId.arcForToken) arcToken == arcId arc) allArcTokens
 >
 >     targetNodeId          = (outNodeId.arcForToken) token
->     inputArcs             = inputs graph targetNodeId
+>     inputArcs             = (graphInputArcs graph) Map.! targetNodeId
 >     outputTokenList       = removeInputTokens inputArcs targetNodeId arcTokens
 >
 >     newToken              = NodeToken (tokenId token) targetNodeId

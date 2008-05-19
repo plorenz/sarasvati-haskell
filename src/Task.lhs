@@ -1,6 +1,7 @@
 
 > module Task where
 > import Workflow
+> import qualified Data.Map as Map
 
 > data TaskState = Open | Complete | Rejected
 >  deriving (Show,Eq)
@@ -32,7 +33,7 @@
 > newTask wf token taskId name desc = Task (tokenId token) taskId name desc Open hasReject
 >     where
 >         nodeId = case token of (NodeToken _ nodeId) -> nodeId
->         hasReject     = not.null $ filter (\arc -> arcName arc =="reject") (outputs (wfGraph wf) nodeId)
+>         hasReject     = not.null $ filter (\arc -> arcName arc =="reject") $ ((graphOutputArcs.wfGraph) wf) Map.! nodeId
 
 > closeTask task wf newState = wf { userData = newTaskList }
 >   where
