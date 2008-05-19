@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow SYSTEM "wf.dtd">
+
+<workflow id="denser" version="1">
+
+  <start>
+    <arc to="1"/>
+    <arc to="2"/>
+    <arc to="3"/>
+    <arc to="4"/>
+  </start>
+
+  <node name="1">
+    <arc to="5"/>
+    <arc to="6"/>
+    <arc to="7"/>
+    <arc to="8"/>
+  </node>
+
+  <node name="2">
+    <arc to="5"/>
+    <arc to="6"/>
+    <arc to="7"/>
+    <arc to="8"/>
+  </node>
+
+    <node name="3">
+    <arc to="5"/>
+    <arc to="6"/>
+    <arc to="7"/>
+    <arc to="8"/>
+  </node>
+
+    <node name="4">
+    <arc to="5"/>
+    <arc to="6"/>
+    <arc to="7"/>
+    <arc to="8"/>
+  </node>
+
+  <node name="5">
+    <arc to="9"/>
+    <arc to="10"/>
+    <arc to="11"/>
+    <arc to="12"/>
+  </node>
+
+  <node name="6">
+    <arc to="9"/>
+    <arc to="10"/>
+    <arc to="11"/>
+    <arc to="12"/>
+  </node>
+
+  <node name="7">
+    <arc to="9"/>
+    <arc to="10"/>
+    <arc to="11"/>
+    <arc to="12"/>
+  </node>
+
+  <node name="8">
+    <arc to="9"/>
+    <arc to="10"/>
+    <arc to="11"/>
+    <arc to="12"/>
+  </node>
+
+  <node name="9">
+    <arc to="1"/>
+    <arc to="2"/>
+    <arc to="3"/>
+    <arc to="4"/>
+    <arc to="9"/>
+    <arc to="10"/>
+    <arc to="11"/>
+    <arc to="12"/>
+  </node>
+
+  <node name="10">
+    <arc to="1"/>
+    <arc to="2"/>
+    <arc to="3"/>
+    <arc to="4"/>
+    <arc to="9"/>
+    <arc to="10"/>
+    <arc to="11"/>
+    <arc to="12"/>
+  </node>
+
+  <node name="11">
+    <arc to="1"/>
+    <arc to="2"/>
+    <arc to="3"/>
+    <arc to="4"/>
+    <arc to="9"/>
+    <arc to="10"/>
+    <arc to="11"/>
+    <arc to="12"/>
+  </node>
+
+  <node name="12">
+    <arc to="1"/>
+    <arc to="2"/>
+    <arc to="3"/>
+    <arc to="4"/>
+    <arc to="9"/>
+    <arc to="10"/>
+    <arc to="11"/>
+    <arc to="12"/>
+  </node>
+
+</workflow>
