@@ -31,6 +31,10 @@ create table wf_node
   type            varchar(255) NOT NULL
 );
 
+ALTER TABLE wf_node
+  ADD CONSTRAINT wf_node_unique
+    UNIQUE(graph_id, name);
+
 create table wf_node_ref
 (
   id        serial       NOT NULL PRIMARY KEY,

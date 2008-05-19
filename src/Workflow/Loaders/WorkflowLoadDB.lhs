@@ -1,6 +1,7 @@
 
 > module Workflow.Loaders.WorkflowLoadDB where
 > import Control.Exception
+> import Control.Monad
 > import Text.XML.HaXml.Parse
 > import Text.XML.HaXml.Combinators
 > import Text.XML.HaXml.Types
@@ -107,7 +108,7 @@ import it into the currently loading workflow.
 
 > insertNewGraph :: (IConnection a) => a -> String -> IO Int
 > insertNewGraph conn name =
->     do maxVersion <- getMaxGraphId conn name
+>     do maxVersion <- getMaxGraphVersion conn name
 >        putStrLn $ "Current version of " ++ name ++ " is " ++ (show maxVersion)
 >        nextId <- nextSeqVal conn "wf_graph_id_seq"
 >        run conn sql [toSql nextId,
@@ -140,12 +141,13 @@ import it into the currently loading workflow.
 
 > insertNodeRef :: (IConnection conn) => conn -> Int -> Int -> String -> IO Int
 > insertNodeRef conn graphId copyRefId instanceName =
->     do nextNodeRefId <- nextSeqVal conn "wf_node_ref_id_seq"
+>     do putStrLn $ "Copying ref: " ++ (show copyRefId) ++ " using instance name: " ++ instanceName ++ " in graph: " ++ (show graphId)
+>        nextNodeRefId <- nextSeqVal conn "wf_node_ref_id_seq"
 >        run conn nodeRefSql
 >                  [toSql nextNodeRefId,
 >                   toSql graphId,
->                   toSql copyRefId,
->                   toSql instanceName]
+>                   toSql instanceName,
+>                   toSql copyRefId]
 >        return nextNodeRefId
 >     where
 >         nodeRefSql = "insert into wf_node_ref (id, node_id, graph_id, instance) " ++
@@ -170,12 +172,19 @@ import it into the currently loading workflow.
 >     where
 >         sql = "select nextval( ? )"
 
+> getMaxGraphVersion :: (IConnection a) => a-> String -> IO Int
+> getMaxGraphVersion conn name =
+>     do rows <- quickQuery conn sql [toSql name]
+>        return $ (fromSql.head.head) rows
+>     where
+>         sql = "select coalesce( max(version), 0) from wf_graph where name = ?"
+
 > getMaxGraphId :: (IConnection a) => a-> String -> IO Int
 > getMaxGraphId conn name =
 >     do rows <- quickQuery conn sql [toSql name]
 >        return $ (fromSql.head.head) rows
 >     where
->         sql = "select coalesce( max(version), 0) from wf_graph where name = ?"
+>         sql = "select coalesce( max(id), 0) from wf_graph where name = ?"
 
 > getNodeRefId :: (IConnection a) => a-> Int -> String -> String -> String -> IO Int
 > getNodeRefId conn newGraphId graphName nodeName instanceName =
@@ -216,9 +225,7 @@ import it into the currently loading workflow.
 > processDoc doc funcMap conn =
 >     do graphId   <- insertNewGraph conn (graphName doc)
 >        loadNodes <- mapM (processChildNode graphId funcMap conn) childNodes
->        putStrLn $ "Load nodes: " ++ (show loadNodes)
 >        let resolvedLoadNodes = resolveArcs loadNodes
->        putStrLn $ "\nResolved load nodes: " ++ (show resolvedLoadNodes)
 >        mapM (processArcs conn graphId) resolvedLoadNodes
 >        processAllExternals conn graphId resolvedLoadNodes
 >        return $ Right graphId
@@ -226,31 +233,28 @@ import it into the currently loading workflow.
 >         childNodes = getChildren (rootElement doc)
 
 > processAllExternals conn graphId nodes =
->     foldr (processNodeExternals conn graphId) initialMap nodes
->     where
->         initialMap = return $ Map.empty
+>     foldM (processNodeExternals conn graphId) Map.empty nodes
 
-> processNodeExternals conn graphId node instanceMap =
->     foldr (processExternal conn graphId node) instanceMap (externalArcs node)
+> processNodeExternals conn graphId instanceMap node =
+>     foldM (processExternal conn graphId node) instanceMap (externalArcs node)
 
-> processExternal conn graphId node extArc mapIO =
+> processExternal conn graphId node instanceMap extArc =
 >     do putStrLn $ "Loading external: " ++ (show extArc)
->        instanceMap <- ensureInstanceLoaded conn mapIO graphId extArc
+>        newInstanceMap <- ensureInstanceLoaded conn instanceMap graphId extArc
 >        targetNodeId <- getNodeRefId conn graphId wfName targetName instanceName
 >        case (arcType extArc) of
 >            InArc  -> insertArc conn graphId targetNodeId (nodeId node) (extArcName extArc)
 >            OutArc -> insertArc conn graphId (nodeId node) targetNodeId (extArcName extArc)
->        return instanceMap
+>        return newInstanceMap
 >     where
 >        wfName       = targetWf extArc
 >        instanceName = targetInstance extArc
 >        targetName   = targetNodeName extArc
 
-> ensureInstanceLoaded conn instanceMapIO graphId extArc =
->     do instanceMap <- instanceMapIO
->        case (Map.member instanceName instanceMap) of
->            True  -> instanceMapIO
->            False -> importInstance conn instanceMap graphId extArc
+> ensureInstanceLoaded conn instanceMap graphId extArc =
+>     case (Map.member instanceName instanceMap) of
+>         True  -> return instanceMap
+>         False -> importInstance conn instanceMap graphId extArc
 >     where
 >         instanceName = targetInstance extArc
 

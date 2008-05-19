@@ -3,8 +3,8 @@
 
 <workflow id="one-node" version="1">
   <start>
-    <arc to="1"/>
+    <arc to="one-node.1"/>
   </start>
 
-  <node name="1" isJoin="true"/>
+  <node name="one-node.1" isJoin="true"/>
 </workflow>

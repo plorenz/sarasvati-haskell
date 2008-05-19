@@ -4,15 +4,15 @@
 <workflow id="three-deep" version="1">
 
   <start>
-    <arc to="1"/>
+    <arc to="three-deep.1"/>
   </start>
 
-  <node name="1">
-    <externalArc workflow="two-deep" version="1" instance="1" nodeId="1" type="out"/>
+  <node name="three-deep.1">
+    <externalArc workflow="two-deep" version="1" instance="1" nodeId="two-deep.1" type="out"/>
   </node>
 
-  <node name="2">
-    <externalArc workflow="two-deep" version="1" instance="1" nodeId="2" type="in"/>
+  <node name="three-deep.2">
+    <externalArc workflow="two-deep" version="1" instance="1" nodeId="two-deep.2" type="in"/>
   </node>
 
 </workflow>
