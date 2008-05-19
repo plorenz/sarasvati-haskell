@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!DOCTYPE workflow SYSTEM "wf.dtd">
 
-<workflow id="test-subwf" version="1">
+<workflow id="subwf-tasks" version="1">
 
-  <task nodeId="sub1">
-    <name>Call Distributer</name>
+  <task name="sub1">
+    <task-name>Call Distributer</task-name>
     <description>
       This task should spawn tasks "Order Stuff" and "Request Status"
     </description>
@@ -13,8 +13,8 @@
     <arc to="sub3"/>
   </task>
 
-  <task nodeId="sub2">
-    <name>Order Stuff</name>
+  <task name="sub2">
+    <task-name>Order Stuff</task-name>
     <description>
       Order stuff now.
 
@@ -23,8 +23,8 @@
     <arc to="sub4"/>
   </task>
 
-  <task nodeId="sub3">
-    <name>Request Status</name>
+  <task name="sub3">
+    <task-name>Request Status</task-name>
     <description>
       Get status on other orders.
 
@@ -33,8 +33,8 @@
     <arc to="sub4"/>
   </task>
 
-  <task nodeId="sub4">
-    <name>Mark Complete</name>
+  <task name="sub4">
+    <task-name>Mark Complete</task-name>
     <description>
       Sign off in application in application.
     </description>

@@ -119,6 +119,7 @@ import it into the currently loading workflow.
 >     where
 >         sql = "insert into wf_graph (id, name, version) values ( ?, ?, ? )"
 
+> insertNodeWithRef :: (IConnection conn) => conn -> Int -> String -> Bool -> String -> IO (Int,Int)
 > insertNodeWithRef conn graphId nodeName isJoin nodeType =
 >     do nextNodeId <- nextSeqVal conn "wf_node_id_seq"
 >        run conn nodeSql
@@ -132,7 +133,7 @@ import it into the currently loading workflow.
 >                  [toSql nextNodeRefId,
 >                   toSql nextNodeId,
 >                   toSql graphId]
->        return nextNodeRefId
+>        return (nextNodeId, nextNodeRefId)
 >     where
 >         nodeSql    = "insert into wf_node (id, graph_id, name, is_join, type) " ++
 >                      " values ( ?, ?, ?, ?, ? )"
@@ -322,13 +323,13 @@ import it into the currently loading workflow.
 
 > processStart :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
 > processStart element conn graphId =
->     do nodeId <- insertNodeWithRef conn graphId "start" False "start"
->        return (nodeId, "start")
+>     do (nodeId, nodeRefId) <- insertNodeWithRef conn graphId "start" False "start"
+>        return (nodeRefId, "start")
 
 > processNode :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
 > processNode element conn graphId =
->    do nodeId <- insertNodeWithRef conn graphId nodeName isJoin "node"
->       return (nodeId, nodeName)
+>    do (nodeId, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin "node"
+>       return (nodeRefId, nodeName)
 >     where
 >         nodeName = readRequiredAttr element "name"
 >         isJoin = case (readOptionalAttr element "isJoin" "false" ) of
@@ -346,14 +347,19 @@ import it into the currently loading workflow.
 >            Left msg -> return $ Left msg
 >            Right doc -> withTransaction conn (processDoc doc funcMap)
 
-> funcMap = Map.fromList [ ("start", processStart),
->                          ("node", processNode) ]
+> initialLoaderMap = Map.fromList [ ("start", processStart),
+>                                   ("node",  processNode) ]
 
-> loadWorkflow filename = do handleAll (loadFromXmlToDB filename funcMap)
+> loaderMapWith list = addToMap list initialLoaderMap
+>    where
+>        addToMap []     map = map
+>        addToMap (x:xs) map = addToMap xs $ Map.insert (fst x) (snd x) map
+
+> loadWorkflow filename funcMap = do handleAll (loadFromXmlToDB filename funcMap)
 >     where
 >         handleAll = (handleSql handleDbError).(handleLoad handleLoadError).(handleXml handleXmlError)
 
-> testLoad filename = do handleAll (loadFromXmlToDB (prefix ++ filename) funcMap)
+> testLoad filename = do handleAll (loadFromXmlToDB (prefix ++ filename) initialLoaderMap)
 >     where
 >         handleAll = (handleSql handleDbError).(handleLoad handleLoadError).(handleXml handleXmlError)
 >         prefix    = "/home/paul/workspace/functional-workflow/"
