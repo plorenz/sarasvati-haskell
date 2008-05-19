@@ -2,7 +2,7 @@
 > module Workflow.Task.TaskXml where
 > import Workflow.Loaders.WorkflowLoadXml
 > import Workflow.Util.XmlUtil
-> import Workflow.Workflow
+> import Workflow.Engine
 > import Workflow.Task.Task
 > import Data.Dynamic
 

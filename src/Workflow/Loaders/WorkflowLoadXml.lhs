@@ -4,7 +4,7 @@
 > import Text.XML.HaXml.Parse
 > import Text.XML.HaXml.Combinators
 > import Text.XML.HaXml.Types
-> import Workflow.Workflow
+> import Workflow.Engine
 > import qualified Data.Map as Map
 > import Control.Monad
 > import Workflow.Util.XmlUtil as XmlUtil

@@ -1,6 +1,6 @@
 Author: Paul Lorenz
 
-> module Workflow.Workflow where
+> module Workflow.Engine where
 > import qualified Data.Map as Map
 > import qualified Workflow.Util.ListUtil as ListUtil
 > import Data.Dynamic

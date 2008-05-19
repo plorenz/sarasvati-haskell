@@ -1,7 +1,7 @@
 Author: Paul Lorenz
 
 > module Main where
-> import Workflow.Workflow
+> import Workflow.Engine
 > import Workflow.Task.Task
 > import IO
 > import Data.Char

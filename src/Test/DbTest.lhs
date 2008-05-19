@@ -2,7 +2,7 @@
 > module Test.DbTest where
 > import Database.HDBC.PostgreSQL
 > import Database.HDBC
-> import Workflow.Workflow
+> import Workflow.Engine
 > import qualified Data.Map as Map
 > import qualified Control.Exception as Ex
 > import Workflow.Util.ListUtil
