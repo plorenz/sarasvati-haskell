@@ -99,24 +99,34 @@ data Arc =
 class Token a where
    tokenId   :: a -> Int
 
+data TokenAttr =
+    TokenStringAttr String |
+    TokenIntAttr Int
+ deriving (Show)
+
+
 -- NodeToken represents tokens which are at node
 
-data NodeToken = NodeToken Int Int
+data NodeToken = NodeToken Int Int [(String,TokenAttr)]
     deriving (Show)
 
+tokenAttr (NodeToken _ _ attr) = attr
+
 instance Token (NodeToken) where
-    tokenId (NodeToken tokId _ ) = tokId
+    tokenId (NodeToken tokId _ _) = tokId
 
 instance Eq (NodeToken) where
     tok1 == tok2 = (tokenId tok1) == (tokenId tok2)
 
 -- ArcToken represents tokens which are between nodes (on an arc)
 
-data ArcToken = ArcToken Int Arc
+data ArcToken = ArcToken Int Arc NodeToken
     deriving (Show)
 
+parentToken (ArcToken _ _ token) = token
+
 instance Token (ArcToken) where
-    tokenId (ArcToken tokId _) = tokId
+    tokenId (ArcToken tokId _ _) = tokId
 
 instance Eq (ArcToken) where
     tok1 == tok2 = (tokenId tok1) == (tokenId tok2)
@@ -190,10 +200,10 @@ getNodeTokenForId tokId wf =
 -- Convenience lookup methods for the data pointed to by tokens
 
 nodeForToken :: NodeToken -> WfGraph -> Node
-nodeForToken (NodeToken _ nodeId) graph = (graphNodes graph) Map.! nodeId
+nodeForToken (NodeToken _ nodeId _) graph = (graphNodes graph) Map.! nodeId
 
 arcForToken :: ArcToken -> Arc
-arcForToken  (ArcToken _ arc)           = arc
+arcForToken  (ArcToken _ arc _)           = arc
 
 -- startWorkflow
 --   Given a workflow definition (WfGraph) and initial userData, gives

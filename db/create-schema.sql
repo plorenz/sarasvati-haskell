@@ -1,5 +1,6 @@
 drop table if exists wf_task;
 drop table if exists wf_task_state;
+drop table if exists wf_token_string_attr;
 drop table if exists wf_node_token_parent;
 drop table if exists wf_arc_token;
 drop table if exists wf_node_token;
@@ -60,11 +61,6 @@ create table wf_arc
   name          varchar(255) NOT NULL
 );
 
-create table wf_token_attr
-(
-  name  varchar(64) NOT NULL
-);
-
 create table wf_node_token
 (
   id            serial    NOT NULL PRIMARY KEY,
@@ -89,6 +85,17 @@ create table wf_node_token_parent
    node_token_id INT NOT NULL REFERENCES wf_node_token,
    arc_token_id  INT NOT NULL REFERENCES wf_arc_token
 );
+
+create table wf_token_string_attr
+(
+  attr_set_id  int          NOT NULL REFERENCES wf_node_token,
+  name         varchar(64)  NOT NULL,
+  value        varchar(255) NOT NULL
+);
+
+ALTER TABLE wf_token_string_attr
+  ADD PRIMARY KEY (attr_set_id, name);
+
 
 create table wf_node_task
 (
