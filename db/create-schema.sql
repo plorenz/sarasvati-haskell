@@ -1,6 +1,7 @@
 drop table if exists wf_node_token;
 drop table if exists wf_arc_token;
 drop table if exists wf_arc;
+drop table if exists wf_node_ref;
 drop table if exists wf_node_task;
 drop table if exists wf_node;
 drop table if exists wf_node_source;
@@ -47,8 +48,9 @@ create table wf_node_token
 
 create table wf_arc_token
 (
-  id     serial NOT NULL PRIMARY KEY,
-  arc_id int    NOT NULL REFERENCES wf_arc
+  id            serial NOT NULL PRIMARY KEY,
+  arc_id        int    NOT NULL REFERENCES wf_arc,
+  prev_token_id int    NOT NULL REFERENCES wf_node_token
 );
 
 create table wf_node_task
@@ -56,4 +58,4 @@ create table wf_node_task
   id int NOT NULL PRIMARY KEY REFERENCES wf_node,
   name varchar(255) NOT NULL,
   description text NOT NULL
-)
+);

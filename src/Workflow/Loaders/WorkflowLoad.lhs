@@ -48,17 +48,25 @@ Take the simple case: Loading a workflow with no external dependencies.
 Loading from XML:
  1. Load the list of nodes
  2. Each node has a list of outgoing arcs
- 3. We resolve the arcs
+ 3. Resolve the arcs
 
 Loading from the database
  1. lookup the entry in wf_graph
  2. load all arcs belong to that graph
  3. We load all the nodes via each node_ref referenced from arcs
 
-How do we load a composed workflow from XML for direct execution?
+How is a composed workflow loaded from XML for direct execution?
  1. Load the list of nodes
  2. Each node has a list of arcs, some of which are external
- 3. We for each distinct
+ 3. For each distinct instance we load a graph
+ 4. The external nodes are imported into the graph
+ 5. Arcs are resolved
+
+How is a workflow loaded from XML into the database?
+ 1. Load the graph name
+ 2. Load the list of nodes
+ 3. Load each externally referenced graph, one per instance
+
 
 Once we have a raw list of LoadNodes, we can complete loading it. A 'raw' LoadNode will only have it's arcRefs
 populated and not have loaded externalArcs. We can fill in the arcs based on the arcRefs (internal references)

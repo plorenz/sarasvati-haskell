@@ -66,11 +66,11 @@ The following functions handle the generation of a WfGraph based on an XML docum
 The loadWfGraphFromDoc function takes a map of tag names to function which take
 elements of that type and return the appropriate XmlNode.
 
-> loadWfGraphFromDoc doc source funcMap = completeLoad (loadWfGraph funcMap) source unlinkedNodeMap
+> loadWfGraphFromDoc doc source funcMap = completeLoad loadFunction source unlinkedNodeMap
 >     where
 >         childNodes      = getChildren (rootElement doc)
 >         unlinkedNodeMap = processChildNodes childNodes source funcMap Map.empty 1
->
+>         loadFunction    = loadWfGraph funcMap
 
 > processChildNodes []       _      _       nodeMap nextId = nodeMap
 > processChildNodes (e:rest) source funcMap nodeMap nextId = processChildNodes rest source funcMap newNodeMap (nextId + 1)
@@ -80,9 +80,7 @@ elements of that type and return the appropriate XmlNode.
 >         node         = fixId $ nodeFunction e source
 >         xmlNode      = LoadNode node [] (readArcs e) (readExternalArcs e)
 >         newNodeMap   = Map.insert (nodeId node) xmlNode nodeMap
->         fixId  node  = case (nodeId node) of
->                            (-1) -> node
->                            otherwise -> node {nodeId = nextId}
+>         fixId  node  = node {nodeId = nextId}
 
 Function for processing the start element. There should be exactly one of these
 per workflow definition. It should contain only arc and externalArc elements. It
