@@ -99,15 +99,16 @@ data Arc =
 class Token a where
    tokenId   :: a -> Int
 
-data TokenAttr =
-    TokenStringAttr String |
-    TokenIntAttr Int
- deriving (Show)
+data TokenAttr = TokenAttr Int String TokenAttrValue
+  deriving (Show)
 
+data TokenAttrValue =
+    TokenAttrString String
+ deriving (Show)
 
 -- NodeToken represents tokens which are at node
 
-data NodeToken = NodeToken Int Int [(String,TokenAttr)]
+data NodeToken = NodeToken Int Int [TokenAttr]
     deriving (Show)
 
 tokenAttr (NodeToken _ _ attr) = attr

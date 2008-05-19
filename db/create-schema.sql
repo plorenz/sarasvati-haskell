@@ -66,6 +66,7 @@ create table wf_node_token
   id            serial    NOT NULL PRIMARY KEY,
   process_id    int       NOT NULL REFERENCES wf_process,
   node_ref_id   int       NOT NULL REFERENCES wf_node_ref,
+  attr_set_id   int       NULL     REFERENCES wf_node_token,
   create_date   timestamp NOT NULL DEFAULT current_timestamp,
   complete_date timestamp NULL
 );

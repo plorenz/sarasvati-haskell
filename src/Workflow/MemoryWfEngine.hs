@@ -28,7 +28,7 @@ createMemoryWfProcess _ graph nodeTypes userData = return $ WfProcess 1 nodeType
 createMemoryNodeToken :: MemoryWfEngine -> a -> Node -> [ArcToken] -> IO NodeToken
 createMemoryNodeToken engine _ node parentTokens =
     do nextTokenId <- atomicModifyIORef (tokenCounter engine) (\t-> (t + 1, t + 1))
-       return $ NodeToken nextTokenId (nodeId node) (tokenState parentTokens)
+       return $ NodeToken nextTokenId (nodeId node) (tokenAttrs parentTokens)
 
 createMemoryArcToken :: MemoryWfEngine -> a -> Arc -> NodeToken -> IO ArcToken
 createMemoryArcToken engine _ arc nodeToken =
@@ -44,17 +44,17 @@ completeMemoryArcToken _ _ = return ()
 memoryTransactionBoundary :: MemoryWfEngine -> IO ()
 memoryTransactionBoundary _ = return ()
 
-parentAttr = (tokenAttr.parentToken)
+parentAttr = tokenAttr.parentToken
 
-tokenState [] = []
-tokenState [token] = parentAttr token
-tokenState (x:xs)  = []
+tokenAttrs [] = []
+tokenAttrs [token] = parentAttr token
+tokenAttrs arcList  = foldr1 (mergeAttrs) (map (\t -> parentAttr t) arcList)
 
-mergeAttrs :: (Eq k) => [(k,v)] -> [(k,v)] -> [(k,v)]
+mergeAttrs :: [TokenAttr] -> [TokenAttr] -> [TokenAttr]
 mergeAttrs list1 list2 = foldr (mergeAttr) list2 list1
 
-mergeAttr :: (Eq k) => [(k,v)] -> (k,v) -> [(k,v)]
-mergeAttr []             (insKey,insVal) = [(insKey,insVal)]
-mergeAttr ((key,val):xs) (insKey,insVal)
-   | insKey == key = (key,val) : xs
-   | otherwise     = (key,val) : mergeAttr xs (insKey, insVal)
+mergeAttr :: TokenAttr -> [TokenAttr] -> [TokenAttr]
+mergeAttr tokenAttr [] = [tokenAttr]
+mergeAttr ins@(TokenAttr _ insKey insValue) (curr@(TokenAttr _ key value):xs)
+    | insKey == key = curr:xs
+    | otherwise     = curr : mergeAttr ins xs

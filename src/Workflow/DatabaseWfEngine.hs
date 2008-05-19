@@ -78,12 +78,12 @@ createDatabaseNodeToken :: DatabaseWfEngine -> WfProcess a -> Node -> [ArcToken]
 createDatabaseNodeToken (DatabaseWfEngine conn) wfRun node arcTokens =
     do nextTokenId <- insertNodeToken conn wfRun node
        mapM (insertNodeTokenParent conn nextTokenId) arcTokens
-       return $ NodeToken nextTokenId (nodeId node)
+       return $ NodeToken nextTokenId (nodeId node) []
 
 createDatabaseArcToken :: DatabaseWfEngine -> WfProcess a -> Arc -> NodeToken -> IO ArcToken
 createDatabaseArcToken (DatabaseWfEngine conn) wfRun arc nodeToken =
     do nextTokenId <- insertArcToken conn wfRun arc nodeToken
-       return $ ArcToken nextTokenId arc
+       return $ ArcToken nextTokenId arc nodeToken
 
 completeDatabaseNodeToken :: DatabaseWfEngine -> NodeToken -> IO ()
 completeDatabaseNodeToken (DatabaseWfEngine conn) token =
@@ -96,3 +96,8 @@ completeDatabaseArcToken (DatabaseWfEngine conn) token =
 databaseTransactionBoundary :: DatabaseWfEngine -> IO ()
 databaseTransactionBoundary (DatabaseWfEngine conn) =
     do commit conn
+
+parentAttr = tokenAttr.parentToken
+
+tokenAttrs []    = []
+tokenAttrs [arcToken] = parentAttr arcToken
