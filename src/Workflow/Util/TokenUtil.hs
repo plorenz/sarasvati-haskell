@@ -1,5 +1,6 @@
 module Workflow.Util.TokenUtil where
 
+import Workflow.EngineTypes
 import Workflow.Engine
 
 parentAttrs :: WfProcess a -> ArcToken -> [TokenAttr]

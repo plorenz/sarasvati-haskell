@@ -7,6 +7,7 @@ import Workflow.Loaders.LoadError
 import Workflow.Loaders.XmlToDatabaseLoader
 import Workflow.Task.Task
 import Workflow.Util.XmlUtil
+import Workflow.EngineTypes
 import Workflow.Engine
 
 loadTask :: (IConnection conn) => conn -> Int -> IO NodeExtra

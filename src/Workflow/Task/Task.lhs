@@ -1,5 +1,7 @@
 
 > module Workflow.Task.Task where
+
+> import Workflow.EngineTypes
 > import Workflow.Engine
 > import qualified Data.Map as Map
 > import Data.Dynamic

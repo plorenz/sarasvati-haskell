@@ -1,6 +1,7 @@
 module Workflow.Loaders.DatabaseToEngineLoader where
 
 import Database.HDBC
+import Workflow.EngineTypes
 import Workflow.Engine
 import Workflow.Loaders.LoadError
 import qualified Data.Map as Map

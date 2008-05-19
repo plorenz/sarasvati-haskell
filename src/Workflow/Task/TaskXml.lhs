@@ -1,6 +1,7 @@
 
 > module Workflow.Task.TaskXml where
 > import Workflow.Util.XmlUtil
+> import Workflow.EngineTypes
 > import Workflow.Engine
 > import Workflow.Task.Task
 > import Text.XML.HaXml.Types

@@ -4,7 +4,7 @@
 > import Text.XML.HaXml.Parse
 > import Text.XML.HaXml.Combinators
 > import Text.XML.HaXml.Types
-> import Workflow.Engine
+> import Workflow.EngineTypes
 > import qualified Data.Map as Map
 > import Workflow.Util.XmlUtil as XmlUtil
 > import Control.Monad.Error

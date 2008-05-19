@@ -2,6 +2,7 @@ module Workflow.MemoryWfEngine where
 
 import Data.IORef
 import qualified Data.Map as Map
+import Workflow.EngineTypes
 import Workflow.Engine
 import qualified Workflow.Util.TokenUtil as TokenUtil
 

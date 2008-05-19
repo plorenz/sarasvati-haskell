@@ -1,6 +1,6 @@
 module Workflow.UI.ConsoleCommon where
 
-import Workflow.Engine
+import Workflow.EngineTypes
 import Workflow.Task.Task
 import Data.Char
 

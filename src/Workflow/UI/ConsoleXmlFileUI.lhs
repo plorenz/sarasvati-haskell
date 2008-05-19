@@ -2,6 +2,7 @@ Author: Paul Lorenz
 
 > module Workflow.UI.ConsoleXmlFileUI where
 
+> import Workflow.EngineTypes
 > import Workflow.Engine
 > import Workflow.Task.Task
 > import IO

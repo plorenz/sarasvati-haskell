@@ -17,7 +17,8 @@ DONE - Allow the token to carry state - will allow more interesting guards
 
 In Progress:
 ---------------------------------------------------------------------
-
+Visualizations
+Guard domain specific language
 
 Next steps:
 ---------------------------------------------------------------------

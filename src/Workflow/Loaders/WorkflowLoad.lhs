@@ -1,6 +1,7 @@
 
 > module Workflow.Loaders.WorkflowLoad where
 > import qualified Data.Map as Map
+> import Workflow.EngineTypes
 > import Workflow.Engine
 
 ArcType enumerates the kind of external allows, which are just outgoing arcs and incoming arcs.

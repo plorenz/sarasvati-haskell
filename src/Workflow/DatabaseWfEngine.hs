@@ -3,6 +3,7 @@ module Workflow.DatabaseWfEngine where
 
 import Database.HDBC
 import qualified Data.Map as Map
+import Workflow.EngineTypes
 import Workflow.Engine
 import Workflow.Util.DbUtil as DbUtil
 import Workflow.Util.TokenUtil as TokenUtil

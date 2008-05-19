@@ -10,6 +10,7 @@ Author: Paul Lorenz
 > import qualified Workflow.Util.DbUtil as DbUtil
 > import Database.HDBC
 > import Database.HDBC.Types
+> import Workflow.EngineTypes
 > import Workflow.Engine
 > import Workflow.DatabaseWfEngine
 > -- import Workflow.MemoryWfEngine
