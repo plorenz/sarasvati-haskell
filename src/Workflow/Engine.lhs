@@ -242,22 +242,14 @@ completeExecution
 > completeExecution :: (WfEngine e) => e -> NodeToken -> String -> WfRun a -> IO (WfRun a)
 > completeExecution engine token outputArcName wf
 >     | hasNoOutputs = return newWf
->     | hasOneOutput = if (firstOutputName == outputArcName)
->                          then do arcToken <- createArcToken engine wf (head outputArcs) token
->                                  completeNodeToken engine token
->                                  acceptToken engine arcToken newWf
->                          else return newWf
 >     | otherwise    = do completeNodeToken engine token
 >                         split outputArcs newWf
 >   where
 >     hasNoOutputs        = null outputArcs
->     hasOneOutput        = null $ tail outputArcs
 >
 >     graph               = wfGraph wf
 >     currentNode         = nodeForToken token graph
 >     outputArcs          = (graphOutputArcs graph) Map.! (nodeId currentNode)
->
->     firstOutputName     = (arcName.head) outputArcs
 >
 >     newWf               = removeNodeToken token wf
 >
