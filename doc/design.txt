@@ -1,0 +1,29 @@
+
+
+Node: Node in Directed Graph
+  inputs: List of nodes. Each node in the list has this node as an output.
+  outputs: List of nodes. Each node in the list has this node as an input.
+
+Token: Represents the current state of execution
+  node: The node that this token is at
+  prev: The node that the token came from
+
+
+Node Types
+
+Fork:
+  Generates a token at every output.
+
+Join:
+  If there are tokens from every input, generates a token at its output
+
+Notes on subworkflows:
+  1. A node can have an input from or output to an external workflow.
+  2. It will be referenced by some identifier and a version.
+  3. 2 nodes could refer to the same workflow
+    a. They may refer to the same instance or a separate instance
+    b. Thus they must also identify which instance they are connected to
+  4. If there is more than 1 instance of an external workflow, the nodes
+     must be copied or wrapped with nodes with new ids. This is because
+     we will have distinct nodearcs for them and because nodearcs are
+     looked up by node id, we need distinct nodes.
