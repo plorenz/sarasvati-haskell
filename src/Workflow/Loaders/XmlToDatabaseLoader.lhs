@@ -1,5 +1,5 @@
 
-> module Workflow.Loaders.WorkflowLoadDB where
+> module Workflow.Loaders.XmlToDatabaseLoader where
 > import Control.Exception
 > import Control.Monad
 > import Text.XML.HaXml.Parse
@@ -348,6 +348,10 @@ import it into the currently loading workflow.
 
 > funcMap = Map.fromList [ ("start", processStart),
 >                          ("node", processNode) ]
+
+> loadWorkflow filename = do handleAll (loadFromXmlToDB filename funcMap)
+>     where
+>         handleAll = (handleSql handleDbError).(handleLoad handleLoadError).(handleXml handleXmlError)
 
 > testLoad filename = do handleAll (loadFromXmlToDB (prefix ++ filename) funcMap)
 >     where

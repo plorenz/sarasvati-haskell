@@ -1,6 +1,6 @@
 Author: Paul Lorenz
 
-> module Main where
+> module ConsoleUI where
 > import Workflow.Engine
 > import Workflow.Task.Task
 > import IO
@@ -32,33 +32,37 @@ Author: Paul Lorenz
 >                           otherwise -> do putStrLn "Ok. Leaving open"
 >                                           return wf
 >            Complete -> return wf
+>            Rejected -> return wf
 >     where
 >         rejectable = taskRejectable task
 >         prompt = case (rejectable) of
 >                      True ->  "1. Complete task\n2. Reject task\n3. Leave task open\nAction: "
 >                      False -> "1. Complete task\n2. Leave task open\nAction: "
 
+> getTask :: Integer -> [Task] -> Either String Task
 > getTask _ [] = Left "Invalid task number"
-> getTask taskNumber tasks@(first:rest)
+> getTask taskNumber (first:rest)
 >     | taskNumber <  1 = Left "Invalid task number"
 >     | taskNumber == 1 = Right first
 >     | otherwise       = getTask (taskNumber - 1) rest
 
+> showTokens :: (Show a) => [a] -> IO ()
 > showTokens []     = return ()
 > showTokens (x:xs) = do putStrLn (show x)
 >                        showTokens xs
 
-> processTasks wf@(WfInstance _         _     []         []        _    ) = putStrLn "Workflow complete!"
-> processTasks wf@(WfInstance nodeTypes graph nodeTokens arcTokens tasks) =
+> processTasks :: WfInstance [Task] -> IO ()
+> processTasks    (WfInstance _ _     [] [] _    ) = putStrLn "Workflow complete!"
+> processTasks wf@(WfInstance _ graph _  _  tasks) =
 >     do putStrLn ""
 >        showTaskList tasks
 >        putStr "> "
 >        cmd <- getLine
 >        case (getCmdType cmd) of
 >            ShowTokenCmd -> do putStrLn "Node Tokens"
->                               showTokens nodeTokens
+>                               showTokens (nodeTokens wf)
 >                               putStrLn "\nArc Tokens"
->                               showTokens arcTokens
+>                               showTokens (arcTokens wf)
 >                               processTasks wf
 >            TaskCmd ->
 >                case (getTask ((read cmd)::Integer) tasks) of
@@ -74,6 +78,7 @@ Author: Paul Lorenz
 
 > data CmdType = ShowTokenCmd | TaskCmd | BadCmd | NoCmd | PersistCmd
 
+> getCmdType :: String -> CmdType
 > getCmdType input
 >     | null input                   = NoCmd
 >     | (map (toUpper) input) == "T" = ShowTokenCmd
@@ -81,11 +86,13 @@ Author: Paul Lorenz
 >     | all (isDigit) input          = TaskCmd
 >     | otherwise                    = BadCmd
 
-> main =
+> consoleMain :: IO ()
+> consoleMain =
 >     do hSetBuffering stdout NoBuffering
 >        wfList <- getWorkflowList
 >        selectWorkflow wfList
 
+> selectWorkflow :: [String] -> IO ()
 > selectWorkflow wfList =
 >     do putStrLn "\n-=Available workflows=-"
 >        showWorkflows wfList 1
@@ -96,33 +103,38 @@ Author: Paul Lorenz
 >          else do putStrLn $ "ERROR: " ++ wf ++ " is not a valid workflow"
 >        selectWorkflow wfList
 
+> useWorkflow :: [String] -> Int -> IO ()
 > useWorkflow wfList idx
 >     | length wfList <= idx = do putStrLn "ERROR: Invalid workflow number"
 >     | otherwise            = do result <- loadWfGraphFromFile (wfList !! idx) elemFunctionMap
 >                                 case (result) of
 >                                     Left msg -> putStrLn $ "ERROR: Could not load workflow: " ++ msg
->                                     Right wfGraph -> do putStrLn "Running workflow"
->                                                         putStrLn (showGraph wfGraph)
->                                                         runWorkflow wfGraph
+>                                     Right graph -> do putStrLn "Running workflow"
+>                                                       putStrLn (showGraph graph)
+>                                                       runWorkflow graph
 >    where
 >        elemFunctionMap = elemMapWith [ ("task", processTaskElement) ]
 
-> runWorkflow wfGraph =
->     case (startWorkflow nodeTypeMap wfGraph []) of
+> runWorkflow :: WfGraph -> IO ()
+> runWorkflow graph =
+>     case (startWorkflow nodeTypeMap graph []) of
 >            Left msg -> putStrLn msg
 >            Right wfInstanceIO -> do wf <- wfInstanceIO
 >                                     processTasks wf
 
+> nodeTypeMap :: Map.Map String (NodeType [Task])
 > nodeTypeMap = Map.fromList
 >                 [ ( "start", NodeType defaultGuard completeDefaultExecution ),
 >                   ( "node",  NodeType defaultGuard completeDefaultExecution ),
 >                   ( "task",  NodeType defaultGuard acceptAndCreateTask ) ]
 
+> showWorkflows :: [String] -> Int -> IO ()
 > showWorkflows []        _       = return ()
 > showWorkflows (wf:rest) counter =
 >  do putStrLn $ "  " ++ (show counter) ++ ": " ++ wf
 >     showWorkflows rest (counter + 1)
 
+> getWorkflowList :: IO [String]
 > getWorkflowList =
 >     do fileList <- getDirectoryContents wfDir
 >        return $ (useFullPath.filterWfs) fileList
@@ -131,4 +143,5 @@ Author: Paul Lorenz
 >     filterWfs = (filter (hasExtension ".wf.xml"))
 >     useFullPath = (map (\f->wfDir ++ f))
 
+> hasExtension :: String -> String -> Bool
 > hasExtension ext name = all (\(x,y) -> x == y) $ zip (reverse ext) (reverse name)
