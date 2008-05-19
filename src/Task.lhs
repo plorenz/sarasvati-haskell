@@ -26,13 +26,13 @@
 >  do putStrLn $ show counter ++ ": " ++ (taskName task) ++ " - " ++ show (taskState task)
 >     showTasks rest (counter + 1)
 
-> acceptAndCreateTask taskId name desc token wf@(WfInstance graph tokenList tasks) =
->     return $ WfInstance graph tokenList ((newTask wf token taskId name desc):tasks)
+> acceptAndCreateTask taskId name desc token wf@(WfInstance graph nodeTokens arcTokens tasks) =
+>     return wf { userData = (newTask wf token taskId name desc):tasks }
 
 > newTask wf token taskId name desc = Task (tokenId token) taskId name desc Open hasReject
 >     where
->         currentNode = currNode token
->         hasReject   = not.null $ filter (\arc -> arcName arc =="reject") (outputs (wfGraph wf) currentNode)
+>         nodeId = case token of (NodeToken _ nodeId) -> nodeId
+>         hasReject     = not.null $ filter (\arc -> arcName arc =="reject") (outputs (wfGraph wf) nodeId)
 
 > closeTask task wf newState = wf { userData = newTaskList }
 >   where
@@ -44,8 +44,8 @@
 
 > completeTask task wf = completeDefaultExecution token (closeTask task wf Complete)
 >   where
->     token = getTokenForId (getTokId task) wf
+>     token = getNodeTokenForId (getTokId task) wf
 
 > rejectTask task wf = completeExecution token "reject" (closeTask task wf Rejected)
 >   where
->     token = getTokenForId (getTokId task) wf
+>     token = getNodeTokenForId (getTokId task) wf

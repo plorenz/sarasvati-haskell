@@ -46,14 +46,17 @@ Author: Paul Lorenz
 > showTokens (x:xs) = do putStrLn (show x)
 >                        showTokens xs
 
-> processTasks wf@(WfInstance graph []        tasks) = do putStrLn "Workflow complete!"
-> processTasks wf@(WfInstance graph tokenList tasks) =
+> processTasks wf@(WfInstance graph []         []        tasks) = putStrLn "Workflow complete!"
+> processTasks wf@(WfInstance graph nodeTokens arcTokens tasks) =
 >     do putStrLn ""
 >        showTaskList tasks
 >        putStr "> "
 >        cmd <- getLine
 >        case (getCmdType cmd) of
->            ShowTokenCmd -> do showTokens tokenList
+>            ShowTokenCmd -> do putStrLn "Node Tokens"
+>                               showTokens nodeTokens
+>                               putStrLn "\nArc Tokens"
+>                               showTokens arcTokens
 >                               processTasks wf
 >            TaskCmd ->
 >                case (getTask ((read cmd)::Integer) tasks) of
