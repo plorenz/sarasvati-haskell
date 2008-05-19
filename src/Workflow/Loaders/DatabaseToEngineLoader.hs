@@ -24,7 +24,6 @@ finishLoad conn row typeMap =
     where
         graphId      = fromSql (row !! 0) :: Int
         graphName    = fromSql (row !! 1) :: String
-        graphVersion = fromSql (row !! 2) :: Int
 
 loadNodes :: (IConnection conn) => conn -> Int -> Map.Map String (conn -> Int -> IO NodeExtra) -> IO [Node]
 loadNodes conn graphId typeMap =

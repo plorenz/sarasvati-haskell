@@ -5,7 +5,7 @@
   function returns true
 
 > removeFirst :: (a->Bool) -> [a] -> [a]
-> removeFirst predicate [] = []
+> removeFirst _         [] = []
 > removeFirst predicate (x:xs)
 >     | predicate x = xs
 >     | otherwise   = x : (removeFirst predicate xs)

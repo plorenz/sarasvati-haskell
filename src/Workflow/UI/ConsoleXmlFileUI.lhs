@@ -29,8 +29,8 @@ Author: Paul Lorenz
 >                                              return newWf
 >                                      else do putStrLn "Ok. Leaving open"
 >                                              return wf
->                           otherwise -> do putStrLn "Ok. Leaving open"
->                                           return wf
+>                           _   -> do putStrLn "Ok. Leaving open"
+>                                     return wf
 >            Complete -> return wf
 >            Rejected -> return wf
 >     where
@@ -52,8 +52,8 @@ Author: Paul Lorenz
 >                        showTokens xs
 
 > processTasks :: WfInstance [Task] -> IO ()
-> processTasks    (WfInstance _ _     [] [] _    ) = putStrLn "Workflow complete!"
-> processTasks wf@(WfInstance _ graph _  _  tasks) =
+> processTasks    (WfInstance _ _ [] [] _    ) = putStrLn "Workflow complete!"
+> processTasks wf@(WfInstance _ _ _  _  tasks) =
 >     do putStrLn ""
 >        showTaskList tasks
 >        putStr "> "

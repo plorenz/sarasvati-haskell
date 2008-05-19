@@ -5,12 +5,9 @@
 
 module Main where
 
-import Database.HDBC
 import System
-import Text.XML.HaXml.Types
 import Workflow.Loaders.XmlToDatabaseLoader
 import Workflow.Task.TaskDB
-import Workflow.Util.XmlUtil as XmlUtil
 
 main :: IO ()
 main =

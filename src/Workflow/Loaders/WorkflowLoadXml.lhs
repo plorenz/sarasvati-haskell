@@ -30,8 +30,8 @@
 >        nodeId     = readAttr e "nodeId"
 >        arcName    = readOptionalAttr e "name" ""
 >        arcType    = case (readAttr e "type") of
->                         "in"      -> InArc
->                         otherwise -> OutArc
+>                         "in" -> InArc
+>                         _    -> OutArc
 
 loadWfGraphFromFile
   Loads a WfGraph from the given file, using the given map of tag names to functions.
@@ -99,7 +99,7 @@ type in Workflow. Nodes should contain only arc and externalArc elements.
 >         nodeTypeS   = readAttr element "type"
 >         isJoinNode  = case ( nodeTypeS ) of
 >                           "requireSingle" -> False
->                           otherwise       -> True
+>                           _               -> True
 
 
 > defaultElemFunctionMap = Map.fromList [ ("start", processStartElement),

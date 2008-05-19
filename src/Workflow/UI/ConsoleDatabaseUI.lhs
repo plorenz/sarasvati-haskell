@@ -7,14 +7,11 @@ Author: Paul Lorenz
 > import Workflow.Task.TaskDB
 > import IO
 > import Data.Char
-> import System.Directory
 > import Workflow.Loaders.DatabaseToEngineLoader
 > import Workflow.Loaders.LoadError
 > import qualified Data.Map as Map
 > import qualified Workflow.Util.DbUtil as DbUtil
 > import Database.HDBC
-> import Database.HDBC.PostgreSQL
-
 
 > handleTask :: Task -> WfInstance [Task] -> IO (WfInstance [Task])
 > handleTask task wf =
@@ -34,8 +31,8 @@ Author: Paul Lorenz
 >                                              return newWf
 >                                      else do putStrLn "Ok. Leaving open"
 >                                              return wf
->                           otherwise -> do putStrLn "Ok. Leaving open"
->                                           return wf
+>                           _   -> do putStrLn "Ok. Leaving open"
+>                                     return wf
 >            Complete -> return wf
 >            Rejected -> return wf
 >     where
@@ -57,8 +54,8 @@ Author: Paul Lorenz
 >                        showTokens xs
 
 > processTasks :: WfInstance [Task] -> IO ()
-> processTasks    (WfInstance _ _     [] [] _    ) = putStrLn "Workflow complete!"
-> processTasks wf@(WfInstance _ graph _  _  tasks) =
+> processTasks    (WfInstance _ _ [] [] _    ) = putStrLn "Workflow complete!"
+> processTasks wf@(WfInstance _ _ _  _  tasks) =
 >     do putStrLn ""
 >        showTaskList tasks
 >        putStr "> "
@@ -149,10 +146,12 @@ Author: Paul Lorenz
 >     where
 >         sql = "select distinct name from wf_graph order by name asc"
 
+> handleLoadError :: LoadException -> IO ()
 > handleLoadError (LoadException msg) =
 >     do putStrLn msg
 >        return $ ()
 
+> handleDbError :: SqlError -> IO ()
 > handleDbError sqlError =
 >     do putStrLn msg
 >        return ()

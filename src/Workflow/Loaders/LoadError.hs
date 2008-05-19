@@ -7,6 +7,7 @@ import Control.Exception
 data LoadException = LoadException String
   deriving (Show,Typeable)
 
+loadError :: String -> a
 loadError msg = throwDyn $ LoadException msg
 
 handleLoad :: (LoadException -> IO a) -> IO a -> IO a

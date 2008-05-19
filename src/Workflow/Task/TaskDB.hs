@@ -44,5 +44,5 @@ processTask element conn graphId =
         taskDesc = readText         element "description"
 
         isJoin = case (readOptionalAttr element "isJoin" "false" ) of
-                     "false"   -> False
-                     otherwise -> True
+                     "false" -> False
+                     _       -> True

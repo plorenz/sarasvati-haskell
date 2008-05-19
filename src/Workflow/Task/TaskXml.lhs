@@ -1,11 +1,11 @@
 
 > module Workflow.Task.TaskXml where
-> import Workflow.Loaders.WorkflowLoadXml
 > import Workflow.Util.XmlUtil
 > import Workflow.Engine
 > import Workflow.Task.Task
-> import Data.Dynamic
+> import Text.XML.HaXml.Types
 
+> processTaskElement :: Element -> NodeSource -> Node
 > processTaskElement element source = Node 0 "task" nodeId source isJoinNode nodeExtra
 >     where
 >         nodeId         = readAttr element "nodeId"
@@ -15,7 +15,7 @@
 >
 >         isJoinNode     = case (nodeTypeStr) of
 >                              "requireSingle" -> False
->                              otherwise       -> True
+>                              _               -> True
 >
 >         taskDef        = TaskDef name desc
 >         nodeExtra      = makeNodeExtra taskDef

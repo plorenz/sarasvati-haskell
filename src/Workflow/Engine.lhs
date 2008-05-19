@@ -92,7 +92,7 @@ Arcs.
 The Token class allows NodeTokens and ArcTokens to share an id lookup function
 
 > class Token a where
->    tokenId :: a -> [Int]
+>    tokenId   :: a -> [Int]
 
 NodeToken represents tokens which are at node
 

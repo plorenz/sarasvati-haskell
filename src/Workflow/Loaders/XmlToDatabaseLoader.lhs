@@ -1,6 +1,5 @@
 
 > module Workflow.Loaders.XmlToDatabaseLoader where
-> import Control.Exception
 > import Control.Monad
 > import Text.XML.HaXml.Parse
 > import Text.XML.HaXml.Combinators
@@ -10,7 +9,6 @@
 > import qualified Data.Map as Map
 > import Workflow.Util.XmlUtil as XmlUtil
 > import qualified Workflow.Util.DbUtil as DbUtil
-> import Data.Dynamic
 > import Workflow.Loaders.LoadError
 
 ================================================================================
@@ -71,7 +69,6 @@ import it into the currently loading workflow.
 > readArcs :: Element -> [(String, String)]
 > readArcs element = map (readArc) arcChildren
 >     where
->         attrVal (v,_) = v
 >         arcChildren   = XmlUtil.toElem $ ((tag "arc") `o` children) (CElem element)
 >         readArc e     = (readOptionalAttr e "name" "", readRequiredAttr e "to")
 
@@ -80,17 +77,18 @@ import it into the currently loading workflow.
 >     where
 >         childElem = XmlUtil.toElem $ ((tag "externalArc") `o` children) (CElem element)
 
+> readExternalArcFromElem :: Element -> ExternalArc
 > readExternalArcFromElem e = ExternalArc nodeId workflowId instanceId arcName arcType
 >     where
 >         workflowId = readRequiredAttr e "workflow"
 >         instanceId = readRequiredAttr e "instance"
 >         nodeId     = readRequiredAttr e "nodeId"
->         arcTypeS   = readRequiredAttr e "type"
 >         arcName    = readOptionalAttr e "name" ""
 >         arcType    = case (readRequiredAttr e "type") of
->                          "in"      -> InArc
->                          otherwise -> OutArc
+>                          "in" -> InArc
+>                          _    -> OutArc
 
+> graphName :: Document -> String
 > graphName doc = readRequiredAttr (rootElement doc) "id"
 
 ================================================================================
@@ -148,6 +146,7 @@ import it into the currently loading workflow.
 >                      "        CASE WHEN instance = '' then ? ELSE ? || ':' || instance END " ++
 >                      " from wf_node_ref where id = ? "
 
+> insertArc :: (IConnection conn) => conn -> Int -> Int -> Int -> String -> IO ()
 > insertArc conn graphId startNode endNode arcName =
 >     do nextArcId <- nextSeqVal conn "wf_arc_id_seq"
 >        run conn sql
@@ -156,6 +155,7 @@ import it into the currently loading workflow.
 >                   toSql startNode,
 >                   toSql endNode,
 >                   toSql arcName]
+>        return ()
 >     where
 >         sql = "insert into wf_arc (id, graph_id, a_node_ref_id, z_node_ref_id, name ) " ++
 >               " values ( ?, ?, ?, ?, ? ) "
@@ -198,6 +198,7 @@ import it into the currently loading workflow.
 >               "  where ref.graph_id = ? and ref.instance = ? " ++
 >               "    and node.name = ? and node.graph_id = ? "
 
+> getLoadArcs :: (IConnection conn) => conn -> String -> IO [LoadArc]
 > getLoadArcs conn graphName =
 >     do graphId <- getMaxGraphId conn graphName
 >        rows <- quickQuery conn sql [toSql graphId]
@@ -205,6 +206,7 @@ import it into the currently loading workflow.
 >     where
 >         sql = "select name, a_node_ref_id, z_node_ref_id from wf_arc where graph_id = ?"
 
+> rowToLoadArc :: [SqlValue] -> LoadArc
 > rowToLoadArc row = LoadArc name refA refZ
 >     where
 >         name = fromSql $ row !! 0
@@ -217,22 +219,31 @@ import it into the currently loading workflow.
 = Load Functions
 ================================================================================
 
+> processDoc ::
+>     (IConnection conn) =>
+>         Document ->
+>         Map.Map String (Element -> conn -> Int -> IO (Int, String)) ->
+>         conn ->
+>         IO Int
 > processDoc doc funcMap conn =
 >     do graphId   <- insertNewGraph conn (graphName doc)
 >        loadNodes <- mapM (processChildNode graphId funcMap conn) childNodes
 >        let resolvedLoadNodes = resolveArcs loadNodes
 >        mapM (processArcs conn graphId) resolvedLoadNodes
 >        processAllExternals conn graphId resolvedLoadNodes
->        return $ Right graphId
+>        return graphId
 >     where
 >         childNodes = getChildren (rootElement doc)
 
+> processAllExternals :: (IConnection conn) => conn -> Int -> [LoadNode] -> IO (Map.Map String Bool)
 > processAllExternals conn graphId nodes =
 >     foldM (processNodeExternals conn graphId) Map.empty nodes
 
+> processNodeExternals :: (IConnection conn) => conn -> Int -> Map.Map String Bool -> LoadNode -> IO (Map.Map String Bool)
 > processNodeExternals conn graphId instanceMap node =
 >     foldM (processExternal conn graphId node) instanceMap (externalArcs node)
 
+> processExternal :: (IConnection conn) => conn -> Int -> LoadNode -> Map.Map String Bool -> ExternalArc -> IO (Map.Map String Bool)
 > processExternal conn graphId node instanceMap extArc =
 >     do putStrLn $ "Loading external: " ++ (show extArc)
 >        newInstanceMap <- ensureInstanceLoaded conn instanceMap graphId extArc
@@ -246,6 +257,7 @@ import it into the currently loading workflow.
 >        instanceName = targetInstance extArc
 >        targetName   = targetNodeName extArc
 
+> ensureInstanceLoaded :: (IConnection conn) => conn -> Map.Map String Bool -> Int -> ExternalArc -> IO (Map.Map String Bool)
 > ensureInstanceLoaded conn instanceMap graphId extArc =
 >     case (Map.member instanceName instanceMap) of
 >         True  -> return instanceMap
@@ -253,23 +265,24 @@ import it into the currently loading workflow.
 >     where
 >         instanceName = targetInstance extArc
 
+> importInstance :: (IConnection conn) => conn -> Map.Map String Bool -> Int -> ExternalArc -> IO (Map.Map String Bool)
 > importInstance conn instanceMap graphId extArc =
 >     do putStrLn $ "Importing: " ++ wfName
 >        loadArcs <- getLoadArcs conn wfName
->        foldr (importArc conn graphId instanceName) startMap loadArcs
+>        foldM (importArc conn graphId instanceName) Map.empty loadArcs
 >        return $ Map.insert instanceName True instanceMap
 >     where
 >        wfName = targetWf extArc
 >        instanceName = targetInstance extArc
->        startMap = return $ Map.empty
 
-> importArc conn graphId instanceName (LoadArc arcName refA refZ) refMapIO =
->     do refMap  <- refMapIO
->        refMapA <- importNode conn graphId instanceName refA refMap
+> importArc :: (IConnection conn) => conn -> Int -> String -> Map.Map Int Int -> LoadArc -> IO (Map.Map Int Int)
+> importArc conn graphId instanceName refMap (LoadArc arcName refA refZ) =
+>     do refMapA <- importNode conn graphId instanceName refA refMap
 >        refMapZ <- importNode conn graphId instanceName refZ refMapA
 >        insertArc conn graphId (refMapZ Map.! refA) (refMapZ Map.! refZ) arcName
 >        return refMapZ
 
+> importNode :: (IConnection conn) => conn -> Int -> String -> Int -> Map.Map Int Int -> IO (Map.Map Int Int)
 > importNode conn graphId instanceName refId refMap =
 >     case (Map.member refId refMap) of
 >         True  -> return refMap
@@ -280,15 +293,18 @@ import it into the currently loading workflow.
 = Load Functions - Arc related
 ================================================================================
 
+> processArcs :: (IConnection conn) => conn -> Int -> LoadNode -> IO [()]
 > processArcs conn graphId loadNode = mapM (processArc) (arcs loadNode)
 >     where
 >         processArc arc = insertArc conn graphId startId (snd arc) (fst arc)
 >         startId = nodeId loadNode
 
+> resolveArcs :: [LoadNode] -> [LoadNode]
 > resolveArcs loadNodes = map (resolveArcs') loadNodes
 >     where
 >         resolveArcs' loadNode = loadNode {arcs = map (resolveArc loadNodes) (arcRefs loadNode) }
 
+> resolveArc :: [LoadNode] -> (String,String) -> (String, Int)
 > resolveArc loadNodes arc
 >     | noTarget      = loadError $ "No node with name " ++ targetName ++
 >                                   " found while looking for arc endpoint"
@@ -306,6 +322,13 @@ import it into the currently loading workflow.
 = Load Functions - Node related
 ================================================================================
 
+> processChildNode ::
+>     (IConnection conn) =>
+>         Int ->
+>         Map.Map String (Element -> conn -> Int -> IO (Int, String)) ->
+>         conn ->
+>         Element ->
+>         IO LoadNode
 > processChildNode graphId funcMap conn e =
 >     do (nodeId, nodeName) <- nodeFunction e conn graphId
 >        return $ LoadNode nodeId nodeName [] arcs extArcs
@@ -316,19 +339,19 @@ import it into the currently loading workflow.
 >         extArcs      = readExternalArcs e
 
 > processStart :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
-> processStart element conn graphId =
->     do (nodeId, nodeRefId) <- insertNodeWithRef conn graphId "start" False "start"
+> processStart _ conn graphId =
+>     do (_, nodeRefId) <- insertNodeWithRef conn graphId "start" False "start"
 >        return (nodeRefId, "start")
 
 > processNode :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
 > processNode element conn graphId =
->    do (nodeId, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin "node"
+>    do (_, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin "node"
 >       return (nodeRefId, nodeName)
 >     where
 >         nodeName = readRequiredAttr element "name"
 >         isJoin = case (readOptionalAttr element "isJoin" "false" ) of
->                      "false"   -> False
->                      otherwise -> True
+>                      "false" -> False
+>                      _       -> True
 
 > loadFromXmlToDB ::
 >      FilePath ->
@@ -338,36 +361,41 @@ import it into the currently loading workflow.
 >     do conn <- DbUtil.openDbConnection
 >        maybeDoc <- loadDocFromFile filename
 >        case maybeDoc of
->            Left msg -> return $ Left msg
->            Right doc -> withTransaction conn (processDoc doc funcMap)
+>            Left msg  -> return $ Left msg
+>            Right doc -> do graphId <- withTransaction conn (processDoc doc funcMap)
+>                            return $ Right graphId
 
+> initialLoaderMap :: (IConnection conn) => Map.Map String (Element -> conn -> Int -> IO (Int, String))
 > initialLoaderMap = Map.fromList [ ("start", processStart),
 >                                   ("node",  processNode) ]
 
+> loaderMapWith ::
+>     (IConnection conn) =>
+>         [(String, (Element -> conn -> Int -> IO (Int, String)))] ->
+>         Map.Map String (Element -> conn -> Int -> IO (Int, String))
 > loaderMapWith list = addToMap list initialLoaderMap
 >    where
 >        addToMap []     map = map
 >        addToMap (x:xs) map = addToMap xs $ Map.insert (fst x) (snd x) map
 
+> loadWorkflow :: String -> Map.Map String (Element -> Connection -> Int -> IO (Int, String)) -> IO (Either String Int)
 > loadWorkflow filename funcMap = do handleAll (loadFromXmlToDB filename funcMap)
 >     where
 >         handleAll = (handleSql handleDbError).(handleLoad handleLoadError).(handleXml handleXmlError)
 
-> testLoad filename = do handleAll (loadFromXmlToDB (prefix ++ filename) initialLoaderMap)
->     where
->         handleAll = (handleSql handleDbError).(handleLoad handleLoadError).(handleXml handleXmlError)
->         prefix    = "/home/paul/workspace/functional-workflow/"
-
+> handleLoadError :: LoadException -> IO (Either String a)
 > handleLoadError (LoadException msg) =
 >     do putStrLn msg
 >        return $ Left msg
 
+> handleDbError :: SqlError -> IO (Either String a)
 > handleDbError sqlError =
 >     do putStrLn msg
 >        return $ Left msg
 >     where
 >        msg = "Database error: " ++ (seErrorMsg sqlError)
 
+> handleXmlError :: XmlException -> IO (Either String a)
 > handleXmlError (MissingRequiredAttr elemName attrName) =
 >     do putStrLn msg
 >        return $ Left msg
