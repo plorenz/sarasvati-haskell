@@ -22,6 +22,8 @@ instance WfEngine MemoryWfEngine where
     completeNodeToken   = completeMemoryNodeToken
     completeArcToken    = completeMemoryArcToken
     transactionBoundary = memoryTransactionBoundary
+    setTokenAttr        = setMemoryTokenAttr
+    removeTokenAttr     = removeMemoryTokenAttr
 
 createMemoryWfProcess :: MemoryWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfProcess a)
 createMemoryWfProcess _ graph nodeTypes userData = return $ WfProcess 1 nodeTypes graph [] [] userData
@@ -44,4 +46,7 @@ completeMemoryArcToken _ _ = return ()
 
 memoryTransactionBoundary :: MemoryWfEngine -> IO ()
 memoryTransactionBoundary _ = return ()
+
+setMemoryTokenAttr :: MemoryWfEngine-> WfProcess b -> NodeToken -> String -> String -> IO (WfProcess b, NodeToken)
+setMemoryTokenAttr =
 

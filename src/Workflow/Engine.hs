@@ -103,21 +103,24 @@ data TokenAttr =
     TokenAttr {
         tokenAttrId    :: Int,
         tokenAttrKey   :: String,
-        tokenAttrValue :: TokenAttrValue
+        tokenAttrValue :: String
     }
   deriving (Show)
-
-data TokenAttrValue =
-    TokenAttrString String
- deriving (Show)
 
 -- NodeToken represents tokens which are at node
 
 data NodeToken = NodeToken Int Int [TokenAttr]
     deriving (Show)
 
-tokenAttr :: NodeToken -> [TokenAttr]
-tokenAttr (NodeToken _ _ attr) = attr
+tokenAttrs :: NodeToken -> [TokenAttr]
+tokenAttrs (NodeToken _ _ attr) = attr
+
+attrValue :: NodeToken -> String -> Maybe String
+attrValue nodeToken key
+    | null attr = Nothing
+    | otherwise = case (attr) of [(TokenAttr _ _ value)] -> Just value
+    where
+        attr  = filter (\tokenAttr -> tokenAttrKey tokenAttr == key) (tokenAttrs nodeToken)
 
 instance Token (NodeToken) where
     tokenId (NodeToken tokId _ _) = tokId
@@ -173,6 +176,8 @@ class WfEngine a where
     completeNodeToken   :: a -> NodeToken   -> IO ()
     completeArcToken    :: a -> ArcToken    -> IO ()
     transactionBoundary :: a -> IO ()
+    setTokenAttr        :: a -> WfProcess b -> NodeToken -> String -> String -> IO (WfProcess b, NodeToken)
+    removeTokenAttr     :: a -> WfProcess b -> NodeToken -> String -> IO (WfProcess b, NodeToken)
 
 -- showGraph
 --   Print prints a graph
