@@ -7,8 +7,8 @@
 
 <!ELEMENT node (arc*, externalArc*)>
 <!ATTLIST node
-          nodeId   ID                         #REQUIRED
-          type (requireSingle|requireAll) "requireAll">
+          name ID             #REQUIRED
+          isJoin (true|false) "false">
 
 <!ELEMENT arc (#PCDATA)>
 <!ATTLIST arc to   ID    #REQUIRED

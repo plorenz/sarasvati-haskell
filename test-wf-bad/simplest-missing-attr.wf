@@ -3,5 +3,8 @@
 
 <workflow version="1">
   <start>
+    <arc to="node1"/>
   </start>
+
+  <node/>
 </workflow>
