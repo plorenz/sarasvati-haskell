@@ -1,5 +1,5 @@
 
-> module MonadTransTest where
+> module Test.MonadTransTest where
 > import Control.Monad.State.Lazy
 > import Control.Monad.Error
 > import Text.XML.HaXml.Combinators

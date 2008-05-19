@@ -1,5 +1,5 @@
 
-> module WorkflowXml where
+> module WorkflowLoadXml where
 > import Text.XML.HaXml.Xml2Haskell
 > import Text.XML.HaXml.Parse
 > import Text.XML.HaXml.Combinators

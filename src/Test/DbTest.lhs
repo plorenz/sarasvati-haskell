@@ -1,5 +1,5 @@
 
-> module DbTest.DbTest where
+> module Test.DbTest where
 > import Database.HDBC.PostgreSQL
 > import Database.HDBC
 > import Workflow

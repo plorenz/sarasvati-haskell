@@ -1,6 +1,6 @@
 
 > module TaskXml where
-> import WorkflowXml
+> import WorkflowLoadXml
 > import XmlUtil
 > import Workflow
 > import Task

@@ -6,10 +6,10 @@ Author: Paul Lorenz
 > import IO
 > import Data.Char
 > import System.Directory
-> import WorkflowXml
+> import WorkflowLoadXml
 > import TaskXml
 > import qualified Data.Map as Map
-> import DbTest.DbTest
+> import Test.DbTest
 
 > handleTask :: Task -> WfInstance [Task] -> IO (WfInstance [Task])
 > handleTask task wf =
