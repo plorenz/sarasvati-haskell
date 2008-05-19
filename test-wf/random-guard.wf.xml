@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE workflow SYSTEM "wf.dtd">
 
-<workflow id="dense" version="1">
+<workflow id="random-guard" version="1">
   <start>
+    <arc to="first-node"/>
   </start>
 
   <init name="first-node">
@@ -11,12 +12,12 @@
   </init>
 
   <dump name="dump1">
-    <guard>IF randomOdd THEN Accept ELSE Discard</guard>
+    <guard>IF isRandOdd THEN Accept ELSE Discard</guard>
     <arc to="join"/>
   </dump>
 
   <dump name="dump2">
-    <guard>IF randomEven THEN Accept ELSE Discard</guard>
+    <guard>IF isRandEven THEN Accept ELSE Discard</guard>
     <arc to="join"/>
   </dump>
 
@@ -26,17 +27,17 @@
   </node>
 
   <dump name="dump3">
-    <guard>IF randomOdd THEN Accept ELSE Skip</guard>
+    <guard>IF isRandOdd THEN Accept ELSE Skip</guard>
     <arc to="leave-decision"/>
   </dump>
 
   <dump name="dump4">
-    <guard>IF randomEven THEN Accept ELSE Skip</guard>
+    <guard>IF isRandEven THEN Accept ELSE Skip</guard>
     <arc to="leave-decision"/>
   </dump>
 
   <node name="leave-decision" isJoin="true">
-    <guard>IF tenthIteration THEN Skip exit ELSE Skip beginning</guard>
+    <guard>IF isTenthIteration THEN Skip exit ELSE Skip beginning</guard>
 
     <arc to="last-node" name="exit"/>
     <arc to="first-node" name="beginning"/>

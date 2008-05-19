@@ -16,6 +16,12 @@ makeNodeExtra extra = NodeExtra $ toDyn extra
 tokenAttrs :: WfProcess a -> NodeToken -> [TokenAttr]
 tokenAttrs wfProcess token = (tokenAttrMap wfProcess) Map.! (tokenId token)
 
+attrValueReq :: WfProcess a -> NodeToken -> String -> String
+attrValueReq process nodeToken key =
+    case (attr) of (TokenAttr _ _ value) -> value
+    where
+        attr  = head $ filter (\tokenAttr -> tokenAttrKey tokenAttr == key) (tokenAttrs process nodeToken)
+
 attrValue :: WfProcess a -> NodeToken -> String -> Maybe String
 attrValue process nodeToken key =
     case (attr) of
@@ -207,7 +213,7 @@ evalGuardLang token wf
         guard = nodeGuard node
 
 evalGuardLangStmt :: NodeToken -> WfProcess a -> GuardLang.Stmt -> IO GuardResponse
-evalGuardLangStmt token wf (GuardLang.StmtResult result)           = return result
+evalGuardLangStmt _     _  (GuardLang.StmtResult result)           = return result
 evalGuardLangStmt token wf (GuardLang.StmtIF expr ifStmt elseStmt) =
     do result <- evalGuardLangExpr token wf expr
        case result of
