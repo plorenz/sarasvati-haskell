@@ -17,7 +17,6 @@
 
 <!ELEMENT externalArc (#PCDATA)>
 <!ATTLIST externalArc workflow ID       #IMPLIED
-                      version  CDATA    #IMPLIED
                       instance CDATA    #IMPLIED
                       nodeId   CDATA    #REQUIRED
                       name     CDATA    #IMPLIED

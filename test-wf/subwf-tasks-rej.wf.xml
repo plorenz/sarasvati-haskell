@@ -3,7 +3,7 @@
 
 <workflow id="subwf-tasks-rej" version="1">
 
-  <task nodeId="sub1">
+  <task name="sub1">
     <name>Call Distributer</name>
     <description>
       This task should spawn tasks "Order Stuff" and "Request Status"
@@ -13,7 +13,7 @@
     <arc to="sub3"/>
   </task>
 
-  <task nodeId="sub2">
+  <task name="sub2">
     <name>Order Stuff</name>
     <description>
       Order stuff now.
@@ -23,7 +23,7 @@
     <arc to="sub4"/>
   </task>
 
-  <task nodeId="sub3">
+  <task name="sub3">
     <name>Request Status</name>
     <description>
       Get status on other orders.
@@ -33,7 +33,7 @@
     <arc to="sub4"/>
   </task>
 
-  <task nodeId="sub4">
+  <task name="sub4">
     <name>Mark Complete</name>
     <description>
       Sign off in application in application.

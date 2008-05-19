@@ -7,8 +7,8 @@
     <arc to="2"/>
   </start>
 
-  <task nodeId="1">
-    <name>Hello</name>
+  <task name="1">
+    <task-name>Hello</task-name>
     <description>
       Here is where one would say hello
     </description>
@@ -16,31 +16,31 @@
     <arc to="3"/>
   </task>
 
-  <task nodeId="2">
-    <name>Shake</name>
+  <task name="2">
+    <task-name>Shake</task-name>
     <description>
       Here is where you shake hands
     </description>
     <arc to="3"/>
   </task>
 
-  <task nodeId="3">
-    <name>Introduce</name>
+  <task name="3">
+    <task-name>Introduce</task-name>
     <description>
       Here is where you give your name
     </description>
     <arc to="4"/>
   </task>
 
-  <task nodeId="4">
-    <name>Pleasantry</name>
+  <task name="4">
+    <task-name>Pleasantry</task-name>
     <description>
       Here is where you say something like, 'Nice to meet you'
     </description>
     <arc to="5"/>
   </task>
 
-  <task nodeId="5">
+  <task name="5">
     <name>Converse</name>
     <description>
       Start a conversation
