@@ -1,2 +1,0 @@
-
-> module Test.IORefTest where

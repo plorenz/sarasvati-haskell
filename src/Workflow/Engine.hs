@@ -4,7 +4,7 @@ module Workflow.Engine where
 import qualified Data.Map as Map
 import qualified Workflow.Util.ListUtil as ListUtil
 import Data.Dynamic
-
+import Control.Monad
 
 -- GuardResponse
 --   Nodes have guard functions which determine if the accept function when a token
@@ -140,7 +140,7 @@ data WfGraph =
 
 data WfProcess a =
     WfProcess {
-        processId      :: Int,
+        processId  :: Int,
         nodeTypes  :: Map.Map String (NodeType a),
         wfGraph    :: WfGraph,
         nodeTokens :: [NodeToken],
@@ -149,11 +149,11 @@ data WfProcess a =
     }
 
 class WfEngine a where
-    createWfProcess     :: a -> WfGraph   -> Map.Map String (NodeType b) -> b -> IO (WfProcess b)
-    createNodeToken     :: a -> WfProcess b   -> Node -> [ArcToken] -> IO NodeToken
-    createArcToken      :: a -> WfProcess b   -> Arc  -> NodeToken  -> IO ArcToken
-    completeNodeToken   :: a -> NodeToken -> IO ()
-    completeArcToken    :: a -> ArcToken  -> IO ()
+    createWfProcess     :: a -> WfGraph     -> Map.Map String (NodeType b) -> b -> IO (WfProcess b)
+    createNodeToken     :: a -> WfProcess b -> Node -> [ArcToken] -> IO NodeToken
+    createArcToken      :: a -> WfProcess b -> Arc  -> NodeToken  -> IO ArcToken
+    completeNodeToken   :: a -> NodeToken   -> IO ()
+    completeArcToken    :: a -> ArcToken    -> IO ()
     transactionBoundary :: a -> IO ()
 
 -- showGraph
@@ -216,17 +216,8 @@ isWfComplete :: WfProcess a -> Bool
 isWfComplete (WfProcess _ _ _ [] [] _) = True
 isWfComplete _                         = False
 
--- removeInputTokens
---   Given a list of input arcs, a target node id and a list of arc tokens,
---   for each node removes the first token which has the input node as
---   its previous node and the target node as its current node
-
-removeInputTokens :: [Arc] -> t -> [ArcToken] -> [ArcToken]
-removeInputTokens []         _          tokenList = tokenList
-removeInputTokens (arc:arcs) targetNodeId tokenList =
-    removeInputTokens arcs targetNodeId $ ListUtil.removeFirst (isInputToken) tokenList
-  where
-    isInputToken tok = (arcId.arcForToken) tok == arcId arc
+-- removeNodeToken
+--   Removes the node token from the list of active node tokens in the given process
 
 removeNodeToken :: NodeToken -> WfProcess a -> WfProcess a
 removeNodeToken token wf = wf { nodeTokens = ListUtil.removeFirst (\t->t == token) (nodeTokens wf) }
@@ -246,25 +237,19 @@ completeDefaultExecution engine token wf = completeExecution engine token [] wf
 --   token.
 
 completeExecution :: (WfEngine e) => e -> NodeToken -> String -> WfProcess a -> IO (WfProcess a)
-completeExecution engine token outputArcName wf
-    | hasNoOutputs = return newWf
-    | otherwise    = do completeNodeToken engine token
-                        split outputArcs newWf
+completeExecution engine token outputArcName wf =
+  do completeNodeToken engine token
+     foldM (split) newWf outputArcs
   where
-    hasNoOutputs        = null outputArcs
+    graph        = wfGraph wf
+    currentNode  = nodeForToken token graph
+    outputArcs   = filter (\arc -> arcName arc == outputArcName ) $
+                   (graphOutputArcs graph) Map.! (nodeId currentNode)
 
-    graph               = wfGraph wf
-    currentNode         = nodeForToken token graph
-    outputArcs          = (graphOutputArcs graph) Map.! (nodeId currentNode)
+    newWf        = removeNodeToken token wf
 
-    newWf               = removeNodeToken token wf
-
-    split [] wf         = return wf
-    split (arc:arcs) wf = if ( arcName arc == outputArcName)
-                              then do arcToken <- createArcToken engine wf arc token
-                                      newWf <- acceptToken engine arcToken wf
-                                      split arcs newWf
-                              else split arcs wf
+    split wf arc = do arcToken <- createArcToken engine wf arc token
+                      acceptToken engine arcToken wf
 
 -- acceptToken
 --   Called when a token arrives at a node. The node is checked to see if it requires
