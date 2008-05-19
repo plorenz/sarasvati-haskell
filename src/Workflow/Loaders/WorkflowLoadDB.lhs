@@ -50,6 +50,13 @@ import it into the currently loading workflow.
 >     }
 >  deriving (Show)
 
+> data RefNode =
+>     RefNode {
+>         name :: String,
+>         refId :: Int
+>     }
+>   deriving (Show)
+
 > data LoadException = LoadException String
 >   deriving (Show,Typeable)
 
@@ -155,7 +162,22 @@ import it into the currently loading workflow.
 >     where
 >         sql = "select coalesce( max(version), 0) from wf_graph where name = ?"
 
+> getNodeRefId :: (IConnection a) => a-> String -> String -> Int -> IO Int
+> getNodeRefId conn graphName nodeName inst =
+>     do graphId <- getMaxGraphId conn graphName
+>        rows <- quickQuery conn sql [toSql nodeName, toSql inst, toSql graphId]
+>        return $ (fromSql.head.head) rows
+>     where
+>         sql = "select nref.id from wf_node_ref nref " ++
+>               "               join wf_node n on (nref.node_id = n.id) " ++
+>               "               join wf_graph g on (n.graph_id = g.id) " ++
+>               "  where n.name = ? and nref.instance = ? and g.id = ? "
+
 > openConn = connectPostgreSQL "port=5433"
+
+> getGraphArcs :: (IConnection a) => a-> String -> IO [RefNode]
+> getGraphArcs conn name =
+>     do return []
 
 ================================================================================
 = Load Functions
@@ -169,6 +191,35 @@ import it into the currently loading workflow.
 >        return $ Right graphId
 >     where
 >         childNodes = getChildren (rootElement doc)
+
+> processAllExternals conn graphId nodes =
+>     foldr (processNodeExternals conn graphId) initialMaps nodes
+>     where
+>         initialMaps = return $ (Map.empty, Map.empty)
+
+> processNodeExternals conn graphId node maps =
+>     foldr (processExternal conn graphId node) maps (externalArcs node)
+
+> processExternal conn graphId node extArc mapsIO =
+>     do (localInstances, dbInstances) <- ensureInstanceLoaded conn mapsIO instanceName
+>        let instanceId = localInstances Map.! instanceName
+>        targetNodeId <- getNodeRefId conn wfName (nodeName node) instanceId
+>        case (arcType extArc) of
+>            InArc  -> insertArc conn graphId targetNodeId (nodeId node) (extArcName extArc)
+>            OutArc -> insertArc conn graphId (nodeId node) targetNodeId (extArcName extArc)
+>        return (localInstances, dbInstances)
+>     where
+>        wfName       = targetWf extArc
+>        instanceName = targetInstance extArc
+
+> ensureInstanceLoaded conn mapsIO instId =
+>     do (localInstance, dbInstances) <- mapsIO
+>        case (Map.member instId localInstance) of
+>            True  -> mapsIO
+>            False -> importInstance conn mapsIO
+
+> importInstance conn mapsIO = mapsIO
+
 
 ================================================================================
 = Load Functions - Arc related
