@@ -18,6 +18,9 @@
 > readNode = do attr1 <- readAttr "a" "b"
 >               attr2 <- readAttr "c" "d"
 >               putStrLn attr1
->               return $ attr1 ++ attr2
+>               return $ Right (attr1 ++ attr2)
 
-> handleXmlError (MissingRequiredAttr name attr) = Left $ "Element " ++ name ++ " missing required attribute " ++ attr
+> exTest = do res <- catchDyn (readNode) (handleXmlError)
+>             print res
+
+> handleXmlError (MissingRequiredAttr name attr) = return $ Left $ "Element " ++ name ++ " missing required attribute " ++ attr

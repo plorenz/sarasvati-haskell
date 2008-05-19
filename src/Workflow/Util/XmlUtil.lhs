@@ -3,8 +3,24 @@
 > import Text.XML.HaXml.Combinators
 > import Text.XML.HaXml.Types
 > import Control.Monad.Error
+> import Data.Dynamic
+> import Control.Exception
+
+> data XmlException = MissingRequiredAttr String String
+>   deriving (Show,Typeable)
 
 > readAttr element name = head $ map (\(val,_)->val) $ attributed name (keep) (CElem element)
+
+> missingAttr elemName attrName = throwDyn $ MissingRequiredAttr elemName attrName
+
+> handleXml :: (XmlException -> IO a) -> IO a -> IO a
+> handleXml f a = catchDyn a f
+
+> readRequiredAttr element name
+>     | null attrList = missingAttr (elementName element) name
+>     | otherwise     = head attrList
+>     where
+>         attrList = map (\(val,_)->val) $ attributed name (keep) (CElem element)
 
 > readOptionalAttr element name defaultValue
 >     | null attrList = defaultValue
@@ -15,6 +31,8 @@
 > cElemToElem (CElem element) = element
 
 > toElem = map (cElemToElem)
+
+> elementName (Elem name _ _) = name
 
 > getChildren element = toElem $ (elm `o` children) (CElem element)
 
