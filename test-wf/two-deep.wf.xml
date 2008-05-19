@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow SYSTEM "wf.dtd">
+
+<workflow id="two-deep" version="1">
+
+  <node name="two-deep.1">
+    <externalArc workflow="one-node" instance="1" nodeId="one-node.1" type="out"/>
+  </node>
+
+  <node name="two-deep.2">
+    <externalArc workflow="one-node" instance="1" nodeId="one-node.1" type="in"/>
+  </node>
+
+</workflow>
