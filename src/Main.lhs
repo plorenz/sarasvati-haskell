@@ -9,6 +9,7 @@ Author: Paul Lorenz
 > import WorkflowXml
 > import TaskXml
 > import qualified Data.Map as Map
+> import DbTest.DbTest
 
 > handleTask :: Task -> WfInstance [Task] -> IO (WfInstance [Task])
 > handleTask task wf =
@@ -68,12 +69,15 @@ Author: Paul Lorenz
 >            BadCmd -> do putStrLn $ cmd ++ " is not a valid command or task entry"
 >                         processTasks wf
 >            NoCmd  -> processTasks wf
+>            PersistCmd -> do persistGraph graph
+>                             processTasks wf
 
-> data CmdType = ShowTokenCmd | TaskCmd | BadCmd | NoCmd
+> data CmdType = ShowTokenCmd | TaskCmd | BadCmd | NoCmd | PersistCmd
 
 > getCmdType input
 >     | null input                   = NoCmd
 >     | (map (toUpper) input) == "T" = ShowTokenCmd
+>     | (map (toUpper) input) == "P" = PersistCmd
 >     | all (isDigit) input          = TaskCmd
 >     | otherwise                    = BadCmd
 

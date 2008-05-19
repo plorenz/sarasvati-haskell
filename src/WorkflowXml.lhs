@@ -40,9 +40,12 @@ loadWfGraphFromFile
 >     do xmlStr <- readFile filename
 >        case (xmlParse' filename xmlStr) of
 >            Left msg -> return $ Left msg
->            Right doc -> loadWfGraphFromDoc doc source funcMap
+>            Right doc -> loadWfGraphFromDoc doc (createNodeSource doc) funcMap
+
+> createNodeSource doc = NodeSource name "" "0" 0
 >     where
->         source = NodeSource "test" "test" "test" 0
+>        root = rootElement doc
+>        name = readAttr root "id"
 
 Given a name and a version number, this function will return the corresponding XML document.
 

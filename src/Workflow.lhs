@@ -27,6 +27,10 @@ GuardResponse
 >     }
 >  deriving (Show)
 
+NodeExtra is a place to store any extra data that a given node may
+require. The only requirement is that the 'extra data' be a Typeable
+so it can encapsulated in a Dynamic
+
 > data NodeExtra = NoNodeExtra | NodeExtra Dynamic
 
 > mkNodeExtra extra = NodeExtra $ toDyn extra
@@ -111,6 +115,8 @@ WFGraph
 
 > data WfGraph =
 >     WfGraph {
+>        graphId         :: Int,
+>        graphName       :: String,
 >        graphNodes      :: Map.Map Int Node,
 >        graphInputArcs  :: Map.Map Int [Arc],
 >        graphOutputArcs :: Map.Map Int [Arc]
@@ -131,15 +137,16 @@ as the tokens representing the current state. A slot for user data is also defin
 showGraph
   Print prints a graph
 
-> showGraph graph = concatMap (\a->show a ++ "\n") (Map.elems (graphNodes graph)) ++ "\n" ++
+> showGraph graph = graphName graph ++ ":\n" ++
+>                   concatMap (\a->show a ++ "\n") (Map.elems (graphNodes graph)) ++ "\n" ++
 >                   concatMap (\a->show a ++ "\n") (Map.elems (graphInputArcs graph)) ++ "\n" ++
 >                   concatMap (\a->show a ++ "\n") (Map.elems (graphOutputArcs graph))
 
 graphFromNodesAndArcs
   Generates a WFGraph from a list of Nodes and Arcs
 
-> graphFromArcs :: [Node] -> [Arc] -> WfGraph
-> graphFromArcs nodes arcs = WfGraph nodeMap inputsMap outputsMap
+> graphFromArcs :: Int -> String -> [Node] -> [Arc] -> WfGraph
+> graphFromArcs id name nodes arcs = WfGraph id name nodeMap inputsMap outputsMap
 >     where
 >         nodeMap  = Map.fromList $ zip (map nodeId nodes) nodes
 >

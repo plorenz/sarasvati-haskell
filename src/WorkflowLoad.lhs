@@ -60,7 +60,7 @@ Once this is done, we can complete the load by converting the LoadNodes to NodeA
 >                            let resolvedLoadNodes = resolveAllExternalArcs allLoadNodes
 >                            putStrLn "\nAfter resolving arcs"
 >                            putStrLn (show resolvedLoadNodes)
->                            return $ Right $ loadNodesToWfGraph resolvedLoadNodes
+>                            return $ Right $ loadNodesToWfGraph (Workflow.wfName source) resolvedLoadNodes
 >    where
 >       linkedNodeMap = findNodeArcs unlinkedNodeMap
 
@@ -147,7 +147,7 @@ The following function deal with converting a map of XmlNode instances to
 a WfGraph. Since XmlNode instances only track outgoing nodes, we need to
 infer the incoming nodes.
 
-> loadNodesToWfGraph nodeMap = Workflow.graphFromArcs (map (wfNode) nodeList) (loadNodesToArcs 1 nodeList)
+> loadNodesToWfGraph name nodeMap = Workflow.graphFromArcs 0 name (map (wfNode) nodeList) (loadNodesToArcs 1 nodeList)
 >     where
 >         nodeList = Map.elems nodeMap
 

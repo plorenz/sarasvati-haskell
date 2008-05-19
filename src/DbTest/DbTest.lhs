@@ -3,8 +3,9 @@
 > import Database.HDBC.PostgreSQL
 > import Database.HDBC
 > import Workflow
+> import qualified Control.Exception as Ex
 
-> openConn = connectPostgreSQL ""
+> openConn = connectPostgreSQL "port=5433"
 
 > listTables =
 >     do conn <- openConn
@@ -12,4 +13,36 @@
 >        mapM (\s-> putStrLn s) tables
 >        disconnect conn
 
- persistGraph (WfGraph nodes _ outArcMap)
+> persistGraph graph =
+>    do catchSql (persistGraphInner graph)
+>         (\e -> do putStrLn (seErrorMsg e)
+>                   return 0)
+
+> persistGraphInner (WfGraph _ name nodes _ outArcMap) =
+>     do conn <- openConn
+>        maxVersion <- getGraphVersionNumber conn name
+>        graphId <- insertNewGraph conn name (maxVersion + 1)
+>        commit conn
+>        disconnect conn
+>        return graphId
+
+> getGraphVersionNumber conn name =
+>     do rows <- quickQuery conn select [toSql name]
+>        return $ (fromSql.head.head) rows
+>     where
+>         select = "select coalesce( max(version), 0) from wf_graph where name = ?"
+
+> insertNewGraph :: (IConnection a) => a -> String -> Int -> IO Int
+> insertNewGraph conn name version =
+>     do stmt <- prepare conn sql
+>        execute stmt [toSql name, toSql version]
+>        finish stmt
+>        getGraphId conn name version
+>     where
+>         sql = "insert into wf_graph (name, version) values ( ?, ? )"
+
+> getGraphId conn name version =
+>     do rows <- quickQuery conn select [toSql name, toSql version]
+>        return $ (fromSql.head.head) rows
+>     where
+>         select = "select id from wf_graph where name = ? and version = ?"
