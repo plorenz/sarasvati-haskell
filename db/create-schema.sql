@@ -28,10 +28,6 @@ create table wf_process
   graph_id int    NOT NULL
 );
 
-create table wf_guard_type
-(
-
-
 create table wf_node
 (
   id              serial       NOT NULL PRIMARY KEY,

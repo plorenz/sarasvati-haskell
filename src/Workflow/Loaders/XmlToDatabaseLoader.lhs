@@ -127,7 +127,7 @@ import it into the currently loading workflow.
 >        return (nextNodeId, nextNodeRefId)
 >     where
 >         nodeSql    = "insert into wf_node (id, graph_id, name, is_join, type, guard) " ++
->                      " values ( ?, ?, ?, ?, ? )"
+>                      " values ( ?, ?, ?, ?, ?, ? )"
 >         nodeRefSql = "insert into wf_node_ref (id, node_id, graph_id, instance) " ++
 >                      " values (?, ?, ?, '' )"
 
@@ -329,7 +329,9 @@ import it into the currently loading workflow.
 >        return $ LoadNode nodeId nodeName [] arcs extArcs
 >     where
 >         elemName     = case (e) of (Elem name _ _ ) -> name
->         nodeFunction = funcMap Map.! elemName
+>         nodeFunction = case (Map.member elemName funcMap) of
+>                            True  -> funcMap Map.! elemName
+>                            False -> processUnknown
 >         arcs         = readArcs e
 >         extArcs      = readExternalArcs e
 
@@ -349,6 +351,18 @@ import it into the currently loading workflow.
 >         isJoin = case (readOptionalAttr element "isJoin" "false" ) of
 >                      "false" -> False
 >                      _       -> True
+>         guard = ListUtil.trim $ readText element "guard"
+
+> processUnknown :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
+> processUnknown element conn graphId =
+>    do (_, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin nodeType guard
+>       return (nodeRefId, nodeName)
+>     where
+>         nodeType = elementName element
+>         nodeName = readRequiredAttr element "name"
+>         isJoin   = case (readOptionalAttr element "isJoin" "false" ) of
+>                        "false" -> False
+>                        _       -> True
 >         guard = ListUtil.trim $ readText element "guard"
 
 > loadFromXmlToDB ::
