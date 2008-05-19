@@ -129,14 +129,14 @@ data WfProcess a =
         nodeTokens   :: [NodeToken],
         arcTokens    :: [ArcToken],
         tokenAttrMap :: Map.Map Int [TokenAttr],
-        predicateMap :: Map.Map String (NodeToken -> WfProcess a -> GuardResponse),
+        predicateMap :: Map.Map String (NodeToken -> WfProcess a -> Bool),
         userData     :: a
     }
 
 class WfEngine a where
     createWfProcess     :: a -> WfGraph ->
                                 Map.Map String (NodeType b) ->
-                                Map.Map String (NodeToken -> WfProcess b -> GuardResponse) ->
+                                Map.Map String (NodeToken -> WfProcess b -> Bool) ->
                                 b ->
                                 IO (WfProcess b)
     createNodeToken     :: a -> WfProcess b -> Node -> [ArcToken] -> IO (WfProcess b, NodeToken)

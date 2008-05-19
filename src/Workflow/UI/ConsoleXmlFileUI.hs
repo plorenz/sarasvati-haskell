@@ -53,18 +53,18 @@ runWorkflow graph =
 
 nodeTypeMap :: Map.Map String (NodeType [Task])
 nodeTypeMap = Map.fromList
-                [ ( "start", NodeType defaultGuard completeDefaultExecution ),
-                  ( "node",  NodeType defaultGuard completeDefaultExecution ),
-                  ( "task",  NodeType defaultGuard acceptAndCreateTask ) ]
+                [ ( "start", NodeType evalGuardLang completeDefaultExecution ),
+                  ( "node",  NodeType evalGuardLang completeDefaultExecution ),
+                  ( "task",  NodeType evalGuardLang acceptAndCreateTask ) ]
 
 getWorkflowList :: IO [String]
 getWorkflowList =
     do fileList <- getDirectoryContents wfDir
        return $ (useFullPath.filterWfs) fileList
-  where
-    wfDir = "/home/paul/workspace/functional-workflow/test-wf/"
-    filterWfs = (filter (hasExtension ".wf.xml"))
-    useFullPath = (map (\f->wfDir ++ f))
+    where
+        wfDir = "/home/paul/workspace/functional-workflow/test-wf/"
+        filterWfs = (filter (hasExtension ".wf.xml"))
+        useFullPath = (map (\f->wfDir ++ f))
 
 hasExtension :: String -> String -> Bool
 hasExtension ext name = all (\(x,y) -> x == y) $ zip (reverse ext) (reverse name)

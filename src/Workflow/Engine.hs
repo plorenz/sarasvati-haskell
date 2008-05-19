@@ -1,7 +1,9 @@
 -- Author: Paul Lorenz
 
 module Workflow.Engine where
+
 import Workflow.EngineTypes
+import Workflow.WfError
 import qualified Data.Map as Map
 import qualified Workflow.Util.ListUtil as ListUtil
 import Data.Dynamic
@@ -75,7 +77,7 @@ arcForToken  (ArcToken _ arc _)           = arc
 startWorkflow :: (WfEngine engine) =>
                    engine ->
                    Map.Map String (NodeType a) ->
-                   Map.Map String (NodeToken -> WfProcess a -> GuardResponse) ->
+                   Map.Map String (NodeToken -> WfProcess a -> Bool) ->
                    WfGraph -> a -> IO ( Either String (WfProcess a))
 startWorkflow engine nodeTypes predicates graph userData
     | null startNodes       = return $ Left "Error: Workflow has no start node"
@@ -99,13 +101,6 @@ isWfComplete process
 
 removeNodeToken :: NodeToken -> WfProcess a -> WfProcess a
 removeNodeToken token wf = wf { nodeTokens = ListUtil.removeFirst (\t->t == token) (nodeTokens wf) }
-
--- defaultGuard
---   Guard function which always accepts the token
-
-defaultGuard :: a -> b -> GuardResponse
-defaultGuard _ _ = AcceptToken
-
 
 completeDefaultExecution :: (WfEngine engine) => engine -> NodeToken -> WfProcess a -> IO (WfProcess a)
 completeDefaultExecution engine token wf = completeExecution engine token [] wf
@@ -201,3 +196,30 @@ acceptWithGuard engine token wf =
         guard        = guardFunction  currNodeType
         accept       = acceptFunction currNodeType
         currNodeType = (nodeTypes wf) Map.! (nodeType currentNode)
+
+evalGuardLang :: NodeToken -> WfProcess a -> GuardResponse
+evalGuardLang token wf
+    | null guard = AcceptToken
+    | otherwise   = evalGuardLangStmt token wf $ GuardLang.evalGuard (GuardLang.lexer guard)
+    where
+        node  = nodeForToken token (wfGraph wf)
+        guard = nodeGuard node
+
+evalGuardLangStmt :: NodeToken -> WfProcess a -> GuardLang.Stmt -> GuardResponse
+evalGuardLangStmt token wf (GuardLang.StmtResult result) = result
+evalGuardLangStmt token wf (GuardLang.StmtIF expr ifStmt elseStmt)
+    | evalGuardLangExpr token wf expr = evalGuardLangStmt token wf ifStmt
+    | otherwise                       = evalGuardLangStmt token wf elseStmt
+
+evalGuardLangExpr :: NodeToken -> WfProcess a -> GuardLang.Expr -> Bool
+evalGuardLangExpr token wf (GuardLang.ExprSymbol symbol)   = evalGuardLangPred token wf symbol
+evalGuardLangExpr token wf (GuardLang.ExprOR  symbol expr) = evalGuardLangPred token wf symbol || (evalGuardLangExpr token wf expr)
+evalGuardLangExpr token wf (GuardLang.ExprAND symbol expr) = evalGuardLangPred token wf symbol && (evalGuardLangExpr token wf expr)
+
+evalGuardLangPred :: NodeToken -> WfProcess a -> String -> Bool
+evalGuardLangPred token wf predicate
+    | invalidPredicate = wfError $ "Predicate " ++ predicate ++ " not defined"
+    | otherwise        = (predMap Map.! predicate) token wf
+    where
+        predMap = predicateMap wf
+        invalidPredicate = not (Map.member predicate predMap)

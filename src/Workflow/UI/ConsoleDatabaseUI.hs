@@ -4,6 +4,7 @@ module Workflow.UI.ConsoleDatabaseUI where
 
 import IO
 import Data.Char
+import Workflow.WfError
 import Workflow.Loaders.DatabaseToEngineLoader
 import Workflow.Loaders.LoadError
 import qualified Data.Map as Map
@@ -62,9 +63,9 @@ runWorkflow graph =
 
 nodeTypeMap :: Map.Map String (NodeType [Task])
 nodeTypeMap = Map.fromList
-                [ ( "start", NodeType defaultGuard completeDefaultExecution ),
-                  ( "node",  NodeType defaultGuard completeDefaultExecution ),
-                  ( "task",  NodeType defaultGuard acceptAndCreateTask ) ]
+                [ ( "start", NodeType evalGuardLang completeDefaultExecution ),
+                  ( "node",  NodeType evalGuardLang completeDefaultExecution ),
+                  ( "task",  NodeType evalGuardLang acceptAndCreateTask ) ]
 
 getWorkflowList :: IO [String]
 getWorkflowList =
@@ -80,6 +81,11 @@ getWorkflowListFromDb conn =
 
 handleLoadError :: LoadException -> IO ()
 handleLoadError (LoadException msg) =
+    do putStrLn msg
+       return $ ()
+
+handleWorkflowError :: WfException -> IO ()
+handleWorkflowError (WfException msg) =
     do putStrLn msg
        return $ ()
 
