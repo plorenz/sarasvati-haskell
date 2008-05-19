@@ -16,7 +16,7 @@ import Control.Monad
 --   SkipNode     - The accept function is not called. The token is not discarded,
 --                  the completeExecution function is called instead.
 
-data GuardResponse = AcceptToken | DiscardToken | SkipNode
+data GuardResponse = AcceptToken | DiscardToken | SkipNode String
   deriving (Show)
 
 data NodeSource =
@@ -345,10 +345,10 @@ acceptJoin engine token process
 acceptWithGuard :: (WfEngine e) => e -> NodeToken -> WfProcess a -> IO (WfProcess a)
 acceptWithGuard engine token wf =
     case (guard token wf) of
-        AcceptToken  -> accept engine token wf
-        DiscardToken -> do completeNodeToken engine token
-                           return $ removeNodeToken token wf
-        SkipNode     -> completeDefaultExecution engine token wf
+        AcceptToken    -> accept engine token wf
+        DiscardToken   -> do completeNodeToken engine token
+                             return $ removeNodeToken token wf
+        (SkipNode arc) -> completeExecution engine token arc wf
     where
         currentNode  = nodeForToken token (wfGraph wf)
         guard        = guardFunction  currNodeType
