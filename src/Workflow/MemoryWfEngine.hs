@@ -29,7 +29,7 @@ instance WfEngine MemoryWfEngine where
 createMemoryWfProcess :: (WfEngine engine) => engine ->
                          WfGraph ->
                          Map.Map String (NodeType a) ->
-                         Map.Map String (NodeToken -> WfProcess a -> Bool) ->
+                         Map.Map String (NodeToken -> WfProcess a -> IO Bool) ->
                          a ->
                          IO (WfProcess a)
 createMemoryWfProcess _ graph nodeTypes predicates userData = return $ WfProcess 1 nodeTypes graph [] [] Map.empty predicates userData

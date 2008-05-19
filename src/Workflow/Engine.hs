@@ -77,7 +77,7 @@ arcForToken  (ArcToken _ arc _)           = arc
 startWorkflow :: (WfEngine engine) =>
                    engine ->
                    Map.Map String (NodeType a) ->
-                   Map.Map String (NodeToken -> WfProcess a -> Bool) ->
+                   Map.Map String (NodeToken -> WfProcess a -> IO Bool) ->
                    WfGraph -> a -> IO ( Either String (WfProcess a))
 startWorkflow engine nodeTypes predicates graph userData
     | null startNodes       = return $ Left "Error: Workflow has no start node"
@@ -186,37 +186,48 @@ acceptJoin engine token process
 
 acceptWithGuard :: (WfEngine e) => e -> NodeToken -> WfProcess a -> IO (WfProcess a)
 acceptWithGuard engine token wf =
-    case (guard token wf) of
-        AcceptToken    -> accept engine token wf
-        DiscardToken   -> do completeNodeToken engine token
-                             return $ removeNodeToken token wf
-        (SkipNode arc) -> completeExecution engine token arc wf
+    do guardResponse <- guard token wf
+       case guardResponse of
+           AcceptToken    -> accept engine token wf
+           DiscardToken   -> do completeNodeToken engine token
+                                return $ removeNodeToken token wf
+           (SkipNode arc) -> completeExecution engine token arc wf
     where
         currentNode  = nodeForToken token (wfGraph wf)
         guard        = guardFunction  currNodeType
         accept       = acceptFunction currNodeType
         currNodeType = (nodeTypes wf) Map.! (nodeType currentNode)
 
-evalGuardLang :: NodeToken -> WfProcess a -> GuardResponse
+evalGuardLang :: NodeToken -> WfProcess a -> IO GuardResponse
 evalGuardLang token wf
-    | null guard = AcceptToken
-    | otherwise   = evalGuardLangStmt token wf $ GuardLang.evalGuard (GuardLang.lexer guard)
+    | null guard = return $ AcceptToken
+    | otherwise  = evalGuardLangStmt token wf $ GuardLang.evalGuard (GuardLang.lexer guard)
     where
         node  = nodeForToken token (wfGraph wf)
         guard = nodeGuard node
 
-evalGuardLangStmt :: NodeToken -> WfProcess a -> GuardLang.Stmt -> GuardResponse
-evalGuardLangStmt token wf (GuardLang.StmtResult result) = result
-evalGuardLangStmt token wf (GuardLang.StmtIF expr ifStmt elseStmt)
-    | evalGuardLangExpr token wf expr = evalGuardLangStmt token wf ifStmt
-    | otherwise                       = evalGuardLangStmt token wf elseStmt
+evalGuardLangStmt :: NodeToken -> WfProcess a -> GuardLang.Stmt -> IO GuardResponse
+evalGuardLangStmt token wf (GuardLang.StmtResult result)           = return result
+evalGuardLangStmt token wf (GuardLang.StmtIF expr ifStmt elseStmt) =
+    do result <- evalGuardLangExpr token wf expr
+       case result of
+          True  -> evalGuardLangStmt token wf ifStmt
+          False -> evalGuardLangStmt token wf elseStmt
 
-evalGuardLangExpr :: NodeToken -> WfProcess a -> GuardLang.Expr -> Bool
+evalGuardLangExpr :: NodeToken -> WfProcess a -> GuardLang.Expr -> IO Bool
 evalGuardLangExpr token wf (GuardLang.ExprSymbol symbol)   = evalGuardLangPred token wf symbol
-evalGuardLangExpr token wf (GuardLang.ExprOR  symbol expr) = evalGuardLangPred token wf symbol || (evalGuardLangExpr token wf expr)
-evalGuardLangExpr token wf (GuardLang.ExprAND symbol expr) = evalGuardLangPred token wf symbol && (evalGuardLangExpr token wf expr)
+evalGuardLangExpr token wf (GuardLang.ExprOR  symbol expr) =
+    do result <- evalGuardLangPred token wf symbol
+       case result of
+           True  -> return True
+           False -> evalGuardLangExpr token wf expr
+evalGuardLangExpr token wf (GuardLang.ExprAND symbol expr) =
+    do result <- evalGuardLangPred token wf symbol
+       case result of
+           True  -> evalGuardLangExpr token wf expr
+           False -> return False
 
-evalGuardLangPred :: NodeToken -> WfProcess a -> String -> Bool
+evalGuardLangPred :: NodeToken -> WfProcess a -> String -> IO Bool
 evalGuardLangPred token wf predicate
     | invalidPredicate = wfError $ "Predicate " ++ predicate ++ " not defined"
     | otherwise        = (predMap Map.! predicate) token wf

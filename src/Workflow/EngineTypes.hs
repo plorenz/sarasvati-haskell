@@ -56,7 +56,7 @@ data Node =
 
 data NodeType a =
     NodeType {
-        guardFunction  :: (NodeToken -> WfProcess a -> GuardResponse),
+        guardFunction  :: (NodeToken -> WfProcess a -> IO GuardResponse),
         acceptFunction :: (WfEngine engine) => (engine -> NodeToken -> WfProcess a -> IO (WfProcess a))
     }
 
@@ -129,14 +129,14 @@ data WfProcess a =
         nodeTokens   :: [NodeToken],
         arcTokens    :: [ArcToken],
         tokenAttrMap :: Map.Map Int [TokenAttr],
-        predicateMap :: Map.Map String (NodeToken -> WfProcess a -> Bool),
+        predicateMap :: Map.Map String (NodeToken -> WfProcess a -> IO Bool),
         userData     :: a
     }
 
 class WfEngine a where
     createWfProcess     :: a -> WfGraph ->
                                 Map.Map String (NodeType b) ->
-                                Map.Map String (NodeToken -> WfProcess b -> Bool) ->
+                                Map.Map String (NodeToken -> WfProcess b -> IO Bool) ->
                                 b ->
                                 IO (WfProcess b)
     createNodeToken     :: a -> WfProcess b -> Node -> [ArcToken] -> IO (WfProcess b, NodeToken)

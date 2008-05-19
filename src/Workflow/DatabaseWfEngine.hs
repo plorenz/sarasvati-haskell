@@ -110,7 +110,7 @@ deleteTokenAttr conn nodeTokenId name =
 createDatabaseWfProcess :: DatabaseWfEngine ->
                            WfGraph ->
                            Map.Map String (NodeType a) ->
-                           Map.Map String (NodeToken -> WfProcess a -> Bool) ->
+                           Map.Map String (NodeToken -> WfProcess a -> IO Bool) ->
                            a ->
                            IO (WfProcess a)
 createDatabaseWfProcess (DatabaseWfEngine conn) graph nodeTypes predicates userData =
