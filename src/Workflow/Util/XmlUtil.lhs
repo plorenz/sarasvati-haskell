@@ -5,6 +5,7 @@
 > import Control.Monad.Error
 > import Data.Dynamic
 > import Control.Exception
+> import Workflow.Util.ListUtil
 
 > data XmlException = MissingRequiredAttr String String
 >   deriving (Show,Typeable)
@@ -17,10 +18,12 @@
 > handleXml f a = catchDyn a f
 
 > readRequiredAttr element name
->     | null attrList = missingAttr (elementName element) name
->     | otherwise     = head attrList
+>     | isMissing = missingAttr (elementName element) name
+>     | otherwise = head attrList
 >     where
->         attrList = map (\(val,_)->val) $ attributed name (keep) (CElem element)
+>         attrList  = map (\(val,_)->val) $ attributed name (keep) (CElem element)
+>         attr      = (trim.head) attrList
+>         isMissing = null attrList || null attr
 
 > readOptionalAttr element name defaultValue
 >     | null attrList = defaultValue
