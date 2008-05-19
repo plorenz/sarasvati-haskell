@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow SYSTEM "wf.dtd">
+
+<workflow id="subwf-tasks-rej" version="1">
+
+  <task nodeId="sub1">
+    <name>Call Distributer</name>
+    <description>
+      This task should spawn tasks "Order Stuff" and "Request Status"
+    </description>
+
+    <arc to="sub2"/>
+    <arc to="sub3"/>
+  </task>
+
+  <task nodeId="sub2">
+    <name>Order Stuff</name>
+    <description>
+      Order stuff now.
+
+      Mark Complete shouldn't spawn until this and Request status are both complete.
+    </description>
+    <arc to="sub4"/>
+  </task>
+
+  <task nodeId="sub3">
+    <name>Request Status</name>
+    <description>
+      Get status on other orders.
+
+      Mark Complete shouldn't spawn until this and Order Stuff are both complete.
+    </description>
+    <arc to="sub4"/>
+  </task>
+
+  <task nodeId="sub4">
+    <name>Mark Complete</name>
+    <description>
+      Sign off in application in application.
+    </description>
+    <arc to="sub1" name="reject"/>
+  </task>
+
+</workflow>

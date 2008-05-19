@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow SYSTEM "wf.dtd">
+
+<workflow id="one-node" version="1">
+  <start>
+    <arc to="1"/>
+  </start>
+
+  <node nodeId="1"/>
+</workflow>

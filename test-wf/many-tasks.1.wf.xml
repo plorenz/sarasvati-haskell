@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow SYSTEM "wf.dtd">
+
+<workflow id="one-node" version="1">
+  <start>
+    <arc to="1"/>
+    <arc to="2"/>
+  </start>
+
+  <task nodeId="1">
+    <name>Hello</name>
+    <description>
+      Here is where one would say hello
+    </description>
+
+    <arc to="3"/>
+  </task>
+
+  <task nodeId="2">
+    <name>Shake</name>
+    <description>
+      Here is where you shake hands
+    </description>
+    <arc to="3"/>
+  </task>
+
+  <task nodeId="3">
+    <name>Introduce</name>
+    <description>
+      Here is where you give your name
+    </description>
+    <arc to="4"/>
+  </task>
+
+  <task nodeId="4">
+    <name>Pleasantry</name>
+    <description>
+      Here is where you say something like, 'Nice to meet you'
+    </description>
+    <arc to="5"/>
+  </task>
+
+  <task nodeId="5">
+    <name>Converse</name>
+    <description>
+      Start a conversation
+    </description>
+  </task>
+
+</workflow>
