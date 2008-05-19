@@ -68,8 +68,8 @@ NodeType
 
 > data NodeType a =
 >     NodeType {
->         guardFunction  :: (NodeToken -> WfInstance a -> GuardResponse),
->         acceptFunction :: (WfEngine engine) => (engine -> NodeToken -> WfInstance a -> IO (WfInstance a))
+>         guardFunction  :: (NodeToken -> WfRun a -> GuardResponse),
+>         acceptFunction :: (WfEngine engine) => (engine -> NodeToken -> WfRun a -> IO (WfRun a))
 >     }
 
 Arc
@@ -113,6 +113,9 @@ ArcToken represents tokens which are between nodes (on an arc)
 > instance Token (ArcToken) where
 >     tokenId (ArcToken tokId _) = tokId
 
+> instance Eq (ArcToken) where
+>     tok1 == tok2 = (tokenId tok1) == (tokenId tok2)
+
 WFGraph
   Has the set of nodes as well as maps of node input arcs and node output arcs
   keyed by node id.
@@ -126,11 +129,12 @@ WFGraph
 >        graphOutputArcs :: Map.Map Int [Arc]
 >     }
 
-A WfInstance tracks the current state of the workflow. It has the workflow graph as well
+A WfRun tracks the current state of the workflow. It has the workflow graph as well
 as the tokens representing the current state. A slot for user data is also defined.
 
-> data WfInstance a =
->     WfInstance {
+> data WfRun a =
+>     WfRun {
+>         runId      :: Int,
 >         nodeTypes  :: Map.Map String (NodeType a),
 >         wfGraph    :: WfGraph,
 >         nodeTokens :: [NodeToken],
@@ -139,8 +143,9 @@ as the tokens representing the current state. A slot for user data is also defin
 >     }
 
 > class WfEngine a where
->     createNodeToken :: a -> WfGraph -> Node -> IO NodeToken
->     createArcToken  :: a -> WfGraph -> Arc  -> IO ArcToken
+>     createWfRun     :: a -> WfGraph -> Map.Map String (NodeType b) -> b -> IO (WfRun b)
+>     createNodeToken :: a -> WfRun b -> Node -> [ArcToken] -> IO NodeToken
+>     createArcToken  :: a -> WfRun b -> Arc  -> NodeToken  -> IO ArcToken
 
 showGraph
   Print prints a graph
@@ -169,7 +174,7 @@ getTokenForId
   Given a token id and a workflow instance gives back the actual token
   corresponding to that id
 
-> getNodeTokenForId :: Int -> WfInstance a -> NodeToken
+> getNodeTokenForId :: Int -> WfRun a -> NodeToken
 > getNodeTokenForId tokId wf =
 >   head $ filter (\t -> (tokenId t) == tokId) (nodeTokens wf)
 
@@ -185,21 +190,22 @@ startWorkflow
   Given a workflow definition (WfGraph) and initial userData, gives
   back a new in progress workflow instance for that definition.
 
-> startWorkflow :: (WfEngine e) => e -> Map.Map String (NodeType a) -> WfGraph -> a -> IO ( Either String (WfInstance a))
+> startWorkflow :: (WfEngine e) => e -> Map.Map String (NodeType a) -> WfGraph -> a -> IO ( Either String (WfRun a))
 > startWorkflow engine nodeTypes graph userData
 >     | null startNodes       = return $ Left "Error: Workflow has no start node"
 >     | length startNodes > 1 = return $ Left "Error: Workflow has more than one start node"
->     | otherwise             = do startToken <- createNodeToken engine graph startNode
->                                  wfInstance <- acceptWithGuard engine startToken (WfInstance nodeTypes graph [startToken] [] userData)
->                                  return $ Right wfInstance
+>     | otherwise             = do wfRun <- createWfRun engine graph nodeTypes userData
+>                                  startToken <- createNodeToken engine wfRun startNode []
+>                                  wfRun <- acceptWithGuard engine startToken (wfRun { nodeTokens = [startToken] })
+>                                  return $ Right wfRun
 >   where
 >     startNodes = filter (isStartNode) $ Map.elems (graphNodes graph)
 >     startNode  = head startNodes
 >     isStartNode node = (nodeName node == "start") && ((wfDepth.nodeSource) node == 0)
 
-> isWfComplete :: WfInstance a -> Bool
-> isWfComplete (WfInstance _ _ [] [] _) = True
-> isWfComplete _                        = False
+> isWfComplete :: WfRun a -> Bool
+> isWfComplete (WfRun _ _ _ [] [] _) = True
+> isWfComplete _                     = False
 
 removeInputTokens
   Given a list of input arcs, a target node id and a list of arc tokens,
@@ -213,7 +219,7 @@ removeInputTokens
 >   where
 >     isInputToken tok = (arcId.arcForToken) tok == arcId arc
 
-> removeNodeToken :: NodeToken -> WfInstance a -> WfInstance a
+> removeNodeToken :: NodeToken -> WfRun a -> WfRun a
 > removeNodeToken token wf = wf { nodeTokens = ListUtil.removeFirst (\t->t == token) (nodeTokens wf) }
 
 defaultGuard
@@ -223,18 +229,18 @@ defaultGuard
 > defaultGuard _ _ = AcceptToken
 
 
-> completeDefaultExecution :: (WfEngine e) => e -> NodeToken -> WfInstance a -> IO (WfInstance a)
+> completeDefaultExecution :: (WfEngine engine) => engine -> NodeToken -> WfRun a -> IO (WfRun a)
 > completeDefaultExecution engine token wf = completeExecution engine token [] wf
 
 completeExecution
   Generates a new token for each output node of the current node of the given
   token.
 
-> completeExecution :: (WfEngine e) => e -> NodeToken -> String -> WfInstance a -> IO (WfInstance a)
+> completeExecution :: (WfEngine e) => e -> NodeToken -> String -> WfRun a -> IO (WfRun a)
 > completeExecution engine token outputArcName wf
 >     | hasNoOutputs = return newWf
 >     | hasOneOutput = if (firstOutputName == outputArcName)
->                          then do arcToken <- createArcToken engine graph (head outputArcs)
+>                          then do arcToken <- createArcToken engine wf (head outputArcs) token
 >                                  acceptToken engine arcToken newWf
 >                          else return newWf
 >     | otherwise    = split outputArcs newWf
@@ -252,7 +258,7 @@ completeExecution
 >
 >     split [] wf         = return wf
 >     split (arc:arcs) wf = if ( arcName arc == outputArcName)
->                               then do arcToken <- createArcToken engine graph arc
+>                               then do arcToken <- createArcToken engine wf arc token
 >                                       newWf <- acceptToken engine arcToken wf
 >                                       split arcs newWf
 >                               else split arcs wf
@@ -262,7 +268,7 @@ acceptToken
   tokens at all inputs. If it doesn't, the acceptSingle function is called. Otherwise
   it calls acceptJoin.
 
-> acceptToken :: (WfEngine e) => e -> ArcToken -> WfInstance a -> IO (WfInstance a)
+> acceptToken :: (WfEngine e) => e -> ArcToken -> WfRun a -> IO (WfRun a)
 > acceptToken engine token wf
 >     | isAcceptSingle = acceptSingle engine token wf
 >     | otherwise      = acceptJoin   engine token wf
@@ -274,9 +280,9 @@ acceptSingle
   Called when a node requires only a single incoming token to activate.
   Moves the token into the node and calls the guard function
 
-> acceptSingle :: (WfEngine e) => e -> ArcToken -> WfInstance a -> IO (WfInstance a)
+> acceptSingle :: (WfEngine e) => e -> ArcToken -> WfRun a -> IO (WfRun a)
 > acceptSingle engine token wf =
->   do newToken <- createNodeToken engine graph node
+>   do newToken <- createNodeToken engine wf node [token]
 >      acceptWithGuard engine newToken wf { nodeTokens = newToken:(nodeTokens wf) }
 >   where
 >     graph = wfGraph wf
@@ -289,23 +295,25 @@ acceptJoin
   If all inputs don't yet have inputs, adds the current token to the workflow
   instance and returns.
 
-> acceptJoin :: (WfEngine e) => e -> ArcToken -> WfInstance a -> IO (WfInstance a)
-> acceptJoin engine token (WfInstance nodeTypes graph nodeTokens arcTokens userData)
->     | areAllInputsPresent = do newToken <- createNodeToken engine graph targetNode
->                                let newWf = WfInstance nodeTypes graph (newToken:nodeTokens) outputTokenList userData
+> acceptJoin :: (WfEngine e) => e -> ArcToken -> WfRun a -> IO (WfRun a)
+> acceptJoin engine token wf@(WfRun runId nodeTypes graph nodeTokens arcTokens userData)
+>     | areAllInputsPresent = do newToken <- createNodeToken engine wf targetNode inputTokens
+>                                let newWf = WfRun runId nodeTypes graph (newToken:nodeTokens) outputTokenList userData
 >                                acceptWithGuard engine newToken newWf
->     | otherwise           = return $ WfInstance nodeTypes graph nodeTokens allArcTokens userData
+>     | otherwise           = return $ WfRun runId nodeTypes graph nodeTokens allArcTokens userData
 >   where
 >     allArcTokens          = token:arcTokens
->     areAllInputsPresent   = all (inputArcHasToken) inputArcs
+>     areAllInputsPresent   = length inputTokens == length inputArcs
 >
->     inputArcHasToken arc  = arcName arc /= (arcName.arcForToken) token ||
->                             any (\arcToken -> (arcId.arcForToken) arcToken == arcId arc) allArcTokens
+>     fstInputArcToken arc  = ListUtil.firstMatch (\arcToken -> (arcId.arcForToken) arcToken == arcId arc) allArcTokens
+>
+>     inputTokens           = ListUtil.removeNothings $ map (fstInputArcToken) inputArcs
 >
 >     targetNodeId          = (endNodeId.arcForToken) token
 >     targetNode            = (graphNodes graph) Map.! targetNodeId
->     inputArcs             = (graphInputArcs graph) Map.! targetNodeId
->     outputTokenList       = removeInputTokens inputArcs targetNodeId arcTokens
+>     allInputArcs          = (graphInputArcs graph) Map.! targetNodeId
+>     inputArcs             = filter (\arc-> arcName arc == (arcName.arcForToken) token) allInputArcs
+>     outputTokenList       = filter (\t -> not $ elem t inputTokens) arcTokens
 
 acceptWithGuard
   This is only called once the node is ready to fire. The given token is now in the node
@@ -313,7 +321,7 @@ acceptWithGuard
   The node guard method is now called and the appropriate action will be taken based on
   what kind of GuardResponse is returned.
 
-> acceptWithGuard :: (WfEngine e) => e -> NodeToken -> WfInstance a -> IO (WfInstance a)
+> acceptWithGuard :: (WfEngine e) => e -> NodeToken -> WfRun a -> IO (WfRun a)
 > acceptWithGuard engine token wf =
 >     case (guard token wf) of
 >         AcceptToken  -> accept engine token wf

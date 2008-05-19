@@ -2,9 +2,6 @@ Author: Paul Lorenz
 
 > module Workflow.UI.ConsoleDatabaseUI where
 
-> import Workflow.Engine
-> import Workflow.Task.Task
-> import Workflow.Task.TaskDB
 > import IO
 > import Data.Char
 > import Data.IORef
@@ -13,8 +10,14 @@ Author: Paul Lorenz
 > import qualified Data.Map as Map
 > import qualified Workflow.Util.DbUtil as DbUtil
 > import Database.HDBC
+> import Database.HDBC.Types
+> import Workflow.Engine
+> import Workflow.DatabaseWfEngine
 > import Workflow.MemoryWfEngine
+> import Workflow.Task.Task
+> import Workflow.Task.TaskDB
 > import Workflow.UI.ConsoleCommon
+> import Workflow.Util.DbUtil as DbUtil
 
 > consoleMain :: IO ()
 > consoleMain =
@@ -48,8 +51,8 @@ Author: Paul Lorenz
 
 > runWorkflow :: WfGraph -> IO ()
 > runWorkflow graph =
->     do tokenCounter <- newIORef 1
->        let engine = MemoryWfEngine tokenCounter
+>     do conn <- DbUtil.openDbConnection
+>        let engine = DatabaseWfEngine (ConnWrapper conn)
 >        result <- startWorkflow engine nodeTypeMap graph []
 >        case (result) of
 >            Left msg -> putStrLn msg

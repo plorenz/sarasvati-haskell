@@ -41,3 +41,16 @@ Removes leading and trailing whitespace
 
 > trim :: String -> String
 > trim s = (trimLeading.reverse.trimLeading.reverse) s
+
+> firstMatch :: (a-> Bool) -> [a] -> Maybe a
+> firstMatch _ []     = Nothing
+> firstMatch f (x:xs) | f x       = Just x
+>                     | otherwise = firstMatch f xs
+
+> removeNothings :: [Maybe a] -> [a]
+> removeNothings = (map (stripJust)).(filter (onlyJust))
+>     where
+>         onlyJust Nothing   = False
+>         onlyJust (Just _)  = True
+>         stripJust Nothing  = error "This should never happen: ListUtil.removeNothings"
+>         stripJust (Just x) = x

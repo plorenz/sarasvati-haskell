@@ -4,7 +4,7 @@ import Workflow.Engine
 import Workflow.Task.Task
 import Data.Char
 
-handleTask :: (WfEngine e) => e -> Task -> WfInstance [Task] -> IO (WfInstance [Task])
+handleTask :: (WfEngine e) => e -> Task -> WfRun [Task] -> IO (WfRun [Task])
 handleTask engine task wf =
     do putStrLn $ "Task name: " ++ (taskName task)
        putStrLn $ "Task desc: " ++ (taskDesc task)
@@ -44,9 +44,9 @@ showTokens []     = return ()
 showTokens (x:xs) = do putStrLn (show x)
                        showTokens xs
 
-processTasks :: (WfEngine e) => e -> WfInstance [Task] -> IO ()
-processTasks _         (WfInstance _ _ [] [] _    ) = putStrLn "Workflow complete!"
-processTasks engine wf@(WfInstance _ _ _  _  tasks) =
+processTasks :: (WfEngine e) => e -> WfRun [Task] -> IO ()
+processTasks _         (WfRun _ _ _ [] [] _    ) = putStrLn "Workflow complete!"
+processTasks engine wf@(WfRun _ _ _ _  _  tasks) =
     do putStrLn ""
        showTaskList tasks
        putStr "> "

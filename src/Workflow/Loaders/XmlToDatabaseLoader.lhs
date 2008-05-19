@@ -99,7 +99,7 @@ import it into the currently loading workflow.
 > insertNewGraph conn name =
 >     do maxVersion <- getMaxGraphVersion conn name
 >        putStrLn $ "Current version of " ++ name ++ " is " ++ (show maxVersion)
->        nextId <- nextSeqVal conn "wf_graph_id_seq"
+>        nextId <- DbUtil.nextSeqVal conn "wf_graph_id_seq"
 >        run conn sql [toSql nextId,
 >                      toSql name,
 >                      toSql (maxVersion + 1)]
@@ -110,14 +110,14 @@ import it into the currently loading workflow.
 
 > insertNodeWithRef :: (IConnection conn) => conn -> Int -> String -> Bool -> String -> IO (Int,Int)
 > insertNodeWithRef conn graphId nodeName isJoin nodeType =
->     do nextNodeId <- nextSeqVal conn "wf_node_id_seq"
+>     do nextNodeId <- DbUtil.nextSeqVal conn "wf_node_id_seq"
 >        run conn nodeSql
 >                  [toSql nextNodeId,
 >                   toSql graphId,
 >                   toSql nodeName,
 >                   toSql isJoin,
 >                   toSql nodeType]
->        nextNodeRefId <- nextSeqVal conn "wf_node_ref_id_seq"
+>        nextNodeRefId <- DbUtil.nextSeqVal conn "wf_node_ref_id_seq"
 >        run conn nodeRefSql
 >                  [toSql nextNodeRefId,
 >                   toSql nextNodeId,
@@ -132,7 +132,7 @@ import it into the currently loading workflow.
 > insertNodeRef :: (IConnection conn) => conn -> Int -> Int -> String -> IO Int
 > insertNodeRef conn graphId copyRefId instanceName =
 >     do putStrLn $ "Copying ref: " ++ (show copyRefId) ++ " using instance name: " ++ instanceName ++ " in graph: " ++ (show graphId)
->        nextNodeRefId <- nextSeqVal conn "wf_node_ref_id_seq"
+>        nextNodeRefId <- DbUtil.nextSeqVal conn "wf_node_ref_id_seq"
 >        run conn nodeRefSql
 >                  [toSql nextNodeRefId,
 >                   toSql graphId,
@@ -148,7 +148,7 @@ import it into the currently loading workflow.
 
 > insertArc :: (IConnection conn) => conn -> Int -> Int -> Int -> String -> IO ()
 > insertArc conn graphId startNode endNode arcName =
->     do nextArcId <- nextSeqVal conn "wf_arc_id_seq"
+>     do nextArcId <- DbUtil.nextSeqVal conn "wf_arc_id_seq"
 >        run conn sql
 >                  [toSql nextArcId,
 >                   toSql graphId,
@@ -159,13 +159,6 @@ import it into the currently loading workflow.
 >     where
 >         sql = "insert into wf_arc (id, graph_id, a_node_ref_id, z_node_ref_id, name ) " ++
 >               " values ( ?, ?, ?, ?, ? ) "
-
-> nextSeqVal :: (IConnection a) => a -> String -> IO Int
-> nextSeqVal conn name =
->     do rows <- quickQuery conn sql [toSql name]
->        return $ (fromSql.head.head) rows
->     where
->         sql = "select nextval( ? )"
 
 > getMaxGraphVersion :: (IConnection a) => a-> String -> IO Int
 > getMaxGraphVersion conn name =

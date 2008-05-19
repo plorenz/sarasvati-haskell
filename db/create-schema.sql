@@ -7,6 +7,7 @@ drop table if exists wf_node_task;
 drop table if exists wf_node;
 drop table if exists wf_node_source;
 drop table if exists wf_instance;
+drop table if exists wf_run;
 drop table if exists wf_graph;
 
 
@@ -21,7 +22,7 @@ ALTER TABLE wf_graph
   ADD CONSTRAINT wf_graph_unique
     UNIQUE(name,version);
 
-create table wf_instance
+create table wf_run
 (
   id       serial NOT NULL PRIMARY KEY,
   graph_id int    NOT NULL
@@ -60,17 +61,19 @@ create table wf_arc
 create table wf_node_token
 (
   id            serial    NOT NULL PRIMARY KEY,
-  instance_id   int       NOT NULL REFERENCES wf_instance,
+  run_id        int       NOT NULL REFERENCES wf_run,
   node_ref_id   int       NOT NULL REFERENCES wf_node_ref,
+  create_date   timestamp NOT NULL DEFAULT current_timestamp,
   complete_date timestamp NULL
 );
 
 create table wf_arc_token
 (
   id            serial    NOT NULL PRIMARY KEY,
-  instance_id   int       NOT NULL REFERENCES wf_instance,
+  run_id        int       NOT NULL REFERENCES wf_run,
   arc_id        int       NOT NULL REFERENCES wf_arc,
   prev_token_id int       NOT NULL REFERENCES wf_node_token,
+  create_date   timestamp NOT NULL DEFAULT current_timestamp,
   complete_date timestamp NULL
 );
 
