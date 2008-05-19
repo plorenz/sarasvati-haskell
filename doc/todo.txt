@@ -9,6 +9,9 @@ DONE - Implement Node guards
 DONE - Create workflow file format (not accounting for nested workflows)
 DONE - Implement nested workflows (implemented via workflow composition)
 DONE - Support named arcs for flow control
+DONE - Database persistence
+       Implemented relatively space efficient means of storing composed workflows in database
+       Tokens provide flow history
 
 In Progress:
 ---------------------------------------------------------------------
@@ -21,6 +24,5 @@ More work with workflow graph composition.
 
 Future posibilities:
 ---------------------------------------------------------------------
-DB Persistence
 Web UI
 GTK UI
