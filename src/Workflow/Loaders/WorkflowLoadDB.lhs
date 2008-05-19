@@ -170,6 +170,10 @@ import it into the currently loading workflow.
 >     where
 >         childNodes = getChildren (rootElement doc)
 
+================================================================================
+= Load Functions - Arc related
+================================================================================
+
 > processArcs conn graphId loadNode = mapM (processArc) (arcs loadNode)
 >     where
 >         processArc arc = insertArc conn graphId startId (snd arc) (fst arc)
@@ -192,6 +196,10 @@ import it into the currently loading workflow.
 >         noTarget      = null targetNodes
 >         toManyTargets = length targetNodes > 1
 
+================================================================================
+= Load Functions - Node related
+================================================================================
+
 > processChildNode graphId funcMap conn e =
 >     do (nodeId, nodeName) <- nodeFunction e conn graphId
 >        return $ LoadNode nodeId nodeName [] arcs extArcs
@@ -200,7 +208,6 @@ import it into the currently loading workflow.
 >         nodeFunction = funcMap Map.! elemName
 >         arcs         = readArcs e
 >         extArcs      = readExternalArcs e
-
 
 > processStart :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
 > processStart element conn graphId =
