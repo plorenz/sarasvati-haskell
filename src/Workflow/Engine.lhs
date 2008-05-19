@@ -36,6 +36,10 @@ so it can encapsulated in a Dynamic
 > makeNodeExtra :: (Typeable a) => a -> NodeExtra
 > makeNodeExtra extra = NodeExtra $ toDyn extra
 
+> instance Show (NodeExtra) where
+>     show NoNodeExtra = "NoNodeExtra"
+>     show _           = "NodeExtra: Dynamic"
+
 Node
   Represents a node in a workflow graph.
 
@@ -74,10 +78,10 @@ Arc
 
 > data Arc =
 >     Arc {
->         arcId     :: Int,
->         arcName   :: String,
->         inNodeId  :: Int,
->         outNodeId :: Int
+>         arcId        :: Int,
+>         arcName      :: String,
+>         startNodeId  :: Int,
+>         endNodeId    :: Int
 >     }
 >  deriving (Show)
 
@@ -152,10 +156,10 @@ graphFromNodesAndArcs
 >         nodeMap  = Map.fromList $ zip (map nodeId nodes) nodes
 >
 >         inputsMap             = Map.fromList $ zip (map nodeId nodes) (map inputArcsForNode nodes)
->         inputArcsForNode node = filter (\arc -> outNodeId arc == nodeId node) arcs
+>         inputArcsForNode node = filter (\arc -> endNodeId arc == nodeId node) arcs
 >
 >         outputsMap = Map.fromList $ zip (map nodeId nodes) (map outputArcsForNode nodes)
->         outputArcsForNode node = filter (\arc -> inNodeId arc == nodeId node) arcs
+>         outputArcsForNode node = filter (\arc -> startNodeId arc == nodeId node) arcs
 
 getTokenForId
   Given a token id and a workflow instance gives back the actual token
@@ -275,7 +279,7 @@ acceptToken
 >     | otherwise      = acceptJoin   token wf
 >   where
 >     isAcceptSingle = not $ nodeIsJoin targetNode
->     targetNode     = ((graphNodes.wfGraph) wf) Map.! ((outNodeId.arcForToken) token)
+>     targetNode     = ((graphNodes.wfGraph) wf) Map.! ((endNodeId.arcForToken) token)
 
 acceptSingle
   Called when a node requires only a single incoming token to activate.
@@ -284,7 +288,7 @@ acceptSingle
 > acceptSingle :: ArcToken -> WfInstance a -> IO (WfInstance a)
 > acceptSingle token wf = acceptWithGuard newToken newWf
 >   where
->     newToken   = NodeToken (tokenId token) $ (outNodeId.arcForToken) token
+>     newToken   = NodeToken (tokenId token) $ (endNodeId.arcForToken) token
 >     newWf      = wf { nodeTokens = newToken:(nodeTokens wf) }
 
 acceptJoin
@@ -305,7 +309,7 @@ acceptJoin
 >     inputArcHasToken arc  = arcName arc /= (arcName.arcForToken) token ||
 >                             any (\arcToken -> (arcId.arcForToken) arcToken == arcId arc) allArcTokens
 >
->     targetNodeId          = (outNodeId.arcForToken) token
+>     targetNodeId          = (endNodeId.arcForToken) token
 >     inputArcs             = (graphInputArcs graph) Map.! targetNodeId
 >     outputTokenList       = removeInputTokens inputArcs targetNodeId arcTokens
 >

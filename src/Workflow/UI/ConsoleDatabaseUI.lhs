@@ -1,17 +1,20 @@
 Author: Paul Lorenz
 
-> module ConsoleDatabaseUI where
+> module Workflow.UI.ConsoleDatabaseUI where
+
 > import Workflow.Engine
 > import Workflow.Task.Task
+> import Workflow.Task.TaskDB
 > import IO
 > import Data.Char
 > import System.Directory
-> import Workflow.Loaders.WorkflowLoadXml
-> import Workflow.Task.TaskXml
+> import Workflow.Loaders.DatabaseToEngineLoader
+> import Workflow.Loaders.LoadError
 > import qualified Data.Map as Map
 > import qualified Workflow.Util.DbUtil as DbUtil
 > import Database.HDBC
 > import Database.HDBC.PostgreSQL
+
 
 > handleTask :: Task -> WfInstance [Task] -> IO (WfInstance [Task])
 > handleTask task wf =
@@ -98,21 +101,22 @@ Author: Paul Lorenz
 >        putStr "\nSelect workflow: "
 >        wf <- getLine
 >        if ((not $ null wf) && all (isDigit) wf)
->          then useWorkflow wfList (((read wf)::Int) - 1)
+>          then handleAll (useWorkflow wfList (((read wf)::Int) - 1))
 >          else do putStrLn $ "ERROR: " ++ wf ++ " is not a valid workflow"
 >        selectWorkflow wfList
+>     where
+>         handleAll = (handleSql handleDbError).(handleLoad handleLoadError)
 
 > useWorkflow :: [String] -> Int -> IO ()
 > useWorkflow wfList idx
 >     | length wfList <= idx = do putStrLn "ERROR: Invalid workflow number"
->     | otherwise            = do result <- loadWfGraphFromFile (wfList !! idx) elemFunctionMap
->                                 case (result) of
->                                     Left msg -> putStrLn $ "ERROR: Could not load workflow: " ++ msg
->                                     Right graph -> do putStrLn "Running workflow"
->                                                       putStrLn (showGraph graph)
->                                                       runWorkflow graph
+>     | otherwise            = do conn <- DbUtil.openDbConnection
+>                                 graph <- loadGraph conn (wfList !! idx) typeMap
+>                                 putStrLn "Running workflow"
+>                                 putStrLn (showGraph graph)
+>                                 runWorkflow graph
 >    where
->        elemFunctionMap = elemMapWith [ ("task", processTaskElement) ]
+>        typeMap = Map.fromList [ ("task", loadTask) ]
 
 > runWorkflow :: WfGraph -> IO ()
 > runWorkflow graph =
@@ -145,5 +149,12 @@ Author: Paul Lorenz
 >     where
 >         sql = "select distinct name from wf_graph order by name asc"
 
-> hasExtension :: String -> String -> Bool
-> hasExtension ext name = all (\(x,y) -> x == y) $ zip (reverse ext) (reverse name)
+> handleLoadError (LoadException msg) =
+>     do putStrLn msg
+>        return $ ()
+
+> handleDbError sqlError =
+>     do putStrLn msg
+>        return ()
+>     where
+>        msg = "Database error: " ++ (seErrorMsg sqlError)

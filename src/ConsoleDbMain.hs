@@ -1,6 +1,7 @@
 
 module Main where
-import ConsoleDatabaseUI
+
+import Workflow.UI.ConsoleDatabaseUI
 
 main :: IO ()
 main = consoleMain

@@ -11,6 +11,7 @@
 > import Workflow.Util.XmlUtil as XmlUtil
 > import qualified Workflow.Util.DbUtil as DbUtil
 > import Data.Dynamic
+> import Workflow.Loaders.LoadError
 
 ================================================================================
 = Data Type Definitions
@@ -44,7 +45,6 @@ import it into the currently loading workflow.
 >     ExternalArc {
 >       targetNodeName :: String,
 >       targetWf       :: String,
->       targetVersion  :: String,
 >       targetInstance :: String,
 >       extArcName     :: String,
 >       arcType        :: ArcType
@@ -58,14 +58,6 @@ import it into the currently loading workflow.
 >         loadArcRefZ  :: Int
 >     }
 >   deriving (Show)
-
-> data LoadException = LoadException String
->   deriving (Show,Typeable)
-
-> loadError msg = throwDyn $ LoadException msg
-
-> handleLoad :: (LoadException -> IO a) -> IO a -> IO a
-> handleLoad f a = catchDyn a f
 
 ================================================================================
 = XML Functions
@@ -88,10 +80,9 @@ import it into the currently loading workflow.
 >     where
 >         childElem = XmlUtil.toElem $ ((tag "externalArc") `o` children) (CElem element)
 
-> readExternalArcFromElem e = ExternalArc nodeId workflowId version instanceId arcName arcType
+> readExternalArcFromElem e = ExternalArc nodeId workflowId instanceId arcName arcType
 >     where
 >         workflowId = readRequiredAttr e "workflow"
->         version    = readRequiredAttr e "version"
 >         instanceId = readRequiredAttr e "instance"
 >         nodeId     = readRequiredAttr e "nodeId"
 >         arcTypeS   = readRequiredAttr e "type"
@@ -148,11 +139,14 @@ import it into the currently loading workflow.
 >                  [toSql nextNodeRefId,
 >                   toSql graphId,
 >                   toSql instanceName,
+>                   toSql instanceName,
 >                   toSql copyRefId]
 >        return nextNodeRefId
 >     where
 >         nodeRefSql = "insert into wf_node_ref (id, node_id, graph_id, instance) " ++
->                      " select ?, node_id, ?, ? from wf_node_ref where id = ? "
+>                      " select ?, node_id, ?, " ++
+>                      "        CASE WHEN instance = '' then ? ELSE ? || ':' || instance END " ++
+>                      " from wf_node_ref where id = ? "
 
 > insertArc conn graphId startNode endNode arcName =
 >     do nextArcId <- nextSeqVal conn "wf_arc_id_seq"

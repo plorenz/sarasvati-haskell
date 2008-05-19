@@ -143,7 +143,7 @@ To import an external workflow into loading workflow, we must take the following
 > importXmlNode baseIncr outputMap (nextId, extNode) = LoadNode node (map (toFixedIdOutput) outputList) [] []
 >     where
 >         node       =  extNode { nodeId = nextId }
->         toFixedIdOutput arc = (arcName arc, baseIncr + (outNodeId arc))
+>         toFixedIdOutput arc = (arcName arc, baseIncr + (endNodeId arc))
 >         outputList = outputMap Map.! (nodeId extNode)
 
 > findNodeArcs nodeMap = foldr (lookupArcs) nodeMap (Map.elems nodeMap)

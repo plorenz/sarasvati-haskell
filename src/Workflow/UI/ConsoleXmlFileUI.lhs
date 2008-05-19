@@ -1,6 +1,7 @@
 Author: Paul Lorenz
 
-> module ConsoleXmlFileUI where
+> module Workflow.UI.ConsoleXmlFileUI where
+
 > import Workflow.Engine
 > import Workflow.Task.Task
 > import IO
