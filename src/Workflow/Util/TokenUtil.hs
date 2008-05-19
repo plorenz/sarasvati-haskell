@@ -2,13 +2,13 @@ module Workflow.Util.TokenUtil where
 
 import Workflow.Engine
 
-parentAttrs :: ArcToken -> [TokenAttr]
-parentAttrs = tokenAttrs.parentToken
+parentAttrs :: WfProcess a -> ArcToken -> [TokenAttr]
+parentAttrs wfProcess = (tokenAttrs wfProcess).parentToken
 
-mergeTokenAttrs :: [ArcToken] -> [TokenAttr]
-mergeTokenAttrs [] = []
-mergeTokenAttrs [token] = parentAttrs token
-mergeTokenAttrs arcList  = foldr1 (mergeAttrLists) (map (\t -> parentAttrs t) arcList)
+mergeTokenAttrs :: WfProcess a -> [ArcToken] -> [TokenAttr]
+mergeTokenAttrs _ []            = []
+mergeTokenAttrs process [token] = parentAttrs process token
+mergeTokenAttrs process arcList = foldr1 (mergeAttrLists) (map (\t -> parentAttrs process t) arcList)
 
 mergeAttrLists :: [TokenAttr] -> [TokenAttr] -> [TokenAttr]
 mergeAttrLists list1 list2 = foldr (mergeAttr) list2 list1
@@ -19,8 +19,24 @@ mergeAttr ins@(TokenAttr _ insKey _) (curr@(TokenAttr _ key _):xs)
     | insKey == key = curr : xs
     | otherwise     = curr : mergeAttr ins xs
 
-setOrReplace :: [TokenAttr] -> TokenAttr -> [TokenAttr]
-setOrReplace [] attr = [attr]
-setOrReplace (curr@(TokenAttr _ key oldValue):xs) new@(TokenAttr _ newKey newValue)
+setTokenAttr :: WfProcess a -> NodeToken -> TokenAttr -> WfProcess a
+setTokenAttr process token attr = replaceTokenAttrs process token newAttrList
+    where
+       newAttrList = setOrReplaceTokenAttr (tokenAttrs process token) attr
+
+setOrReplaceTokenAttr :: [TokenAttr] -> TokenAttr -> [TokenAttr]
+setOrReplaceTokenAttr [] attr = [attr]
+setOrReplaceTokenAttr (curr@(TokenAttr _ key _):xs) new@(TokenAttr _ newKey _)
    | key == newKey = new : xs
-   | otherwise     = curr : setOrReplace xs new
+   | otherwise     = curr : setOrReplaceTokenAttr xs new
+
+removeTokenAttr :: WfProcess a -> NodeToken -> String -> WfProcess a
+removeTokenAttr process token key = replaceTokenAttrs process token newAttrList
+    where
+       newAttrList = removeTokenAttrFromList key (tokenAttrs process token)
+
+removeTokenAttrFromList ::  String -> [TokenAttr] -> [TokenAttr]
+removeTokenAttrFromList key = filter (\(TokenAttr _ name _) -> key /= name)
+
+nodeHasAttr :: (WfProcess a) -> NodeToken -> String -> Bool
+nodeHasAttr wfProcess nodeToken key = any (\(TokenAttr _ name _) -> key == name) (tokenAttrs wfProcess nodeToken)

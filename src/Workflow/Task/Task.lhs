@@ -38,10 +38,14 @@
 >     showTasks rest (counter + 1)
 
 > acceptAndCreateTask :: (WfEngine e) => e -> NodeToken -> WfProcess [Task] -> IO (WfProcess [Task])
-> acceptAndCreateTask _ token wf =
->     do return wf { userData = task: (userData wf) }
+> acceptAndCreateTask engine token wf =
+>     do (newWf, newToken) <- case (attrValue token key) of
+>                                 Just val -> setTokenAttr engine wf token key $ show $ (1 + (read val)::Int)
+>                                 Nothing  -> setTokenAttr engine wf token key "1"
+>        return newWf { userData = task: (userData wf) }
 >     where
 >         task = newTask wf token
+>         key  = taskName task
 
 > newTask :: WfProcess [Task] -> NodeToken -> Task
 > newTask wf token = Task (tokenId token) (show theNodeId) taskName taskDesc Open hasReject

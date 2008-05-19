@@ -101,29 +101,32 @@ class Token a where
 
 data TokenAttr =
     TokenAttr {
-        tokenAttrId    :: Int,
+        attrSetId      :: Int,
         tokenAttrKey   :: String,
         tokenAttrValue :: String
     }
   deriving (Show)
 
 -- NodeToken represents tokens which are at node
-
-data NodeToken = NodeToken Int Int [TokenAttr]
+--   The NodeToken constructor takes three parameters
+--   token id :: Int          - The id should be unique among node tokens for this process
+--   node  id :: Int          - This should be the id of a node in the graph for this process
+data NodeToken = NodeToken Int Int
     deriving (Show)
 
-tokenAttrs :: NodeToken -> [TokenAttr]
-tokenAttrs (NodeToken _ _ attr) = attr
+tokenAttrs :: WfProcess a -> NodeToken -> [TokenAttr]
+tokenAttrs wfProcess token = (tokenAttrMap wfProcess) Map.! (tokenId token)
 
-attrValue :: NodeToken -> String -> Maybe String
-attrValue nodeToken key
-    | null attr = Nothing
-    | otherwise = case (attr) of [(TokenAttr _ _ value)] -> Just value
+attrValue :: WfProcess a -> NodeToken -> String -> Maybe String
+attrValue wfProcess nodeToken key =
+    case (attr) of
+        [(TokenAttr _ _ value)] -> Just value
+        _                       -> Nothing
     where
-        attr  = filter (\tokenAttr -> tokenAttrKey tokenAttr == key) (tokenAttrs nodeToken)
+        attr  = filter (\tokenAttr -> tokenAttrKey tokenAttr == key) (tokenAttrs wfProcess nodeToken)
 
 instance Token (NodeToken) where
-    tokenId (NodeToken tokId _ _) = tokId
+    tokenId (NodeToken tokId _) = tokId
 
 instance Eq (NodeToken) where
     tok1 == tok2 = (tokenId tok1) == (tokenId tok2)
@@ -161,23 +164,28 @@ data WfGraph =
 
 data WfProcess a =
     WfProcess {
-        processId  :: Int,
-        nodeTypes  :: Map.Map String (NodeType a),
-        wfGraph    :: WfGraph,
-        nodeTokens :: [NodeToken],
-        arcTokens  :: [ArcToken],
-        userData   :: a
+        processId    :: Int,
+        nodeTypes    :: Map.Map String (NodeType a),
+        wfGraph      :: WfGraph,
+        nodeTokens   :: [NodeToken],
+        arcTokens    :: [ArcToken],
+        tokenAttrMap :: Map.Map Int [TokenAttr],
+        userData     :: a
     }
+
+replaceTokenAttrs :: WfProcess a -> NodeToken -> [TokenAttr] -> WfProcess a
+replaceTokenAttrs process token attrList =
+    process { tokenAttrMap = Map.insert (tokenId token) attrList (tokenAttrMap process) }
 
 class WfEngine a where
     createWfProcess     :: a -> WfGraph     -> Map.Map String (NodeType b) -> b -> IO (WfProcess b)
-    createNodeToken     :: a -> WfProcess b -> Node -> [ArcToken] -> IO NodeToken
-    createArcToken      :: a -> WfProcess b -> Arc  -> NodeToken  -> IO ArcToken
+    createNodeToken     :: a -> WfProcess b -> Node -> [ArcToken] -> IO (WfProcess b, NodeToken)
+    createArcToken      :: a -> WfProcess b -> Arc  -> NodeToken  -> IO (WfProcess b, ArcToken)
     completeNodeToken   :: a -> NodeToken   -> IO ()
     completeArcToken    :: a -> ArcToken    -> IO ()
     transactionBoundary :: a -> IO ()
-    setTokenAttr        :: a -> WfProcess b -> NodeToken -> String -> String -> IO (WfProcess b, NodeToken)
-    removeTokenAttr     :: a -> WfProcess b -> NodeToken -> String -> IO (WfProcess b, NodeToken)
+    setTokenAttr        :: a -> WfProcess b -> NodeToken -> String -> String -> IO (WfProcess b)
+    removeTokenAttr     :: a -> WfProcess b -> NodeToken -> String -> IO (WfProcess b)
 
 -- showGraph
 --   Print prints a graph
@@ -213,7 +221,7 @@ getNodeTokenForId tokId wf =
 -- Convenience lookup methods for the data pointed to by tokens
 
 nodeForToken :: NodeToken -> WfGraph -> Node
-nodeForToken (NodeToken _ nodeId _) graph = (graphNodes graph) Map.! nodeId
+nodeForToken (NodeToken _ nodeId) graph = (graphNodes graph) Map.! nodeId
 
 arcForToken :: ArcToken -> Arc
 arcForToken  (ArcToken _ arc _)           = arc
@@ -227,7 +235,7 @@ startWorkflow engine nodeTypes graph userData
     | null startNodes       = return $ Left "Error: Workflow has no start node"
     | length startNodes > 1 = return $ Left "Error: Workflow has more than one start node"
     | otherwise             = do wfRun <- createWfProcess engine graph nodeTypes userData
-                                 startToken <- createNodeToken engine wfRun startNode []
+                                 (wfRun,startToken) <- createNodeToken engine wfRun startNode []
                                  wfRun <- acceptWithGuard engine startToken (wfRun { nodeTokens = [startToken] })
                                  return $ Right wfRun
   where
@@ -236,7 +244,7 @@ startWorkflow engine nodeTypes graph userData
     isStartNode node = (nodeName node == "start") && ((wfDepth.nodeSource) node == 0)
 
 isWfComplete :: WfProcess a -> Bool
-isWfComplete (WfProcess _ _ _ [] [] _) = True
+isWfComplete (WfProcess _ _ _ [] [] _ _) = True
 isWfComplete _                         = False
 
 -- removeNodeToken
@@ -271,7 +279,7 @@ completeExecution engine token outputArcName wf =
 
     newWf        = removeNodeToken token wf
 
-    split wf arc = do arcToken <- createArcToken engine wf arc token
+    split wf arc = do (wf, arcToken) <- createArcToken engine wf arc token
                       acceptToken engine arcToken wf
 
 -- acceptToken
@@ -293,7 +301,7 @@ acceptToken engine token wf
 
 acceptSingle :: (WfEngine e) => e -> ArcToken -> WfProcess a -> IO (WfProcess a)
 acceptSingle engine token wf =
-  do newToken <- createNodeToken engine wf node [token]
+  do (wf,newToken) <- createNodeToken engine wf node [token]
      completeArcToken engine token
      acceptWithGuard engine newToken wf { nodeTokens = newToken:(nodeTokens wf) }
   where
@@ -308,12 +316,12 @@ acceptSingle engine token wf =
 --   instance and returns.
 
 acceptJoin :: (WfEngine e) => e -> ArcToken -> WfProcess a -> IO (WfProcess a)
-acceptJoin engine token wf@(WfProcess runId nodeTypes graph nodeTokens arcTokens userData)
-    | areAllInputsPresent = do newToken <- createNodeToken engine wf targetNode inputTokens
-                               let newWf = WfProcess runId nodeTypes graph (newToken:nodeTokens) outputTokenList userData
+acceptJoin engine token wf@(WfProcess runId nodeTypes graph nodeTokens arcTokens tokenAttrMap userData)
+    | areAllInputsPresent = do (wf,newToken) <- createNodeToken engine wf targetNode inputTokens
+                               let newWf = WfProcess runId nodeTypes graph (newToken:nodeTokens) outputTokenList tokenAttrMap userData
                                mapM (completeArcToken engine) inputTokens
                                acceptWithGuard engine newToken newWf
-    | otherwise           = return $ WfProcess runId nodeTypes graph nodeTokens allArcTokens userData
+    | otherwise           = return $ WfProcess runId nodeTypes graph nodeTokens allArcTokens tokenAttrMap userData
   where
     allArcTokens          = token:arcTokens
     areAllInputsPresent   = length inputTokens == length inputArcs

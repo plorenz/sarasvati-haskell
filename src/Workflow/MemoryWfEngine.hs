@@ -26,17 +26,18 @@ instance WfEngine MemoryWfEngine where
     removeTokenAttr     = removeMemoryTokenAttr
 
 createMemoryWfProcess :: MemoryWfEngine -> WfGraph -> Map.Map String (NodeType a) -> a -> IO (WfProcess a)
-createMemoryWfProcess _ graph nodeTypes userData = return $ WfProcess 1 nodeTypes graph [] [] userData
+createMemoryWfProcess _ graph nodeTypes userData = return $ WfProcess 1 nodeTypes graph [] [] Map.empty userData
 
-createMemoryNodeToken :: MemoryWfEngine -> a -> Node -> [ArcToken] -> IO NodeToken
-createMemoryNodeToken engine _ node parentTokens =
+createMemoryNodeToken :: MemoryWfEngine -> WfProcess a -> Node -> [ArcToken] -> IO (WfProcess a, NodeToken)
+createMemoryNodeToken engine process node parentTokens =
     do nextTokenId <- atomicModifyIORef (tokenCounter engine) (\t-> (t + 1, t + 1))
-       return $ NodeToken nextTokenId (nodeId node) (TokenUtil.mergeTokenAttrs parentTokens)
+       let newToken = NodeToken nextTokenId (nodeId node)
+       return (replaceTokenAttrs process newToken (TokenUtil.mergeTokenAttrs process parentTokens), newToken)
 
-createMemoryArcToken :: MemoryWfEngine -> a -> Arc -> NodeToken -> IO ArcToken
-createMemoryArcToken engine _ arc nodeToken =
+createMemoryArcToken :: MemoryWfEngine -> WfProcess a -> Arc -> NodeToken -> IO (WfProcess a, ArcToken)
+createMemoryArcToken engine process arc nodeToken =
     do nextTokenId <- atomicModifyIORef (tokenCounter engine) (\t-> (t + 1, t + 1))
-       return $ ArcToken nextTokenId arc nodeToken
+       return (process, ArcToken nextTokenId arc nodeToken)
 
 completeMemoryNodeToken :: a -> b -> IO ()
 completeMemoryNodeToken _ _ = return ()
@@ -47,6 +48,11 @@ completeMemoryArcToken _ _ = return ()
 memoryTransactionBoundary :: MemoryWfEngine -> IO ()
 memoryTransactionBoundary _ = return ()
 
-setMemoryTokenAttr :: MemoryWfEngine-> WfProcess b -> NodeToken -> String -> String -> IO (WfProcess b, NodeToken)
-setMemoryTokenAttr =
+setMemoryTokenAttr :: MemoryWfEngine-> WfProcess a -> NodeToken -> String -> String -> IO (WfProcess a)
+setMemoryTokenAttr _ process nodeToken key value = return newProcess
+    where
+        newProcess = TokenUtil.setTokenAttr process nodeToken newAttr
+        newAttr    = TokenAttr (tokenId nodeToken) key value
 
+removeMemoryTokenAttr :: MemoryWfEngine-> WfProcess a -> NodeToken -> String -> IO (WfProcess a)
+removeMemoryTokenAttr _ process nodeToken key = return $ TokenUtil.removeTokenAttr process nodeToken key
