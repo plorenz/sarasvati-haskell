@@ -50,7 +50,8 @@
 >     where
 >         select = "select id from wf_graph where name = ? and version = ?"
 
-> splitNodesBySource nodes = splitBy (nodeSource) nodes
+> splitNodesBySource nodes = splitOn (nodeSource) nodes
 
 > persistNodes nodes =
->     do print (splitNodesBySource nodes)
+>     do print nodes
+>        print (splitNodesBySource nodes)

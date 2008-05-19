@@ -7,12 +7,12 @@
 > removeFirst predicate [] = []
 > removeFirst predicate (x:xs)
 >     | predicate x = xs
->     | otherwise = x : (removeFirst predicate xs)
+>     | otherwise   = x : (removeFirst predicate xs)
 
-> splitBy f [] = []
-> splitBy f (x:xs) = firstSet : (splitBy f rest)
+> splitOn attr [] = []
+> splitOn attr (x:xs) = firstSet : (splitOn attr rest)
 >      where
->          firstSplit = extract (\x' -> f x == f x') xs
+>          firstSplit = extract (\x' -> attr x == attr x') xs
 >          firstSet   = x:(fst firstSplit)
 >          rest       = snd firstSplit
 

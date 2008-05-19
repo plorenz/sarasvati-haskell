@@ -55,8 +55,8 @@ Node
 >     }
 
 > instance Show (Node) where
->     show a = "[Node id: " ++ (show.nodeId) a ++ " name: " ++ nodeName a ++
->              " depth: " ++ (show.nodeSource) a ++ "]"
+>     show a = "|Node id: " ++ (show.nodeId) a ++ " name: " ++ nodeName a ++
+>              " depth: " ++ (show.nodeSource) a ++ "|"
 
 NodeType
   Encapsulates node functionality
