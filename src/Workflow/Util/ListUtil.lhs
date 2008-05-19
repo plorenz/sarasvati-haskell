@@ -11,7 +11,7 @@
 >     | otherwise   = x : (removeFirst predicate xs)
 
 > splitOn :: (Eq b) => (a->b) -> [a] -> [[a]]
-> splitOn attr [] = []
+> splitOn _    []     = []
 > splitOn attr (x:xs) = firstSet : (splitOn attr rest)
 >      where
 >          firstSplit = extract (\x' -> attr x == attr x') xs
