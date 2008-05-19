@@ -14,7 +14,7 @@ The NodeArcs gives both incoming and outgoing nodes. However, when loading a gra
 defined only one way (for simplicity and correctness). The LoadNode maps to what a workflow graph
 definition node mostly likely looks like.
 
-> data LoadNode a =
+> data LoadNode =
 >     LoadNode {
 >         wfNode       :: Workflow.Node,
 >         arcs         :: [(String,Int)],
@@ -132,6 +132,7 @@ To import an external workflow into loading workflow, we must take the following
 
 > resolveNodeExternals node nodeMap = foldr (resolveNodeExternal node) nodeMap (externalArcs node)
 
+> resolveNodeExternal :: LoadNode -> ExternalArc -> Map.Map Int LoadNode -> Map.Map Int LoadNode
 > resolveNodeExternal node extArc nodeMap = Map.insert (wfNodeId newNode) newNode nodeMap
 >     where
 >         newNode          = case (arcType extArc) of
@@ -139,9 +140,11 @@ To import an external workflow into loading workflow, we must take the following
 >                                InArc  -> targetNode { arcs = newEntry node:(arcs targetNode) }
 >         targetNode       = head $ filter (isMatch) (Map.elems nodeMap)
 >         isMatch loadNode = (Workflow.nodeName.wfNode)                       loadNode == (targetNodeRef  extArc) &&
+>                            (Workflow.wfName.Workflow.nodeSource.wfNode)     loadNode == (targetWf extArc ) &&
 >                            (Workflow.wfInstance.Workflow.nodeSource.wfNode) loadNode == (targetInstance extArc) &&
->                            (Workflow.wfDepth.Workflow.nodeSource.wfNode)    loadNode == 1
+>                            (Workflow.wfDepth.Workflow.nodeSource.wfNode)    loadNode == depth
 >         newEntry n       = (arcName extArc, wfNodeId n)
+>         depth            = (Workflow.wfDepth.Workflow.nodeSource.wfNode) node + 1
 
 The following function deal with converting a map of XmlNode instances to
 a WfGraph. Since XmlNode instances only track outgoing nodes, we need to

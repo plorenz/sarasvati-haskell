@@ -1,4 +1,4 @@
-<!ELEMENT workflow (start,node*)>
+<!ELEMENT workflow (start?,node*)>
 <!ATTLIST workflow
           id      ID    #REQUIRED
           version CDATA #REQUIRED>
@@ -7,7 +7,7 @@
 
 <!ELEMENT node (arc*, externalArc*)>
 <!ATTLIST node
-          id   ID                         #REQUIRED
+          nodeId   ID                         #REQUIRED
           type (requireSingle|requireAll) "requireAll">
 
 <!ELEMENT arc (#PCDATA)>
@@ -20,5 +20,5 @@
                       version  CDATA    #IMPLIED
                       instance CDATA    #IMPLIED
                       nodeId   CDATA    #REQUIRED
-                      name     CDATA    #REQUIRED
+                      name     CDATA    #IMPLIED
                       type     (in|out) "out">

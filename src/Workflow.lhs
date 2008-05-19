@@ -25,7 +25,7 @@ GuardResponse
 >         wfInstance :: String,
 >         wfDepth    :: Int
 >     }
->  deriving (Show)
+>  deriving (Show, Eq)
 
 NodeExtra is a place to store any extra data that a given node may
 require. The only requirement is that the 'extra data' be a Typeable
@@ -56,7 +56,7 @@ Node
 
 > instance Show (Node) where
 >     show a = "[Node id: " ++ (show.nodeId) a ++ " name: " ++ nodeName a ++
->              " depth: " ++ (show.wfDepth.nodeSource) a ++ "]"
+>              " depth: " ++ (show.nodeSource) a ++ "]"
 
 NodeType
   Encapsulates node functionality
@@ -107,7 +107,6 @@ ArcToken represents tokens which are between nodes (on an arc)
 
 > instance Token (ArcToken) where
 >     tokenId (ArcToken id _) = id
-
 
 WFGraph
   Has the set of nodes as well as maps of node input arcs and node output arcs

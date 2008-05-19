@@ -3,7 +3,9 @@
 > import Database.HDBC.PostgreSQL
 > import Database.HDBC
 > import Workflow
+> import qualified Data.Map as Map
 > import qualified Control.Exception as Ex
+> import Util
 
 > openConn = connectPostgreSQL "port=5433"
 
@@ -22,6 +24,7 @@
 >     do conn <- openConn
 >        maxVersion <- getGraphVersionNumber conn name
 >        graphId <- insertNewGraph conn name (maxVersion + 1)
+>        persistNodes (Map.elems nodes)
 >        commit conn
 >        disconnect conn
 >        return graphId
@@ -46,3 +49,8 @@
 >        return $ (fromSql.head.head) rows
 >     where
 >         select = "select id from wf_graph where name = ? and version = ?"
+
+> splitNodesBySource nodes = splitBy (nodeSource) nodes
+
+> persistNodes nodes =
+>     do print (splitNodesBySource nodes)

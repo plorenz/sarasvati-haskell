@@ -6,5 +6,5 @@
     <arc to="1"/>
   </start>
 
-  <node nodeId="1"/>
+  <node nodeId="1" type="requireSingle"/>
 </workflow>
