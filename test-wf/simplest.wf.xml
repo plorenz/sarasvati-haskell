@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE workflow SYSTEM "wf.dtd">
-
-<workflow id="simplest" version="1">
-  <start>
-  </start>
-</workflow>
