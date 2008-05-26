@@ -40,15 +40,17 @@ import Data.Char
     '('       { TokenLP        }
     ')'       { TokenRP        }
 
+%left or and
+
 %%
 
 Stmt : if Expr then Stmt else Stmt { StmtIF $2 $4 $6   }
      | Result                      { StmtResult $1     }
 
-Expr : UnitExpr or Expr  { ExprOR  $1 $3 }
-     | UnitExpr and Expr { ExprAND $1 $3 }
-     | not UnitExpr      { ExprNOT $2    }
-     | UnitExpr          { $1            }
+Expr : Expr or Expr  { ExprOR  $1 $3 }
+     | Expr and Expr { ExprAND $1 $3 }
+     | not UnitExpr  { ExprNOT $2    }
+     | UnitExpr      { $1            }
 
 UnitExpr : symbol       { ExprSymbol $1 }
          | '(' Expr ')' { $2            }

@@ -67,11 +67,11 @@ action_7 x = happyTcHack x happyReduce_12
 
 action_8 x = happyTcHack x happyReduce_11
 
-action_9 (9#) = happyShift action_18
+action_9 (9#) = happyShift action_16
+action_9 (11#) = happyShift action_17
+action_9 (12#) = happyShift action_18
 action_9 x = happyTcHack x happyFail
 
-action_10 (11#) = happyShift action_16
-action_10 (12#) = happyShift action_17
 action_10 x = happyTcHack x happyReduce_6
 
 action_11 (14#) = happyShift action_12
@@ -88,16 +88,19 @@ action_13 (5#) = happyGoto action_14
 action_13 (6#) = happyGoto action_10
 action_13 x = happyTcHack x happyFail
 
+action_14 (11#) = happyShift action_17
+action_14 (12#) = happyShift action_18
 action_14 (19#) = happyShift action_22
 action_14 x = happyTcHack x happyFail
 
 action_15 x = happyTcHack x happyReduce_5
 
-action_16 (13#) = happyShift action_11
-action_16 (14#) = happyShift action_12
-action_16 (18#) = happyShift action_13
-action_16 (5#) = happyGoto action_21
-action_16 (6#) = happyGoto action_10
+action_16 (8#) = happyShift action_2
+action_16 (15#) = happyShift action_5
+action_16 (16#) = happyShift action_6
+action_16 (17#) = happyShift action_7
+action_16 (4#) = happyGoto action_21
+action_16 (7#) = happyGoto action_4
 action_16 x = happyTcHack x happyFail
 
 action_17 (13#) = happyShift action_11
@@ -107,20 +110,19 @@ action_17 (5#) = happyGoto action_20
 action_17 (6#) = happyGoto action_10
 action_17 x = happyTcHack x happyFail
 
-action_18 (8#) = happyShift action_2
-action_18 (15#) = happyShift action_5
-action_18 (16#) = happyShift action_6
-action_18 (17#) = happyShift action_7
-action_18 (4#) = happyGoto action_19
-action_18 (7#) = happyGoto action_4
+action_18 (13#) = happyShift action_11
+action_18 (14#) = happyShift action_12
+action_18 (18#) = happyShift action_13
+action_18 (5#) = happyGoto action_19
+action_18 (6#) = happyGoto action_10
 action_18 x = happyTcHack x happyFail
 
-action_19 (10#) = happyShift action_23
-action_19 x = happyTcHack x happyFail
+action_19 x = happyTcHack x happyReduce_3
 
-action_20 x = happyTcHack x happyReduce_3
+action_20 x = happyTcHack x happyReduce_4
 
-action_21 x = happyTcHack x happyReduce_4
+action_21 (10#) = happyShift action_23
+action_21 x = happyTcHack x happyFail
 
 action_22 x = happyTcHack x happyReduce_8
 
@@ -156,7 +158,7 @@ happyReduction_2 _  = notHappyAtAll
 happyReduce_3 = happySpecReduce_3  5# happyReduction_3
 happyReduction_3 (HappyAbsSyn5  happy_var_3)
   _
-  (HappyAbsSyn6  happy_var_1)
+  (HappyAbsSyn5  happy_var_1)
    =  HappyAbsSyn5
      (ExprOR  happy_var_1 happy_var_3
   )
@@ -165,7 +167,7 @@ happyReduction_3 _ _ _  = notHappyAtAll
 happyReduce_4 = happySpecReduce_3  5# happyReduction_4
 happyReduction_4 (HappyAbsSyn5  happy_var_3)
   _
-  (HappyAbsSyn6  happy_var_1)
+  (HappyAbsSyn5  happy_var_1)
    =  HappyAbsSyn5
      (ExprAND happy_var_1 happy_var_3
   )
