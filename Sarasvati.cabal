@@ -7,8 +7,15 @@ Author:			Paul Lorenz
 Homepage:		http://sarasvati.googlecode.com/
 Category:		Workflow
 Synopsis:	    A graph-based workflow engine for Haskell
-Build-type:     Simple
+Build-Type:     Simple
 Copyright:      2008 Paul Lorenz
+Data-Files:     common/GPLv3.license,
+                lang/guard.y
+Extra-Source-Files: src/Workflow/Util/DbUtil.hs,
+                    src/Workflow/Util/ListUtil.hs,
+                    src/Workflow/Util/TokenUtil.hs,
+                    src/Workflow/GuardLang.hs
+
 
 Library
   Build-Depends:	base,
