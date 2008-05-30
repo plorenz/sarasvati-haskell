@@ -18,7 +18,6 @@
 --    Copyright 2008 Paul Lorenz
 
 module Workflow.GuardLang where
-import qualified Workflow.EngineTypes as EngineTypes
 import Data.Char
 }
 
@@ -55,10 +54,10 @@ Expr : Expr or Expr  { ExprOR  $1 $3 }
 UnitExpr : symbol       { ExprSymbol $1 }
          | '(' Expr ')' { $2            }
 
-Result : accept      { EngineTypes.AcceptToken  }
-       | discard     { EngineTypes.DiscardToken }
-       | skip symbol { EngineTypes.SkipNode $2  }
-       | skip        { EngineTypes.SkipNode []  }
+Result : accept      { Accept   }
+       | discard     { Discard  }
+       | skip symbol { Skip $2  }
+       | skip        { Skip []  }
 
 {
 
@@ -66,7 +65,7 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 data Stmt = StmtIF Expr Stmt Stmt
-          | StmtResult EngineTypes.GuardResponse
+          | StmtResult Result
   deriving Show
 
 data Expr = ExprOR  Expr Expr
@@ -87,6 +86,9 @@ data Token = TokenIF
            | TokenSkip
            | TokenLP
            | TokenRP
+  deriving Show
+
+data Result = Accept | Discard | Skip String
   deriving Show
 
 isLegalSymbolChar '.' = True

@@ -2,7 +2,7 @@
     This file is part of Sarasvati.
 
     Sarasvati is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as 
+    it under the terms of the GNU Lesser General Public License as
     published by the Free Software Foundation, either version 3 of the
     License, or (at your option) any later version.
 
@@ -11,7 +11,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public 
+    You should have received a copy of the GNU Lesser General Public
     License along with Sarasvati.  If not, see <http://www.gnu.org/licenses/>.
 
     Copyright 2008 Paul Lorenz
@@ -21,7 +21,6 @@
 module Workflow.Loaders.WorkflowLoad where
 
 import qualified Data.Map as Map
-import Workflow.EngineTypes
 import Workflow.Engine
 
 -- ArcType enumerates the kind of external allows, which are just outgoing arcs and incoming arcs.
@@ -136,7 +135,7 @@ loadExternal loadFunction wfMap extArc depth =
        else do putStrLn $ "Loading " ++ (targetWf extArc) ++ " version: " ++ (targetVersion extArc)
                maybeGraph <- loadFunction source
                case (maybeGraph) of
-                   Right graph -> do putStrLn $ "Loaded: " ++ (showGraph graph)
+                   Right graph -> do putStrLn $ "Loaded: " ++ (show graph)
                                      return $ Right $ Map.insert key graph wfMap
                    Left  msg   -> return $ Left msg
     where

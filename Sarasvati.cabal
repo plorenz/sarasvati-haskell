@@ -1,0 +1,24 @@
+Name:			Sarasvati
+Version:		0.0.1
+Cabal-Version:  >= 1.2
+License:		LGPL
+License-File:	common/LGPLv3.license
+Author:			Paul Lorenz
+Homepage:		http://sarasvati.googlecode.com/
+Category:		Workflow
+Synopsis:	    A graph-based workflow engine for Haskell
+Build-type:     Simple
+Copyright:      2008 Paul Lorenz
+
+Library
+  Build-Depends:	base,
+                    containers,
+                    HDBC >= 1.1.4,
+                    HDBC-postgresql >=1.1.4.1
+  Exposed-modules:
+    Workflow.DatabaseWfEngine,
+    Workflow.Engine,
+    Workflow.MemoryWfEngine
+
+  Hs-Source-Dirs: src
+  Extensions:     DeriveDataTypeable, ExistentialQuantification, Rank2Types

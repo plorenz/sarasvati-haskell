@@ -2,7 +2,7 @@
     This file is part of Sarasvati.
 
     Sarasvati is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as 
+    it under the terms of the GNU Lesser General Public License as
     published by the Free Software Foundation, either version 3 of the
     License, or (at your option) any later version.
 
@@ -11,7 +11,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public 
+    You should have received a copy of the GNU Lesser General Public
     License along with Sarasvati.  If not, see <http://www.gnu.org/licenses/>.
 
     Copyright 2008 Paul Lorenz
@@ -20,7 +20,6 @@
 
 module Workflow.Task.Task where
 
-import Workflow.EngineTypes
 import Workflow.Engine
 import qualified Data.Map as Map
 import Data.Dynamic
@@ -89,7 +88,7 @@ closeTask task wf newState = wf { userData = newTaskList }
                            else t
 
 completeTask :: (WfEngine e) => e -> Task -> WfProcess [Task] -> IO (WfProcess [Task])
-completeTask engine task wf = completeDefaultExecution engine token (closeTask task wf Complete)
+completeTask engine task wf = completeExecution engine token [] (closeTask task wf Complete)
   where
     token = getNodeTokenForId (getTokId task) wf
 

@@ -17,7 +17,6 @@
 --    Copyright 2008 Paul Lorenz
 
 module Workflow.GuardLang where
-import qualified Workflow.EngineTypes as EngineTypes
 import Data.Char
 #if __GLASGOW_HASKELL__ >= 503
 import GHC.Exts
@@ -207,27 +206,27 @@ happyReduction_8 _ _ _  = notHappyAtAll
 happyReduce_9 = happySpecReduce_1  7# happyReduction_9
 happyReduction_9 _
    =  HappyAbsSyn7
-     (EngineTypes.AcceptToken
+     (Accept
   )
 
 happyReduce_10 = happySpecReduce_1  7# happyReduction_10
 happyReduction_10 _
    =  HappyAbsSyn7
-     (EngineTypes.DiscardToken
+     (Discard
   )
 
 happyReduce_11 = happySpecReduce_2  7# happyReduction_11
 happyReduction_11 (HappyTerminal (TokenSymbol happy_var_2))
   _
    =  HappyAbsSyn7
-     (EngineTypes.SkipNode happy_var_2
+     (Skip happy_var_2
   )
 happyReduction_11 _ _  = notHappyAtAll
 
 happyReduce_12 = happySpecReduce_1  7# happyReduction_12
 happyReduction_12 _
    =  HappyAbsSyn7
-     (EngineTypes.SkipNode []
+     (Skip []
   )
 
 happyNewToken action sts stk [] =
@@ -280,7 +279,7 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 data Stmt = StmtIF Expr Stmt Stmt
-          | StmtResult EngineTypes.GuardResponse
+          | StmtResult Result
   deriving Show
 
 data Expr = ExprOR  Expr Expr
@@ -301,6 +300,9 @@ data Token = TokenIF
            | TokenSkip
            | TokenLP
            | TokenRP
+  deriving Show
+
+data Result = Accept | Discard | Skip String
   deriving Show
 
 isLegalSymbolChar '.' = True
