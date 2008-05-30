@@ -54,20 +54,25 @@ import Data.Dynamic
 import qualified Workflow.GuardLang as GuardLang
 import qualified Workflow.Util.ListUtil as ListUtil
 
--- |GuardResponse
---   Nodes have guard functions which determine if the accept function when a token
---   arrives and the node is ready to be activated. Guard functions must return a
---   GuardResponse
+-- | Every 'Node' has a guard function which is called when a token arrives
+--   and the node is ready to be activated. Guard functions must return a
+--   'GuardResponse'. Guard functions are contained in 'NodeType' instances.
+--   The nodeType attribute of a 'Node' is mapped to a 'NodeType' via the
+--   nodeTypes map in a 'WfProcess'.
 --
---   * AcceptToken  - The token is passed on to the accept function
+--   * 'AcceptToken'  - The token is passed on to the accept function
 --
---   * DiscardToken - The token is discarded and the accept function is not called
+--   * 'DiscardToken' - The token is discarded and the accept function is not called
 --
---   * SkipNode     - The accept function is not called. The token is not discarded,
---                    the completeExecution function is called instead.
+--   * 'SkipNode' arcName - The accept function is not called. The token is not discarded,
+--                          the 'completeExecution' function is called instead with the
+--                          given arc name
 
 data GuardResponse = AcceptToken | DiscardToken | SkipNode String
   deriving (Show)
+
+-- | Each 'Node' has a 'NodeSource', which describes in which process definition the
+--   'Node' was originally defined in.
 
 data NodeSource =
     NodeSource {
@@ -79,20 +84,35 @@ data NodeSource =
  deriving (Show, Eq)
 
 
--- NodeExtra is a place to store any extra data that a given node may
--- require. The only requirement is that the 'extra data' be a Typeable
--- so it can encapsulated in a Dynamic
+-- | 'NodeExtra' is a place to store any extra data that a given 'Node' may
+-- require. The only requirement is that the 'extra data' be a 'Typeable'
+-- so it can encapsulated in a 'Dynamic'.
 
 data NodeExtra = NoNodeExtra | NodeExtra Dynamic
 
--- Node
---   Represents a node in a workflow graph.
+-- | Represents a node in a workflow graph. A Node is part of a process definition, as stored in
+--   a 'WfGraph'. The 'Arc' type models connections between Nodes.
 --
 --   Members:
---     nodeId - An integer id, which should be unique. Used for testing equality
---     accept - function which handles incoming tokens.
 --
---   Connections between Nodes are represented by Arcs and WFGraph
+--     * 'nodeId'   - An Int id, which should be unique across all workflows. Used for testing equality.
+--
+--     * 'nodeType' - String which used to get the associated 'NodeType' stored in the 'WfProcess'
+--
+--     * 'nodeName' - String identifier which should be unique within a single process definition.
+--
+--     * 'nodeSource' - 'NodeSource' which stores in which process definition this Node was originally defined.
+--
+--     * 'nodeIsJoin' - If true, when an 'ArcToken' arrives at a 'Node', the node will wait for an 'ArcToken' to
+--                      be waiting on every 'Arc' that shares the name of the 'Arc' that the current, incoming
+--                      'ArcToken' points to. If false, every incoming 'ArcToken' will immediately generate a new
+--                      'NodeToken' upon which the approprate guard function will be called.
+--
+--     * 'nodeGuard' - May contain a string which can be interpreted by the guard function. For example, it may
+--                     be a GuardLang script, which can be evaluated by the 'evalGuardLang' guard function.
+--
+--     * 'nodeExtra' - A 'NodeExtra', which may be nothing, or something 'Typeable', which the guard or accept
+--                     functions may use to do their work.
 
 data Node =
     Node {
