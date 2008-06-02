@@ -22,13 +22,8 @@ module Workflow.Loaders.WorkflowLoad where
 
 import qualified Data.Map as Map
 import Workflow.Engine
+import Workflow.Loaders.WfLoad
 
--- ArcType enumerates the kind of external allows, which are just outgoing arcs and incoming arcs.
--- General arcs are all defined as outgoing, but because external arcs must add outgoing arcs to
--- nodes not in the same workflow, they are allowed both.
-
-data ArcType = InArc | OutArc
-  deriving (Show)
 
 -- The NodeArcs gives both incoming and outgoing nodes. However, when loading a graph, the arcs are
 -- defined only one way (for simplicity and correctness). The LoadNode maps to what a workflow graph
@@ -42,22 +37,6 @@ data LoadNode =
         externalArcs :: [ExternalArc]
     }
  deriving (Show)
-
--- The ExternalArc contains all the information we need to load an external referenced workflow and
--- import it into the currently loading workflow.
-
-data ExternalArc =
-    ExternalArc {
-      targetNodeRef  :: String,
-      targetWf       :: String,
-      targetVersion  :: String,
-      targetInstance :: String,
-      extArcName     :: String,
-      arcType        :: ArcType
-    }
- deriving (Show)
-
--- Shortcut function to get the nodeId of the Node in a LoadNode
 
 wfNodeId :: LoadNode -> Int
 wfNodeId = nodeId.wfNode
@@ -132,7 +111,7 @@ loadExternal :: (NodeSource -> IO (Either a WfGraph)) -> Map.Map String WfGraph 
 loadExternal loadFunction wfMap extArc depth =
     if (Map.member key wfMap)
        then do return $ Right wfMap
-       else do putStrLn $ "Loading " ++ (targetWf extArc) ++ " version: " ++ (targetVersion extArc)
+       else do putStrLn $ "Loading " ++ (targetWf extArc)
                maybeGraph <- loadFunction source
                case (maybeGraph) of
                    Right graph -> do putStrLn $ "Loaded: " ++ (show graph)
@@ -140,7 +119,7 @@ loadExternal loadFunction wfMap extArc depth =
                    Left  msg   -> return $ Left msg
     where
         key = targetInstance extArc
-        source = NodeSource (targetWf extArc) (targetVersion extArc) (targetInstance extArc) (depth + 1)
+        source = NodeSource (targetWf extArc) "1" (targetInstance extArc) (depth + 1)
 
 
 -- To import an external workflow into loading workflow, we must take the following steps:
@@ -192,7 +171,7 @@ resolveNodeExternal node extArc nodeMap = Map.insert (wfNodeId newNode) newNode 
                                OutArc -> node { arcs = newEntry targetNode:(arcs node) }
                                InArc  -> targetNode { arcs = newEntry node:(arcs targetNode) }
         targetNode       = head $ filter (isMatch) (Map.elems nodeMap)
-        isMatch loadNode = (nodeName.wfNode)                       loadNode == (targetNodeRef  extArc) &&
+        isMatch loadNode = (nodeName.wfNode)                       loadNode == (targetNodeName  extArc) &&
                            (wfName.nodeSource.wfNode)     loadNode == (targetWf extArc ) &&
                            (wfInstance.nodeSource.wfNode) loadNode == (targetInstance extArc) &&
                            (wfDepth.nodeSource.wfNode)    loadNode == depth

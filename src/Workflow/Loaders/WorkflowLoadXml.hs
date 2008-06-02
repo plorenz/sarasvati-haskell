@@ -28,6 +28,7 @@ import qualified Data.Map as Map
 import Workflow.Util.XmlUtil as XmlUtil
 import Control.Monad.Error
 import Workflow.Loaders.WorkflowLoad
+import Workflow.Loaders.WfLoad
 import Workflow.Util.ListUtil
 
 readArcs :: Element -> [(String, String)]
@@ -42,10 +43,9 @@ readExternalArcs element = map (readExternalArcFromElem) childElem
         childElem = XmlUtil.toElem $ ((tag "externalArc") `o` children) (CElem element)
 
 readExternalArcFromElem :: Element -> ExternalArc
-readExternalArcFromElem e = ExternalArc nodeId workflowId version instanceId arcName arcType
+readExternalArcFromElem e = ExternalArc nodeId workflowId instanceId arcName arcType
     where
        workflowId = readAttr e "workflow"
-       version    = readAttr e "version"
        instanceId = readAttr e "instance"
        nodeId     = readAttr e "nodeId"
        arcName    = readOptionalAttr e "name" ""
@@ -71,17 +71,17 @@ createNodeSource doc = NodeSource name "" "0" 0
 
 -- Given a name and a version number, this function will return the corresponding XML document.
 
-loadXmlForWorkflow :: String -> String -> IO (Either String Document)
-loadXmlForWorkflow name version =
+loadXmlForWorkflow :: String -> IO (Either String Document)
+loadXmlForWorkflow name =
     do xmlStr <- readFile filename
        return $ xmlParse' filename xmlStr
     where
-        filename = wfDir ++ name ++ "." ++ version ++ ".wf.xml"
+        filename = wfDir ++ name ++ ".wf.xml"
         wfDir = "/home/paul/workspace/functional-workflow/test-wf/"
 
 loadWfGraph :: Map.Map String (Element -> NodeSource -> Node) -> NodeSource -> IO (Either String WfGraph)
 loadWfGraph funcMap source =
-    do maybeDoc <- loadXmlForWorkflow (wfName source) (wfVersion source)
+    do maybeDoc <- loadXmlForWorkflow (wfName source)
        case (maybeDoc) of
            Right doc -> loadWfGraphFromDoc doc source funcMap
            Left  msg -> return $ Left msg
@@ -132,9 +132,8 @@ processNodeElement :: Element -> NodeSource -> Node
 processNodeElement element source = Node 0 "node" nodeId source isJoinNode guard NoNodeExtra
     where
         nodeId      = readAttr element "nodeId"
-        nodeTypeS   = readAttr element "type"
         guard       = readText element "guard"
-        isJoinNode  = case ( nodeTypeS ) of
+        isJoinNode  = case ( readAttr element "type" ) of
                           "requireSingle" -> False
                           _               -> True
 
@@ -146,5 +145,5 @@ defaultElemFunctionMap = Map.fromList [ ("start", processStartElement),
 elemMapWith :: [(String, (Element -> NodeSource -> Node))] -> Map.Map String (Element -> NodeSource -> Node)
 elemMapWith list = addToMap list defaultElemFunctionMap
    where
-       addToMap []     map = map
-       addToMap (x:xs) map = addToMap xs $ Map.insert (fst x) (snd x) map
+       addToMap []     funcMap = funcMap
+       addToMap (x:xs) funcMap = addToMap xs $ Map.insert (fst x) (snd x) funcMap

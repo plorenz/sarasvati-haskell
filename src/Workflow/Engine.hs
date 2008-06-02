@@ -40,6 +40,8 @@ module Workflow.Engine (GuardResponse(..),
                         evalGuardLang,
                         getNodeTokenForId,
                         graphFromArcs,
+                        handleWfError,
+                        isWfComplete,
                         makeNodeExtra,
                         nodeForToken,
                         startWorkflow,
@@ -125,8 +127,16 @@ data Node =
         nodeExtra    :: NodeExtra
     }
 
--- NodeType
---   Encapsulates node functionality
+-- | Encapsulates the behavior for a specific 'Node' type. Each type of 'Node' can have
+--   different behaviour for guards and for accept.
+--
+--   * 'guardFunction' - Called when a 'NodeToken' is created in a 'Node'. The 'GuardResponse'
+--                       result determines if the related 'acceptFunction' is called, if the
+--                       token is discarded, if accept is skipped and 'completeExecution' is
+--                       is called.
+--
+--   * 'acceptFunction' - Called if 'guardFunction' returns 'AcceptToken'. The function may
+--                        end with a call to 'completeExecution', or it may be called later.
 
 data NodeType a =
     NodeType {
@@ -135,9 +145,20 @@ data NodeType a =
     }
 
 
--- Arc
---   An Arc represents an directed edge in a workflow graph.
+-- | An 'Arc' represents an directed edge in a workflow graph.
 --   It has an id, a label and two node id endpoints.
+--
+-- * 'arcId' - *Int* id, which should be unique for that process definition.
+--
+-- * 'arcName' - Every 'Arc' has a name, though that name will often be the default name,
+--               which is just the empty string. When 'completeExecution' is called on a
+--               'NodeToken' an arc name must be specified. More than one 'Arc' may have
+--               the same name. Every arc with the given name will have an 'ArcToken'
+--               placed on it. There may also be no arcs with that name.
+--
+-- * startNodeId - The id of the *Node* at the beginning of this arc.
+--
+-- * endNodeId   - The id of the *Node* at the end of this arc.
 
 data Arc =
     Arc {
@@ -285,8 +306,8 @@ instance Show (WfGraph) where
                  concatMap (\a->show a ++ "\n") (Map.elems (graphInputArcs graph)) ++ "\n" ++
                  concatMap (\a->show a ++ "\n") (Map.elems (graphOutputArcs graph))
 
--- graphFromNodesAndArcs
---   Generates a WFGraph from a list of Nodes and Arcs
+-- | Given a name, version, and lists of nodes and arcs, builds the lookup lists
+--   and returns a 'WfGraph'.
 
 graphFromArcs :: Int -> String -> [Node] -> [Arc] -> WfGraph
 graphFromArcs graphId name nodes arcs = WfGraph graphId name nodeMap inputsMap outputsMap
@@ -300,8 +321,8 @@ graphFromArcs graphId name nodes arcs = WfGraph graphId name nodeMap inputsMap o
         outputArcsForNode node = filter (\arc -> startNodeId arc == nodeId node) arcs
 
 -- getTokenForId
---   Given a token id and a workflow instance gives back the actual token
---   corresponding to that id
+--  | Given a token id and a workflow instance gives back the actual token
+--    corresponding to that id
 
 getNodeTokenForId :: Int -> WfProcess a -> NodeToken
 getNodeTokenForId tokId wf =
@@ -452,6 +473,7 @@ evalGuardLang token wf
         node  = nodeForToken token (wfGraph wf)
         guard = nodeGuard node
 
+resultToResponse :: GuardLang.Result -> GuardResponse
 resultToResponse GuardLang.Accept     = AcceptToken
 resultToResponse GuardLang.Discard    = DiscardToken
 resultToResponse (GuardLang.Skip arc) = SkipNode arc

@@ -80,7 +80,7 @@ getWorkflowList =
     do fileList <- getDirectoryContents wfDir
        return $ (useFullPath.filterWfs) fileList
     where
-        wfDir = "/home/paul/workspace/functional-workflow/test-wf/"
+        wfDir = "/home/paul/workspace/wf-haskell/common/test-wf/"
         filterWfs = (filter (hasExtension ".wf.xml"))
         useFullPath = (map (\f->wfDir ++ f))
 
