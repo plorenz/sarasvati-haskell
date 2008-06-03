@@ -24,7 +24,7 @@ module Workflow.UI.ConsoleDatabaseUI where
 import IO
 import Data.Char
 import Workflow.Loaders.DatabaseToEngineLoader
-import Workflow.Loaders.LoadError
+import Workflow.Loaders.WfLoad
 import qualified Data.Map as Map
 import qualified Workflow.Util.DbUtil as DbUtil
 import Database.HDBC
@@ -54,13 +54,13 @@ selectWorkflow wfList =
          else do putStrLn $ "ERROR: " ++ wf ++ " is not a valid workflow"
        selectWorkflow wfList
     where
-        handleAll = (handleSql handleDbError).(handleLoad handleLoadError)
+        handleAll = (handleSql handleDbError).(handleWfLoad handleLoadError)
 
 useWorkflow :: [String] -> Int -> IO ()
 useWorkflow wfList idx
     | length wfList <= idx = do putStrLn "ERROR: Invalid workflow number"
     | otherwise            = do conn <- DbUtil.openDbConnection
-                                graph <- loadGraph conn (wfList !! idx) typeMap
+                                graph <- loadLatestGraph conn (wfList !! idx) typeMap
                                 putStrLn "Running workflow"
                                 putStrLn (show graph)
                                 runWorkflow graph
@@ -139,8 +139,8 @@ getWorkflowListFromDb conn =
     where
         sql = "select distinct name from wf_graph order by name asc"
 
-handleLoadError :: LoadException -> IO ()
-handleLoadError (LoadException msg) =
+handleLoadError :: WfLoadError -> IO ()
+handleLoadError (WfLoadError msg) =
     do putStrLn msg
        return $ ()
 

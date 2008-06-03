@@ -17,23 +17,55 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.Loaders.DatabaseToEngineLoader where
+
+module Workflow.Loaders.DatabaseToEngineLoader ( loadLatestGraph, loadGraph ) where
 
 import Database.HDBC
 import Workflow.Engine
-import Workflow.Loaders.LoadError
+import Workflow.Loaders.WfLoad
 import qualified Data.Map as Map
 
-loadGraph :: (IConnection conn) => conn -> String -> Map.Map String (conn -> Int -> IO NodeExtra) -> IO WfGraph
-loadGraph conn name typeMap =
+-- | Loads latest (with the highest version number) 'WfGraph' from the database with the given name.
+--   Take a 'Map' of 'String' types to loaders for those types. Loading of the basic 'Node' information
+--   is handled automatically. However, if a given 'Node' type has extra information in another table
+--   which should be loaded into the 'NodeExtra', a loader function can be specified. It will be called
+--   with the node id. If no function is specified for a given type, it's 'nodeExtra' will be set to
+--   'NoNodeExtra'.
+--
+--  Parameters:
+--
+--    * conn - The HDBC database connection to use to connect to the database
+--
+--    * name - The name of the 'WfGraph' to load
+--
+--    * typeMap - 'Map' of type name to function for loading 'NodeExtra'
+--
+--  If a database error is encounered, a 'SqlError' will be thrown. If a loading error occurs, due
+--  to missing or inconsistent data, a 'WfLoadError'will be thrown.
+
+loadLatestGraph :: (IConnection conn) => conn -> String -> Map.Map String (conn -> Int -> IO NodeExtra) -> IO WfGraph
+loadLatestGraph conn name typeMap =
     do rows <- quickQuery conn sql [toSql name]
        if (null rows)
-           then loadError $ "No graph found with name " ++ name
+           then wfLoadError $ "No graph found with name " ++ name
            else finishLoad conn (head rows) typeMap
     where
         sql = "select g.id, g.name, g.version from wf_graph g" ++
               " where g.name = ? and g.version in " ++
               "   (select max(g2.version) from wf_graph g2 where g2.name = g.name)"
+
+-- | Like 'loadLatestGraph', except the specific version number of the 'WfGraph' to be loaded is given,
+--   rather than assuming the newest version is to be loaded.
+
+loadGraph :: (IConnection conn) => conn -> String -> Int -> Map.Map String (conn -> Int -> IO NodeExtra) -> IO WfGraph
+loadGraph conn name version typeMap =
+    do rows <- quickQuery conn sql [toSql name, toSql version]
+       if (null rows)
+           then wfLoadError $ "No graph found with name " ++ name ++ " and version " ++ (show version)
+           else finishLoad conn (head rows) typeMap
+    where
+        sql = "select g.id, g.name, g.version from wf_graph g" ++
+              " where g.name = ? and g.version = ?"
 
 finishLoad :: (IConnection conn) => conn -> [SqlValue] -> Map.Map String (conn -> Int -> IO NodeExtra) -> IO WfGraph
 finishLoad conn row typeMap =

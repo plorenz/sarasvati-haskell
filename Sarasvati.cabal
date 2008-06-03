@@ -9,9 +9,12 @@ Category:		Workflow
 Synopsis:	    A graph-based workflow engine for Haskell
 Build-Type:     Simple
 Copyright:      2008 Paul Lorenz
-Data-Files:     common/GPLv3.license,
+Data-Files:     README,
+                common/GPLv3.license,
+                common/db/create-schema.sql
                 lang/guard.y
-Extra-Source-Files: src/Workflow/Util/DbUtil.hs,
+Extra-Source-Files: src/Workflow/Loaders/WfLoad.hs
+                    src/Workflow/Util/DbUtil.hs,
                     src/Workflow/Util/ListUtil.hs,
                     src/Workflow/Util/TokenUtil.hs,
                     src/Workflow/GuardLang.hs
@@ -23,6 +26,7 @@ Library
                     HDBC >= 1.1.4,
                     HDBC-postgresql >=1.1.4.1
   Exposed-modules:
+    Workflow.Loaders.DatabaseToEngineLoader,
     Workflow.DatabaseWfEngine,
     Workflow.Engine,
     Workflow.MemoryWfEngine

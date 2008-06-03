@@ -1,0 +1,54 @@
+Sarasvati
+---------
+
+Summary:
+  Sarasvati is a graph based, workflow engine.
+
+Authors:
+  Paul lorenz
+
+Homepage:
+  http://code.google.com/p/sarasvati/
+
+License:
+  LGPL version 3
+
+Dependencies:
+  The haskell version uses
+
+    * HDBC
+        Summary : Database connection library
+        License : LGPL
+        Homepage: http://software.complete.org/software/projects/show/hdbc
+
+    * HaXML
+        Summary : XML parsing library
+        License : LGPL
+        Homepage: http://www.cs.york.ac.uk/fp/HaXml/
+
+    * Happy
+        Summary : Haskell Yacc replacement (parser generator)
+        License : Happy License (BSD like)
+        Homepage: http://haskell.org/happy/
+        Other   : Not a source dependency. Used to generate GuardLang parser.
+
+
+Instructions for building
+-----------------------------------------
+Sarasvati uses Cabal as a build tool.
+
+To see the available options:
+
+  > runhaskell Setup.hs --help
+
+Before running any other commands
+
+  > runhaskell Setup.hs configure
+
+To build:
+
+  > runhaskell Setup.hs build
+
+To generate the documentation using Haddock.
+
+  > runhaskell Setup.hs haddock

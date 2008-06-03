@@ -30,7 +30,6 @@ import qualified Data.Map as Map
 import Workflow.Util.XmlUtil as XmlUtil
 import qualified Workflow.Util.DbUtil as DbUtil
 import qualified Workflow.Util.ListUtil as ListUtil
-import Workflow.Loaders.LoadError
 import Workflow.Loaders.WfLoad
 
 --------------------------------------------------------------------------------
@@ -187,7 +186,7 @@ getNodeRefId conn newGraphId graphName nodeName instanceName =
                   toSql nodeName,
                   toSql graphId]
        case (null rows) of
-           True -> loadError $ "Node with name " ++ nodeName ++ " for instance " ++ instanceName ++ " not found"
+           True -> wfLoadError $ "Node with name " ++ nodeName ++ " for instance " ++ instanceName ++ " not found"
            False -> return $ (fromSql.head.head) rows
     where
         sql = "select ref.id from wf_node_ref ref " ++
@@ -301,9 +300,9 @@ resolveArcs loadNodes = map (resolveArcs') loadNodes
 
 resolveArc :: [LoadNode] -> (String,String) -> (String, Int)
 resolveArc loadNodes arc
-    | noTarget      = loadError $ "No node with name " ++ targetName ++
+    | noTarget      = wfLoadError $ "No node with name " ++ targetName ++
                                   " found while looking for arc endpoint"
-    | toManyTargets = loadError $ "Too many nodes with name " ++ targetName ++
+    | toManyTargets = wfLoadError $ "Too many nodes with name " ++ targetName ++
                                   " found while looking for arc endpoint"
     | otherwise     = (arcName, (nodeId.head) targetNodes)
     where
@@ -365,13 +364,13 @@ processUnknown element conn graphId =
                        _       -> True
         guard = ListUtil.trim $ readText element "guard"
 
-loadFromXmlToDB ::
+loadFromXmlToDB :: (IConnection conn) =>
      FilePath ->
-     Map.Map Name (Element -> Connection -> Int -> IO (Int,String)) ->
+     conn ->
+     Map.Map Name (Element -> conn -> Int -> IO (Int,String)) ->
      IO (Either String Int)
-loadFromXmlToDB filename funcMap =
-    do conn <- DbUtil.openDbConnection
-       maybeDoc <- loadDocFromFile filename
+loadFromXmlToDB filename conn funcMap =
+    do maybeDoc <- loadDocFromFile filename
        case maybeDoc of
            Left msg  -> return $ Left msg
            Right doc -> do graphId <- withTransaction conn (processDoc doc funcMap)
@@ -390,13 +389,13 @@ loaderMapWith list = addToMap list initialLoaderMap
        addToMap []     map = map
        addToMap (x:xs) map = addToMap xs $ Map.insert (fst x) (snd x) map
 
-loadWorkflow :: String -> Map.Map String (Element -> Connection -> Int -> IO (Int, String)) -> IO (Either String Int)
-loadWorkflow filename funcMap = do handleAll (loadFromXmlToDB filename funcMap)
+loadWorkflow :: (IConnection conn) => String -> conn -> Map.Map String (Element -> conn -> Int -> IO (Int, String)) -> IO (Either String Int)
+loadWorkflow filename conn funcMap = do handleAll (loadFromXmlToDB filename conn funcMap)
     where
-        handleAll = (handleSql handleDbError).(handleLoad handleLoadError).(handleXml handleXmlError)
+        handleAll = (handleSql handleDbError).(handleWfLoad handleLoadError).(handleXml handleXmlError)
 
-handleLoadError :: LoadException -> IO (Either String a)
-handleLoadError (LoadException msg) =
+handleLoadError :: WfLoadError -> IO (Either String a)
+handleLoadError (WfLoadError msg) =
     do putStrLn msg
        return $ Left msg
 
