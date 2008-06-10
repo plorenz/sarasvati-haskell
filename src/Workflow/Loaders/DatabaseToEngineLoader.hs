@@ -81,7 +81,7 @@ loadNodes conn graphId typeMap =
     do rows <- quickQuery conn sql [toSql graphId]
        mapM (rowToNode conn typeMap) rows
     where
-        sql = "select r.id, n.id, n.name, n.type, n.is_join, r.instance, g.name, g.version, n.guard " ++
+        sql = "select r.id, n.id, n.name, n.type, n.is_join, r.instance, g.name, g.version, coalesce( n.guard, '' ) " ++
               "  from wf_node_ref r " ++
               "  join wf_node n on (r.node_id = n.id) " ++
               "  join wf_graph g on (n.graph_id = g.id)" ++

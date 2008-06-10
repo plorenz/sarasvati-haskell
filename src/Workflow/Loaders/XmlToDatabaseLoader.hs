@@ -25,7 +25,6 @@ import Text.XML.HaXml.Parse
 import Text.XML.HaXml.Combinators
 import Text.XML.HaXml.Types
 import Database.HDBC
-import Database.HDBC.PostgreSQL
 import qualified Data.Map as Map
 import Workflow.Util.XmlUtil as XmlUtil
 import qualified Workflow.Util.DbUtil as DbUtil
