@@ -27,7 +27,7 @@ import Workflow.Task.Task
 import Text.XML.HaXml.Types
 
 processTaskElement :: Element -> NodeSource -> Node
-processTaskElement element source = Node 0 "task" nodeId source isJoinNode guard nodeExtra
+processTaskElement element source = Node 0 "task" nodeId source isJoinNode isStartNode guard nodeExtra
     where
         nodeId         = readAttr element "nodeId"
         nodeTypeStr    = readAttr element "type"
@@ -38,6 +38,10 @@ processTaskElement element source = Node 0 "task" nodeId source isJoinNode guard
         isJoinNode     = case (nodeTypeStr) of
                              "requireSingle" -> False
                              _               -> True
+
+        isStartNode    = case (readRequiredAttr element "isStart") of
+                             "true" -> True
+                             _      -> False
 
         taskDef        = TaskDef name desc
         nodeExtra      = makeNodeExtra taskDef

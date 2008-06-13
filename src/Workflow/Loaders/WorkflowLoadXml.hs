@@ -119,7 +119,7 @@ processChildNodes (e:rest) source funcMap nodeMap nextId = processChildNodes res
 -- has no attributes
 
 processStartElement :: Element -> NodeSource -> Node
-processStartElement element source = Node 0 "start" "start" source False guard NoNodeExtra
+processStartElement element source = Node 0 "start" "start" source False True guard NoNodeExtra
     where
         guard = trim $ readText element "guard"
 
@@ -129,13 +129,17 @@ processStartElement element source = Node 0 "start" "start" source False guard N
 -- type in Workflow. Nodes should contain only arc and externalArc elements.
 
 processNodeElement :: Element -> NodeSource -> Node
-processNodeElement element source = Node 0 "node" nodeId source isJoinNode guard NoNodeExtra
+processNodeElement element source = Node 0 "node" nodeId source isJoinNode isStartNode guard NoNodeExtra
     where
         nodeId      = readAttr element "nodeId"
         guard       = readText element "guard"
-        isJoinNode  = case ( readAttr element "type" ) of
-                          "requireSingle" -> False
-                          _               -> True
+        isJoinNode  = case ( readAttr element "isJoin" ) of
+                          "true" -> True
+                          _      -> False
+        isStartNode = case ( readRequiredAttr element "isStart" ) of
+                           "true" -> True
+                           _      -> False
+
 
 
 defaultElemFunctionMap :: Map.Map String (Element -> NodeSource -> Node)

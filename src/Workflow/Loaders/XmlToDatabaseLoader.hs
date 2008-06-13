@@ -81,9 +81,9 @@ readExternalArcs element = map (readExternalArcFromElem) childElem
 readExternalArcFromElem :: Element -> ExternalArc
 readExternalArcFromElem e = ExternalArc nodeId workflowId instanceId arcName arcType
     where
-        workflowId = readRequiredAttr e "workflow"
+        workflowId = readRequiredAttr e "external"
         instanceId = readRequiredAttr e "instance"
-        nodeId     = readRequiredAttr e "nodeId"
+        nodeId     = readRequiredAttr e "nodeName"
         arcName    = readOptionalAttr e "name" ""
         arcType    = case (readRequiredAttr e "type") of
                          "in" -> InArc
@@ -326,9 +326,9 @@ processChildNode graphId funcMap conn e =
     do (nodeId, nodeName) <- nodeFunction e conn graphId
        return $ LoadNode nodeId nodeName [] arcs extArcs
     where
-        elemName     = case (e) of (Elem name _ _ ) -> name
-        nodeFunction = case (Map.member elemName funcMap) of
-                           True  -> funcMap Map.! elemName
+        nodeType     = readRequiredAttr e "type"
+        nodeFunction = case (Map.member nodeType funcMap) of
+                           True  -> funcMap Map.! nodeType
                            False -> processUnknown
         arcs         = readArcs e
         extArcs      = readExternalArcs e

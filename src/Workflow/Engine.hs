@@ -110,6 +110,8 @@ data NodeExtra = NoNodeExtra | NodeExtra Dynamic
 --                      'ArcToken' points to. If false, every incoming 'ArcToken' will immediately generate a new
 --                      'NodeToken' upon which the approprate guard function will be called.
 --
+--     * 'nodeIsStart' - If true a 'NodeToken' will e placed in this 'Node' when the workflow is started.
+--
 --     * 'nodeGuard' - May contain a string which can be interpreted by the guard function. For example, it may
 --                     be a GuardLang script, which can be evaluated by the 'evalGuardLang' guard function.
 --
@@ -123,6 +125,7 @@ data Node =
         nodeName     :: String,
         nodeSource   :: NodeSource,
         nodeIsJoin   :: Bool,
+        nodeIsStart  :: Bool,
         nodeGuard    :: String,
         nodeExtra    :: NodeExtra
     }
@@ -353,9 +356,8 @@ startWorkflow engine nodeTypes predicates graph userData
                                  wfRun <- acceptWithGuard engine startToken (wfRun { nodeTokens = [startToken] })
                                  return $ Right wfRun
   where
-    startNodes = filter (isStartNode) $ Map.elems (graphNodes graph)
+    startNodes = filter (\node -> nodeIsStart node) $ Map.elems (graphNodes graph)
     startNode  = head startNodes
-    isStartNode node = (nodeName node == "start") && ((wfDepth.nodeSource) node == 0)
 
 isWfComplete :: WfProcess a -> Bool
 isWfComplete process
