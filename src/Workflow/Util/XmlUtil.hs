@@ -2,7 +2,7 @@
     This file is part of Sarasvati.
 
     Sarasvati is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as 
+    it under the terms of the GNU Lesser General Public License as
     published by the Free Software Foundation, either version 3 of the
     License, or (at your option) any later version.
 
@@ -11,7 +11,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public 
+    You should have received a copy of the GNU Lesser General Public
     License along with Sarasvati.  If not, see <http://www.gnu.org/licenses/>.
 
     Copyright 2008 Paul Lorenz
@@ -26,16 +26,16 @@ import Data.Dynamic
 import Control.Exception
 import Workflow.Util.ListUtil
 
-data XmlException = MissingRequiredAttr String String
+data XmlError = XmlError String
   deriving (Show,Typeable)
 
 readAttr :: Element -> String -> String
 readAttr element name = head $ map (\(val,_)->val) $ attributed name (keep) (CElem element)
 
 missingAttr :: String -> String -> a
-missingAttr elemName attrName = throwDyn $ MissingRequiredAttr elemName attrName
+missingAttr elemName attrName = throwDyn $ XmlError $ "Element " ++ elemName ++ " is missing required attribute " ++ attrName
 
-handleXml :: (XmlException -> IO a) -> IO a -> IO a
+handleXml :: (XmlError -> IO a) -> IO a -> IO a
 handleXml f a = catchDyn a f
 
 readRequiredAttr :: Element -> String -> String

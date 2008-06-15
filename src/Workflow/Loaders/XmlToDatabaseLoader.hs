@@ -405,9 +405,7 @@ handleDbError sqlError =
     where
        msg = "Database error: " ++ (seErrorMsg sqlError)
 
-handleXmlError :: XmlException -> IO (Either String a)
-handleXmlError (MissingRequiredAttr elemName attrName) =
+handleXmlError :: XmlError -> IO (Either String a)
+handleXmlError (XmlError msg) =
     do putStrLn msg
        return $ Left msg
-    where
-        msg = "Missing xml attribute '" ++ attrName ++ "' on element of type '" ++ elemName ++ "'"
