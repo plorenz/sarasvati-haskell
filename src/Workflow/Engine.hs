@@ -20,7 +20,6 @@
 -- Author: Paul Lorenz
 
 module Workflow.Engine (GuardResponse(..),
-                        NodeSource(..),
                         NodeExtra(..),
                         Node(..),
                         NodeType(..),
@@ -73,19 +72,6 @@ import qualified Workflow.Util.ListUtil as ListUtil
 data GuardResponse = AcceptToken | DiscardToken | SkipNode String
   deriving (Show)
 
--- | Each 'Node' has a 'NodeSource', which describes in which process definition the
---   'Node' was originally defined in.
-
-data NodeSource =
-    NodeSource {
-        wfName     :: String,
-        wfVersion  :: String,
-        wfInstance :: String,
-        wfDepth    :: Int
-    }
- deriving (Show, Eq)
-
-
 -- | 'NodeExtra' is a place to store any extra data that a given 'Node' may
 -- require. The only requirement is that the 'extra data' be a 'Typeable'
 -- so it can encapsulated in a 'Dynamic'.
@@ -102,8 +88,6 @@ data NodeExtra = NoNodeExtra | NodeExtra Dynamic
 --     * 'nodeType' - String which used to get the associated 'NodeType' stored in the 'WfProcess'
 --
 --     * 'nodeName' - String identifier which should be unique within a single process definition.
---
---     * 'nodeSource' - 'NodeSource' which stores in which process definition this Node was originally defined.
 --
 --     * 'nodeIsJoin' - If true, when an 'ArcToken' arrives at a 'Node', the node will wait for an 'ArcToken' to
 --                      be waiting on every 'Arc' that shares the name of the 'Arc' that the current, incoming
@@ -123,7 +107,6 @@ data Node =
         nodeId       :: Int,
         nodeType     :: String,
         nodeName     :: String,
-        nodeSource   :: NodeSource,
         nodeIsJoin   :: Bool,
         nodeIsStart  :: Bool,
         nodeGuard    :: String,
@@ -252,8 +235,7 @@ instance Show (NodeExtra) where
 
 
 instance Show (Node) where
-    show a = "|Node id: " ++ (show.nodeId) a ++ " name: " ++ nodeName a ++
-             " depth: " ++ (show.nodeSource) a ++ "|"
+    show a = "|Node id: " ++ (show.nodeId) a ++ " name: " ++ nodeName a ++ "|"
 
 instance Token (NodeToken) where
     tokenId (NodeToken tokId _) = tokId

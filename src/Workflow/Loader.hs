@@ -22,13 +22,18 @@ module Workflow.Loader where
 import Control.Exception
 
 import Data.Dynamic
-import Data.Map as Map
+import qualified Data.Map as Map
 
 import Text.XML.HaXml.Combinators
 import Text.XML.HaXml.Parse
 import Text.XML.HaXml.Types
 
+import Workflow.Engine
 import Workflow.Util.XmlUtil
+
+-------------------------------------------------------------------------------
+--             XML Literals to  XML Data Structures                          --
+-------------------------------------------------------------------------------
 
 data XmlWorkflow =
     XmlWorkflow {
@@ -147,6 +152,68 @@ loadXmlExternalArcs (e:rest) =  xmlExternalArc : loadXmlExternalArcs rest
                              "in"  -> InArc
                              "out" -> OutArc
                              _     -> wfLoadError $ "Invalid value for external arc 'type' attribute specified. Must be 'in' or 'out'."
+
+-------------------------------------------------------------------------------
+--             XML Data structures to Engine Data structures                 --
+-------------------------------------------------------------------------------
+
+data LoadNode =
+    LoadNode {
+        loadedNode   :: Node,
+        xmlNode      :: XmlNode,
+        loadNodeArcs :: [LoadArc]
+    }
+
+data LoadArc =
+    LoadArc {
+        arcName   :: String,
+        arcNodeId :: Int
+    }
+
+class Loader loader where
+    loadWorkflow :: loader -> XmlWorkflow -> IO Int
+    loadNode     :: loader -> Int -> XmlNode -> IO Node
+
+processXmlWorkflow :: (Loader l) => l -> XmlWorkflow -> IO ()
+processXmlWorkflow loader xmlWf =
+    do graphId <- loadWorkflow loader xmlWf
+       nodes   <- mapM (xmlNodeToLoadNode loader graphId) (xmlWfNodes xmlWf)
+       let nodes = resolveArcs nodes
+       return ()
+
+xmlNodeToLoadNode :: (Loader l) => l -> Int -> XmlNode -> IO LoadNode
+xmlNodeToLoadNode loader graphId xmlNode =
+    do node <- loadNode loader graphId xmlNode
+       return $ LoadNode node xmlNode []
+
+resolveArcs :: [LoadNode] -> [LoadNode]
+resolveArcs loadNodes = map (resolveArcs') loadNodes
+    where
+        resolveArcs' loadNode = loadNode {loadNodeArcs = map (resolveArc loadNodes) ((xmlArcs.xmlNode) loadNode) }
+
+resolveArc :: [LoadNode] -> XmlArc -> LoadArc
+resolveArc loadNodes xmlArc
+    | noTarget      = wfLoadError $ "No node with name " ++ targetName ++
+                                  " found while looking for arc endpoint"
+    | toManyTargets = wfLoadError $ "Too many nodes with name " ++ targetName ++
+                                  " found while looking for arc endpoint"
+    | otherwise     = LoadArc arcName $ (nodeId.loadedNode.head) targetNodes
+    where
+        arcName       = xmlArcName xmlArc
+        targetName    = xmlArcTo   xmlArc
+        targetNodes   = filter (\n->(xmlNodeName.xmlNode) n == targetName) loadNodes
+        noTarget      = null targetNodes
+        toManyTargets = length targetNodes > 1
+
+xmlNodeToNode :: Int -> XmlNode -> NodeExtra -> Node
+xmlNodeToNode nodeId xmlNode nodeExtra =
+    Node nodeId
+         (xmlNodeType xmlNode)
+         (xmlNodeName xmlNode)
+         (xmlNodeIsJoin xmlNode)
+         (xmlNodeIsStart xmlNode)
+         (xmlNodeGuard xmlNode)
+         nodeExtra
 
 data WfLoadError = WfLoadError String
   deriving (Show,Typeable)
