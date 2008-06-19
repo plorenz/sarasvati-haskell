@@ -91,7 +91,7 @@ loadNodes conn graphId typeMap =
 rowToNode :: (IConnection conn) => conn -> Map.Map String (conn -> Int -> IO NodeExtra) -> [SqlValue] -> IO Node
 rowToNode conn typeMap row =
     do nodeExtra <- nodeExtraIO
-       return $ Node nodeRefId nodeType nodeName isJoin isStart guard nodeExtra
+       return $ Node nodeRefId nodeType nodeName isJoin isStart (not isTopLevel) guard nodeExtra
     where
         nodeRefId    = fromSql (row !! 0)
         nodeId       = fromSql (row !! 1) :: Int

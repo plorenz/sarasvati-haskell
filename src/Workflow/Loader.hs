@@ -19,18 +19,18 @@
 
 module Workflow.Loader where
 
-import Control.Exception
-import Control.Monad
+import           Control.Exception
+import           Control.Monad
 
 import           Data.Dynamic
 import qualified Data.Map as Map
 
 import           Text.XML.HaXml.Combinators
-import Text.XML.HaXml.Parse
-import Text.XML.HaXml.Types
+import           Text.XML.HaXml.Parse
+import           Text.XML.HaXml.Types
 
-import Workflow.Engine
-import Workflow.Util.XmlUtil
+import           Workflow.Engine
+import           Workflow.Util.XmlUtil
 
 -------------------------------------------------------------------------------
 --             XML Literals to  XML Data Structures                          --
@@ -168,13 +168,13 @@ class Loader loader where
     createWorkflow :: loader -> XmlWorkflow -> IO Int
     createNode     :: loader -> Int -> XmlNode -> IO Node
     createArc      :: loader -> Int -> String -> Node -> Node -> IO Arc
-    importInstance :: loader -> Int -> String -> IO (Node,Arc)
+    importInstance :: loader -> Int -> String -> IO ([Node],[Arc])
 
 processXmlWorkflow :: (Loader l) => l -> XmlWorkflow -> IO ()
 processXmlWorkflow loader xmlWf =
     do graphId <- createWorkflow loader xmlWf
        nodes   <- mapM (xmlNodeToLoadNode loader graphId) xmlNodes
-       arcs    <- resolveArcs loader graphId nodes
+       arcs    <- createInternalArcs loader graphId nodes
        instanceMap <- foldM (importExternal loader graphId) Map.empty externals
        return ()
     where
@@ -184,7 +184,7 @@ processXmlWorkflow loader xmlWf =
 instanceKey :: XmlExternalArc -> String
 instanceKey extArc = (xmlExtArcExternal extArc) ++ ":" ++ (xmlExtArcInstance extArc)
 
-importExternal :: (Loader l) => l -> Int -> Map.Map String (Node,Arc) -> XmlExternalArc -> IO (Map.Map String (Node,Arc))
+importExternal :: (Loader l) => l -> Int -> Map.Map String ([Node],[Arc]) -> XmlExternalArc -> IO (Map.Map String ([Node],[Arc]))
 importExternal loader graphId instanceMap extArc =
     if (Map.member key instanceMap)
         then return instanceMap
@@ -199,28 +199,54 @@ xmlNodeToLoadNode loader graphId xmlNode =
     do node <- createNode loader graphId xmlNode
        return $ LoadNode node xmlNode
 
-resolveArcs :: (Loader l) => l -> Int -> [LoadNode] -> IO [Arc]
-resolveArcs loader graphId loadNodes =
+createInternalArcs :: (Loader l) => l -> Int -> [LoadNode] -> IO [Arc]
+createInternalArcs loader graphId loadNodes =
     do arcList <- mapM (resolveArcs') loadNodes
        return (concat arcList)
     where
-        resolveArcs' loadNode = mapM (resolveArc loader loadNode graphId loadNodes) ((xmlArcs.xmlNode) loadNode)
+        resolveArcs' loadNode = mapM (createInternalArc loader loadNode graphId loadNodes) ((xmlArcs.xmlNode) loadNode)
 
-resolveArc :: (Loader l) => l -> LoadNode -> Int -> [LoadNode] -> XmlArc -> IO Arc
-resolveArc loader node graphId loadNodes xmlArc
-    | noTarget      = wfLoadError $ "No node with name " ++ targetName ++
-                                  " found while looking for arc endpoint"
-    | toManyTargets = wfLoadError $ "Too many nodes with name " ++ targetName ++
-                                  " found while looking for arc endpoint"
-    | otherwise     = createArc loader graphId arcName startNode endNode
+createInternalArc :: (Loader l) => l -> LoadNode -> Int -> [LoadNode] -> XmlArc -> IO Arc
+createInternalArc loader node graphId loadNodes xmlArc
+    | noTarget       = wfLoadError $ "No node with name " ++ targetName ++
+                                     " found while looking for arc endpoint"
+    | tooManyTargets = wfLoadError $ "Too many nodes with name " ++ targetName ++
+                                     " found while looking for arc endpoint"
+    | otherwise      = createArc loader graphId arcName startNode endNode
     where
-        arcName       = xmlArcName xmlArc
-        targetName    = xmlArcTo   xmlArc
-        targetNodes   = filter (\n->(xmlNodeName.xmlNode) n == targetName) loadNodes
-        noTarget      = null targetNodes
-        toManyTargets = length targetNodes > 1
-        startNode     = loadedNode node
-        endNode       = loadedNode (head targetNodes)
+        arcName        = xmlArcName xmlArc
+        targetName     = xmlArcTo   xmlArc
+        targetNodes    = filter (\n->(xmlNodeName.xmlNode) n == targetName) loadNodes
+        noTarget       = null targetNodes
+        tooManyTargets = length targetNodes > 1
+        startNode      = loadedNode node
+        endNode        = loadedNode (head targetNodes)
+
+createExternalArcs :: (Loader l) => l -> Int -> [LoadNode] -> Map.Map String ([Node],[Arc]) -> IO [Arc]
+createExternalArcs loader graphId nodes instanceMap = mapM (createExternalArc loader graphId instanceMap) nodeArcPairs
+    where
+        nodeArcPairs = concatMap (\loadNode-> map(\arc -> (loadedNode loadNode,arc)) ((xmlExternalArcs.xmlNode) loadNode)) nodes
+
+createExternalArc :: (Loader l) => l -> Int -> Map.Map String ([Node],[Arc]) -> (Node, XmlExternalArc) -> IO Arc
+createExternalArc loader graphId instanceMap (node,extArc)
+    | noTarget       = wfLoadError $ "No node with name " ++ targetName ++
+                                     " found in external " ++ (xmlExtArcExternal extArc) ++
+                                     " while looking for external arc endpoint"
+    | tooManyTargets = wfLoadError $ "Too many nodes with name " ++ targetName ++
+                                     " found in external " ++ (xmlExtArcExternal extArc) ++
+                                     " while looking for external arc endpoint"
+    | otherwise      = case (xmlExtArcType extArc) of
+                            InArc  -> createArc loader graphId extArcName targetNode node
+                            OutArc -> createArc loader graphId extArcName node       targetNode
+    where
+        instKey        = instanceKey extArc
+        nodes          = fst $ instanceMap Map.! instKey
+        extArcName     = xmlExtArcName extArc
+        targetName     = xmlExtArcNodeName extArc
+        targetNodes    = filter (\n -> (nodeName n) == targetName && ((not.nodeIsExternal) n)) nodes
+        noTarget       = null targetNodes
+        tooManyTargets = length targetNodes > 1
+        targetNode     = head targetNodes
 
 xmlNodeToNode :: Int -> XmlNode -> NodeExtra -> Node
 xmlNodeToNode nodeId xmlNode nodeExtra =
@@ -229,6 +255,7 @@ xmlNodeToNode nodeId xmlNode nodeExtra =
          (xmlNodeName xmlNode)
          (xmlNodeIsJoin xmlNode)
          (xmlNodeIsStart xmlNode)
+         False
          (xmlNodeGuard xmlNode)
          nodeExtra
 
