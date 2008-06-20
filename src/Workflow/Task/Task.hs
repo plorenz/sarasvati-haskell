@@ -20,9 +20,14 @@
 
 module Workflow.Task.Task where
 
-import Workflow.Engine
+import           Data.Dynamic
 import qualified Data.Map as Map
-import Data.Dynamic
+
+import           Text.XML.HaXml.Types
+
+import           Workflow.Engine
+import           Workflow.Util.XmlUtil
+
 
 data TaskDef =
     TaskDef {
@@ -43,6 +48,13 @@ data Task =
     taskState      :: TaskState,
     taskRejectable :: Bool
   }
+
+processTaskElement :: Element -> NodeExtra
+processTaskElement element = makeNodeExtra $ TaskDef name description
+    where
+        taskDefElem = getChildNamed element "task-def"
+        name        = readText taskDefElem "task-name"
+        description = readText taskDefElem "description"
 
 showTaskList :: [Task] -> IO ()
 showTaskList tasks =

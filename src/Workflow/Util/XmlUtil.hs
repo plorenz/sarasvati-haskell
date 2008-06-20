@@ -65,6 +65,16 @@ elementName (Elem name _ _) = name
 getChildren :: Element -> [Element]
 getChildren element = toElem $ (elm `o` children) (CElem element)
 
+getChildrenNamed :: Element -> String -> [Element]
+getChildrenNamed element name = toElem $ ((tag name) `o` children) (CElem element)
+
+getChildNamed :: Element -> String -> Element
+getChildNamed element name
+    | null childList = throwDyn $ XmlError $ (elementName element) ++ " is missing required child element " ++ name
+    | otherwise      = head childList
+    where
+        childList = toElem $ ((tag name) `o` children) (CElem element)
+
 rootElement :: Document -> Element
 rootElement (Document _ _ element _ ) = element
 

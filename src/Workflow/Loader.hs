@@ -25,7 +25,6 @@ import           Control.Monad
 import           Data.Dynamic
 import qualified Data.Map as Map
 
-import           Text.XML.HaXml.Combinators
 import           Text.XML.HaXml.Parse
 import           Text.XML.HaXml.Types
 
@@ -122,8 +121,8 @@ loadXmlNodes (e:rest) funcMap = xmlNode : loadXmlNodes rest funcMap
                            "true" -> True
                            _      -> False
         guard        = readText e "guard"
-        arcs         = loadXmlArcs         $ toElem $ ((tag "arc") `o` children) (CElem e)
-        externalArcs = loadXmlExternalArcs $ toElem $ ((tag "externalArc") `o` children) (CElem e)
+        arcs         = loadXmlArcs         $ getChildrenNamed e "arc"
+        externalArcs = loadXmlExternalArcs $ getChildrenNamed e "externalArc"
         nodeExtra    = case (Map.member nodeType funcMap) of
                            False -> NoNodeExtra
                            True  -> (funcMap Map.! nodeType) e
@@ -162,14 +161,14 @@ data LoadNode =
     }
 
 class Loader loader where
+    loadWorkflow   :: loader -> String -> IO (Either String WfGraph)
     createWorkflow :: loader -> XmlWorkflow -> IO Int
     createNode     :: loader -> Int -> XmlNode -> IO Node
     createArc      :: loader -> Int -> String -> Node -> Node -> IO Arc
     importInstance :: loader -> Int -> String -> IO ([Node],[Arc])
 
 class Resolver resolver where
-    resolveNodeExtra :: resolver -> Int -> XmlNode -> IO NodeExtra
-    resolveWorkflow  :: resolver -> String -> IO WfGraph
+    resolveGraphNameToXmlWorkflow  :: resolver -> String -> IO XmlWorkflow
 
 processXmlWorkflow :: (Loader l) => l -> XmlWorkflow -> IO WfGraph
 processXmlWorkflow loader xmlWf =
@@ -181,7 +180,7 @@ processXmlWorkflow loader xmlWf =
        return $ graphFromArcs graphId
                               (xmlWfName xmlWf)
                               (extractNodes nodes instanceMap)
-                              (extractArcs  arcs  instanceMap)
+                              (extractArcs  arcs  extArcs instanceMap)
     where
         xmlNodes  = xmlWfNodes xmlWf
         externals = concatMap (xmlExternalArcs) xmlNodes
@@ -192,8 +191,8 @@ extractNodes loadNodes nodeMap = nodes ++ instanceNodes
         nodes         = map (loadedNode) loadNodes
         instanceNodes = concatMap (fst) (Map.elems nodeMap)
 
-extractArcs :: [Arc] -> Map.Map String ([Node],[Arc]) -> [Arc]
-extractArcs arcs instanceMap = arcs ++ instanceArcs
+extractArcs :: [Arc] -> [Arc] -> Map.Map String ([Node],[Arc]) -> [Arc]
+extractArcs arcs extArcs instanceMap = arcs ++ extArcs ++ instanceArcs
     where
         instanceArcs = concatMap (snd) (Map.elems instanceMap)
 
@@ -264,8 +263,8 @@ createExternalArc loader graphId instanceMap (node,extArc)
         tooManyTargets = length targetNodes > 1
         targetNode     = head targetNodes
 
-xmlNodeToNode :: Int -> XmlNode -> NodeExtra -> Node
-xmlNodeToNode nodeId xmlNode nodeExtra =
+xmlNodeToNode :: Int -> XmlNode -> Node
+xmlNodeToNode nodeId xmlNode =
     Node nodeId
          (xmlNodeType xmlNode)
          (xmlNodeName xmlNode)
@@ -273,7 +272,7 @@ xmlNodeToNode nodeId xmlNode nodeExtra =
          (xmlNodeIsStart xmlNode)
          False
          (xmlNodeGuard xmlNode)
-         nodeExtra
+         (xmlNodeExtra xmlNode)
 
 data WfLoadError = WfLoadError String
   deriving (Show,Typeable)
@@ -283,6 +282,12 @@ wfLoadError msg = throwDyn $ WfLoadError msg
 
 handleWfLoad :: (WfLoadError -> IO a) -> IO a -> IO a
 handleWfLoad f a = catchDyn a f
+
+xmlErrorToLeft :: XmlError -> IO (Either String a)
+xmlErrorToLeft (XmlError msg) = return $ Left msg
+
+wfErrorToLeft :: WfLoadError -> IO (Either String a)
+wfErrorToLeft (WfLoadError msg) = return $ Left msg
 
 {-
 testLoad f =

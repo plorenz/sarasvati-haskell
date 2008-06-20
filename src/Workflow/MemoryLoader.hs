@@ -23,48 +23,74 @@ import           Control.Monad
 import           Data.IORef
 import qualified Data.Map as Map
 
+import           Text.XML.HaXml.Types
+
 import           Workflow.Engine
 import           Workflow.Loader
+import           Workflow.Util.XmlUtil
 
-data MemLoader = MemLoader (IORef Int)
+data MemLoader = forall resolver . Resolver resolver => MemLoader (IORef Int) resolver
 
 instance Loader (MemLoader) where
+    loadWorkflow   = loadMemWorkflow
     createWorkflow = createMemWorkflow
     createNode     = createMemNode
     createArc      = createMemArc
     importInstance = importMemInstance
 
-newMemLoader :: IO MemLoader
-newMemLoader =
+data SimpleResolver =
+    SimpleResolver {
+        basePath :: String,
+        funcMap  :: Map.Map String (Element -> NodeExtra)
+    }
+
+instance Resolver SimpleResolver where
+    resolveGraphNameToXmlWorkflow resolver name =
+        do result <- loadXmlWorkflowFromFile path (funcMap resolver)
+           case result of
+               Left msg    -> wfLoadError $ "Failed to load '" ++ name ++ "' from file '" ++ path ++
+                                           "' because: " ++ msg
+               Right xmlWf -> return $ xmlWf
+        where
+            path = (basePath resolver) ++ name ++ ".wf.xml"
+
+newMemLoader :: (Resolver r) => r -> IO MemLoader
+newMemLoader resolver =
     do counter <- newIORef 1
-       return $ MemLoader counter
+       return $ MemLoader counter resolver
+
+newSimpleMemLoader :: String -> Map.Map String (Element -> NodeExtra) -> IO MemLoader
+newSimpleMemLoader basePath funcMap = newMemLoader (SimpleResolver basePath funcMap)
 
 nextId :: MemLoader -> IO Int
-nextId (MemLoader counter) = atomicModifyIORef counter (\t-> (t + 1, t + 1))
+nextId (MemLoader counter _) = atomicModifyIORef counter (\t-> (t + 1, t + 1))
 
-createMemWorkflow :: MemLoader -> XmlWorkflow -> IO Int
-createMemWorkflow loader xmlWf = nextId loader
-
-createMemNode :: MemLoader -> Int -> XmlNode -> IO Node
-createMemNode loader graphId xmlNode =
-    do nodeId <- nextId loader
-       return $ xmlNodeToNode nodeId xmlNode extra
+loadMemWorkflow :: MemLoader -> String -> IO (Either String WfGraph)
+loadMemWorkflow loader@(MemLoader _ resolver) graphName = handleErrors graph
     where
-        nodeName = xmlNodeName    xmlNode
-        isJoin   = xmlNodeIsJoin  xmlNode
-        isStart  = xmlNodeIsStart xmlNode
-        nodeType = xmlNodeType    xmlNode
-        guard    = xmlNodeGuard   xmlNode
-        extra    = xmlNodeExtra   xmlNode
+       graph = do xmlWf <- resolveGraphNameToXmlWorkflow resolver graphName
+                  graph <- processXmlWorkflow loader xmlWf
+                  return $ Right graph
+       handleErrors = (handleWfLoad wfErrorToLeft).(handleXml xmlErrorToLeft)
 
-createMemArc :: MemLoader -> Int -> String -> Node -> Node -> IO Arc
-createMemArc loader graphId arcName startNode endNode =
+
+createMemWorkflow :: MemLoader -> a -> IO Int
+createMemWorkflow loader _ = nextId loader
+
+createMemNode :: MemLoader -> a -> XmlNode -> IO Node
+createMemNode loader _ xmlNode =
+    do nodeId <- nextId loader
+       return $ xmlNodeToNode nodeId xmlNode
+
+createMemArc :: MemLoader -> a -> String -> Node -> Node -> IO Arc
+createMemArc loader _ arcName startNode endNode =
     do arcId <- nextId loader
        return $ Arc arcId arcName (nodeId startNode) (nodeId endNode)
 
-importMemInstance :: MemLoader -> Int -> String -> IO ([Node],[Arc])
-importMemInstance loader@(MemLoader counter) graphId graphName =
-    do wfGraph <- resolveWorkflow resolver graphName
+importMemInstance :: MemLoader -> a -> String -> IO ([Node],[Arc])
+importMemInstance loader@(MemLoader _ resolver ) _ graphName =
+    do xmlWf   <- resolveGraphNameToXmlWorkflow resolver graphName
+       wfGraph <- processXmlWorkflow loader xmlWf
        nodeMap <- importInstanceNodes loader (Map.elems (graphNodes wfGraph))
        arcs    <- importInstanceArcs loader nodeMap ((concat.Map.elems) (graphInputArcs wfGraph))
        return (Map.elems nodeMap,arcs)

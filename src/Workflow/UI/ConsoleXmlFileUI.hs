@@ -26,8 +26,9 @@ import Workflow.Task.Task
 import IO
 import Data.Char
 import System.Directory
-import Workflow.Loaders.WorkflowLoadXml
-import Workflow.Task.TaskXml
+import Workflow.Loader
+import Workflow.MemoryLoader
+import Workflow.Task.Task
 import qualified Data.Map as Map
 import Workflow.UI.ConsoleCommon
 import Workflow.MemoryWfEngine
@@ -52,14 +53,15 @@ selectWorkflow wfList =
 useWorkflow :: [String] -> Int -> IO ()
 useWorkflow wfList idx
     | length wfList <= idx = do putStrLn "ERROR: Invalid workflow number"
-    | otherwise            = do result <- loadWfGraphFromFile (wfList !! idx) elemFunctionMap
+    | otherwise            = do loader <- newSimpleMemLoader "/home/paul/workspace/wf-haskell/common/test-wf/" funcMap
+                                result <- loadWorkflow loader (wfList !! idx)
                                 case (result) of
                                     Left msg -> putStrLn $ "ERROR: Could not load workflow: " ++ msg
                                     Right graph -> do putStrLn "Running workflow"
                                                       putStrLn (show graph)
                                                       runWorkflow graph
    where
-       elemFunctionMap = elemMapWith [ ("task", processTaskElement) ]
+       funcMap = Map.fromList [ ("task", processTaskElement) ]
 
 runWorkflow :: WfGraph -> IO ()
 runWorkflow graph =
@@ -78,11 +80,11 @@ nodeTypeMap = Map.fromList
 getWorkflowList :: IO [String]
 getWorkflowList =
     do fileList <- getDirectoryContents wfDir
-       return $ (useFullPath.filterWfs) fileList
+       return $ (stripExt.filterWfs) fileList
     where
         wfDir = "/home/paul/workspace/wf-haskell/common/test-wf/"
         filterWfs = (filter (hasExtension ".wf.xml"))
-        useFullPath = (map (\f->wfDir ++ f))
+        stripExt = map (reverse.(drop 7).reverse)
 
 hasExtension :: String -> String -> Bool
 hasExtension ext name = all (\(x,y) -> x == y) $ zip (reverse ext) (reverse name)
