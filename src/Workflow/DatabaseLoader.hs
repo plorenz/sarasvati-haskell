@@ -145,7 +145,7 @@ rowToLoadArc row = LoadArc name refA refZ
         refZ = fromSql $ row !! 2
 -}
 
-data DbLoader = forall conn. IConnection conn => DbLoader conn (Map.Map String (DbLoader -> Int -> XmlNodeExtra -> IO NodeExtra))
+data DbLoader = forall conn . IConnection conn => DbLoader conn (Map.Map String (DbLoader -> Int -> XmlNodeExtra -> IO NodeExtra))
 
 instance Loader (DbLoader) where
     createWorkflow = createDbWorkflow
@@ -154,7 +154,7 @@ instance Loader (DbLoader) where
     importInstance = importDbInstance
 
 createDbWorkflow :: DbLoader -> XmlWorkflow -> IO Int
-createDbWorkflow (DbLoader conn funcMap) xmlWf = insertNewGraph conn (xmlWfName xmlWf)
+createDbWorkflow (DbLoader conn _) xmlWf = insertNewGraph conn (xmlWfName xmlWf)
 
 createDbNode :: DbLoader -> Int -> XmlNode -> IO Node
 createDbNode loader@(DbLoader conn funcMap) graphId xmlNode =
@@ -172,7 +172,7 @@ createDbNode loader@(DbLoader conn funcMap) graphId xmlNode =
         xmlExtra = xmlNodeExtra   xmlNode
 
 createDbArc :: DbLoader -> Int -> String -> Node -> Node -> IO Arc
-createDbArc (DbLoader conn funcMap) graphId arcName startNode endNode =
+createDbArc (DbLoader conn _) graphId arcName startNode endNode =
     do arcId <-insertArc conn graphId (nodeId startNode) (nodeId endNode) arcName
        return $ Arc arcId arcName (nodeId startNode) (nodeId endNode)
 

@@ -43,9 +43,6 @@ data XmlWorkflow =
     }
   deriving Show
 
-data XmlNodeExtra = NoXmlNodeExtra | XmlNodeExtra Dynamic
-  deriving Show
-
 -- | An 'XmlNode' stores the data from a <node> element.
 data XmlNode =
     XmlNode {
@@ -56,7 +53,7 @@ data XmlNode =
         xmlNodeGuard    :: String,
         xmlArcs         :: [XmlArc],
         xmlExternalArcs :: [XmlExternalArc],
-        xmlNodeExtra    :: XmlNodeExtra
+        xmlNodeExtra    :: NodeExtra
     }
   deriving Show
 
@@ -91,14 +88,14 @@ data XmlExternalArc =
 
 -- Given a filename, this function will return the corresponding XmlWorkflow.
 
-loadXmlWorkflowFromFile :: String -> (Map.Map String (Element -> XmlNodeExtra)) -> IO (Either String XmlWorkflow)
+loadXmlWorkflowFromFile :: String -> (Map.Map String (Element -> NodeExtra)) -> IO (Either String XmlWorkflow)
 loadXmlWorkflowFromFile filename funcMap =
     do xmlStr <- readFile filename
        case (xmlParse' filename xmlStr) of
            Left msg  -> return $ Left msg
            Right doc -> loadXmlWorkflow doc funcMap
 
-loadXmlWorkflow :: Document -> (Map.Map String (Element -> XmlNodeExtra)) -> IO (Either String XmlWorkflow)
+loadXmlWorkflow :: Document -> (Map.Map String (Element -> NodeExtra)) -> IO (Either String XmlWorkflow)
 loadXmlWorkflow doc funcMap =
     do handleErrors (return xmlWorkflow)
     where
@@ -111,7 +108,7 @@ loadXmlWorkflow doc funcMap =
         wfErrorHandler (WfLoadError msg) = return $ Left msg
         xmlErrorHandler (XmlError msg)   = return $ Left msg
 
-loadXmlNodes :: [Element] -> (Map.Map String (Element -> XmlNodeExtra)) -> [XmlNode]
+loadXmlNodes :: [Element] -> (Map.Map String (Element -> NodeExtra)) -> [XmlNode]
 loadXmlNodes [] _             = []
 loadXmlNodes (e:rest) funcMap = xmlNode : loadXmlNodes rest funcMap
     where
@@ -128,7 +125,7 @@ loadXmlNodes (e:rest) funcMap = xmlNode : loadXmlNodes rest funcMap
         arcs         = loadXmlArcs         $ toElem $ ((tag "arc") `o` children) (CElem e)
         externalArcs = loadXmlExternalArcs $ toElem $ ((tag "externalArc") `o` children) (CElem e)
         nodeExtra    = case (Map.member nodeType funcMap) of
-                           False -> NoXmlNodeExtra
+                           False -> NoNodeExtra
                            True  -> (funcMap Map.! nodeType) e
 
 loadXmlArcs :: [Element] -> [XmlArc]
@@ -170,16 +167,35 @@ class Loader loader where
     createArc      :: loader -> Int -> String -> Node -> Node -> IO Arc
     importInstance :: loader -> Int -> String -> IO ([Node],[Arc])
 
-processXmlWorkflow :: (Loader l) => l -> XmlWorkflow -> IO ()
+class Resolver resolver where
+    resolveNodeExtra :: resolver -> Int -> XmlNode -> IO NodeExtra
+    resolveWorkflow  :: resolver -> String -> IO WfGraph
+
+processXmlWorkflow :: (Loader l) => l -> XmlWorkflow -> IO WfGraph
 processXmlWorkflow loader xmlWf =
-    do graphId <- createWorkflow loader xmlWf
-       nodes   <- mapM (xmlNodeToLoadNode loader graphId) xmlNodes
-       arcs    <- createInternalArcs loader graphId nodes
+    do graphId     <- createWorkflow loader xmlWf
+       nodes       <- mapM (xmlNodeToLoadNode loader graphId) xmlNodes
+       arcs        <- createInternalArcs loader graphId nodes
        instanceMap <- foldM (importExternal loader graphId) Map.empty externals
-       return ()
+       extArcs     <- createExternalArcs loader graphId nodes instanceMap
+       return $ graphFromArcs graphId
+                              (xmlWfName xmlWf)
+                              (extractNodes nodes instanceMap)
+                              (extractArcs  arcs  instanceMap)
     where
         xmlNodes  = xmlWfNodes xmlWf
         externals = concatMap (xmlExternalArcs) xmlNodes
+
+extractNodes :: [LoadNode] -> Map.Map String ([Node],[Arc]) -> [Node]
+extractNodes loadNodes nodeMap = nodes ++ instanceNodes
+    where
+        nodes         = map (loadedNode) loadNodes
+        instanceNodes = concatMap (fst) (Map.elems nodeMap)
+
+extractArcs :: [Arc] -> Map.Map String ([Node],[Arc]) -> [Arc]
+extractArcs arcs instanceMap = arcs ++ instanceArcs
+    where
+        instanceArcs = concatMap (snd) (Map.elems instanceMap)
 
 instanceKey :: XmlExternalArc -> String
 instanceKey extArc = (xmlExtArcExternal extArc) ++ ":" ++ (xmlExtArcInstance extArc)
