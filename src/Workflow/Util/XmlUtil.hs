@@ -22,21 +22,15 @@ module Workflow.Util.XmlUtil where
 
 import Text.XML.HaXml.Combinators
 import Text.XML.HaXml.Types
-import Data.Dynamic
-import Control.Exception
-import Workflow.Util.ListUtil
 
-data XmlError = XmlError String
-  deriving (Show,Typeable)
+import Workflow.Error
+import Workflow.Util.ListUtil
 
 readAttr :: Element -> String -> String
 readAttr element name = head $ map (\(val,_)->val) $ attributed name (keep) (CElem element)
 
 missingAttr :: String -> String -> a
-missingAttr elemName attrName = throwDyn $ XmlError $ "Element " ++ elemName ++ " is missing required attribute " ++ attrName
-
-handleXml :: (XmlError -> IO a) -> IO a -> IO a
-handleXml f a = catchDyn a f
+missingAttr elemName attrName = wfError $ "Element " ++ elemName ++ " is missing required attribute " ++ attrName
 
 readRequiredAttr :: Element -> String -> String
 readRequiredAttr element name
@@ -70,10 +64,10 @@ getChildrenNamed element name = toElem $ ((tag name) `o` children) (CElem elemen
 
 getChildNamed :: Element -> String -> Element
 getChildNamed element name
-    | null childList = throwDyn $ XmlError $ (elementName element) ++ " is missing required child element " ++ name
+    | null childList = wfError $ (elementName element) ++ " is missing required child element " ++ name
     | otherwise      = head childList
     where
-        childList = toElem $ ((tag name) `o` children) (CElem element)
+        childList = getChildrenNamed element name
 
 rootElement :: Document -> Element
 rootElement (Document _ _ element _ ) = element

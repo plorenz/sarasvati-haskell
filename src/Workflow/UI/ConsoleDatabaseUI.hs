@@ -31,7 +31,6 @@ import Database.HDBC
 import Database.HDBC.Types
 import Workflow.Engine
 import Workflow.DatabaseWfEngine
-import Random
 import Workflow.Task.Task
 import Workflow.Task.TaskDB
 import Workflow.UI.ConsoleCommon
@@ -80,8 +79,7 @@ runWorkflow graph =
 
 nodeTypeMap :: Map.Map String (NodeType [Task])
 nodeTypeMap = Map.fromList
-                [ ( "start", NodeType evalGuardLang completeDefaultExecution ),
-                  ( "node",  NodeType evalGuardLang completeDefaultExecution ),
+                [ ( "node",  NodeType evalGuardLang completeDefaultExecution ),
                   ( "task",  NodeType evalGuardLang acceptAndCreateTask ),
                   ( "init",  NodeType evalGuardLang acceptInit ),
                   ( "dump",  NodeType evalGuardLang acceptDump ) ]
@@ -90,42 +88,6 @@ predMap :: Map.Map String (NodeToken -> WfProcess a -> IO Bool)
 predMap = Map.fromList [ ("isRandOdd", predIsRandOdd),
                          ("isRandEven", predIsRandEven),
                          ("isTenthIteration", predIsTenthIteration) ]
-
-acceptInit :: (WfEngine engine) => engine -> NodeToken -> WfProcess a -> IO (WfProcess a)
-acceptInit engine token process =
-    do process <- setTokenAttr engine process token "iter" (show newVal)
-       nextRand <- getStdRandom (randomR (1,2))::(IO Int)
-       putStrLn $ "Next random: " ++ (show nextRand)
-       process <- setTokenAttr engine process token "rand" (show nextRand)
-       completeDefaultExecution engine token process
-    where
-        newVal = case (attrValue process token "iter") of
-                     Nothing -> 0
-                     Just x  -> (read x::Int) + 1
-
-acceptDump :: (WfEngine engine) => engine -> NodeToken -> WfProcess a -> IO (WfProcess a)
-acceptDump engine token process =
-    do putStrLn $ "Accepted into " ++ (nodeName node)
-       completeDefaultExecution engine token process
-    where
-       node = nodeForToken token (wfGraph process)
-
-predIsRandOdd :: NodeToken -> WfProcess a -> IO Bool
-predIsRandOdd token process = return isOdd
-    where
-       randVal = attrValueReq process token "rand"
-       isOdd   = (read randVal::Int) `mod` 2 == 0
-
-predIsRandEven :: NodeToken -> WfProcess a -> IO Bool
-predIsRandEven token process =
-    do result <- predIsRandOdd token process
-       return $ not result
-
-predIsTenthIteration :: NodeToken -> WfProcess a -> IO Bool
-predIsTenthIteration token process = return isTenth
-    where
-       iterVal = attrValueReq process token "iter"
-       isTenth = (read iterVal::Int) >= 10
 
 getWorkflowList :: IO [String]
 getWorkflowList =

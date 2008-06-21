@@ -26,8 +26,8 @@ import qualified Data.Map as Map
 import           Text.XML.HaXml.Types
 
 import           Workflow.Engine
+import           Workflow.Error
 import           Workflow.Loader
-import           Workflow.Util.XmlUtil
 
 data MemLoader = forall resolver . Resolver resolver => MemLoader (IORef Int) resolver
 
@@ -48,8 +48,8 @@ instance Resolver SimpleResolver where
     resolveGraphNameToXmlWorkflow resolver name =
         do result <- loadXmlWorkflowFromFile path (funcMap resolver)
            case result of
-               Left msg    -> wfLoadError $ "Failed to load '" ++ name ++ "' from file '" ++ path ++
-                                           "' because: " ++ msg
+               Left msg    -> wfError $ "Failed to load '" ++ name ++ "' from file '" ++ path ++
+                                        "' because: " ++ msg
                Right xmlWf -> return $ xmlWf
         where
             path = (basePath resolver) ++ name ++ ".wf.xml"
@@ -66,13 +66,11 @@ nextId :: MemLoader -> IO Int
 nextId (MemLoader counter _) = atomicModifyIORef counter (\t-> (t + 1, t + 1))
 
 loadMemWorkflow :: MemLoader -> String -> IO (Either String WfGraph)
-loadMemWorkflow loader@(MemLoader _ resolver) graphName = handleErrors graph
+loadMemWorkflow loader@(MemLoader _ resolver) graphName = catchWf graph
     where
        graph = do xmlWf <- resolveGraphNameToXmlWorkflow resolver graphName
                   graph <- processXmlWorkflow loader xmlWf
                   return $ Right graph
-       handleErrors = (handleWfLoad wfErrorToLeft).(handleXml xmlErrorToLeft)
-
 
 createMemWorkflow :: MemLoader -> a -> IO Int
 createMemWorkflow loader _ = nextId loader
@@ -107,9 +105,11 @@ importInstanceArcs :: MemLoader -> Map.Map Int Node -> [Arc] -> IO [Arc]
 importInstanceArcs loader nodeMap arcs = mapM (importInstanceArc loader nodeMap) arcs
 
 importInstanceArc :: MemLoader -> Map.Map Int Node -> Arc -> IO Arc
-importInstanceArc loader nodeMap arc =
-    do newArcId <- nextId loader
-       return $ Arc newArcId (arcName arc) newStartNodeId newEndNodeId
+importInstanceArc loader nodeMap arc
+    | not (Map.member (startNodeId arc) nodeMap) = error $ "When importing arc, new node not found"
+    | not (Map.member (endNodeId arc) nodeMap)   = error $ "When importing arc, new node not found"
+    | otherwise = do newArcId <- nextId loader
+                     return $ Arc newArcId (arcName arc) newStartNodeId newEndNodeId
     where
         newStartNodeId = nodeId $ nodeMap Map.! (startNodeId arc)
         newEndNodeId   = nodeId $ nodeMap Map.! (endNodeId   arc)

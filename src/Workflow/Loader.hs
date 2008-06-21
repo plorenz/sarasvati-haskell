@@ -19,16 +19,15 @@
 
 module Workflow.Loader where
 
-import           Control.Exception
 import           Control.Monad
 
-import           Data.Dynamic
 import qualified Data.Map as Map
 
 import           Text.XML.HaXml.Parse
 import           Text.XML.HaXml.Types
 
 import           Workflow.Engine
+import           Workflow.Error
 import           Workflow.Util.XmlUtil
 
 -------------------------------------------------------------------------------
@@ -96,16 +95,12 @@ loadXmlWorkflowFromFile filename funcMap =
 
 loadXmlWorkflow :: Document -> (Map.Map String (Element -> NodeExtra)) -> IO (Either String XmlWorkflow)
 loadXmlWorkflow doc funcMap =
-    do handleErrors (return xmlWorkflow)
+    do catchWf (return xmlWorkflow)
     where
         xmlWorkflow  = Right $ XmlWorkflow name nodes
         root         = rootElement doc
         name         = readRequiredAttr root "name"
         nodes        = loadXmlNodes (getChildren root) funcMap
-        handleErrors = (handleWfLoad wfErrorHandler).(handleXml xmlErrorHandler)
-
-        wfErrorHandler (WfLoadError msg) = return $ Left msg
-        xmlErrorHandler (XmlError msg)   = return $ Left msg
 
 loadXmlNodes :: [Element] -> (Map.Map String (Element -> NodeExtra)) -> [XmlNode]
 loadXmlNodes [] _             = []
@@ -113,7 +108,10 @@ loadXmlNodes (e:rest) funcMap = xmlNode : loadXmlNodes rest funcMap
     where
         xmlNode      = XmlNode name nodeType isJoin isStart guard arcs externalArcs nodeExtra
         name         = readRequiredAttr e "name"
-        nodeType     = readOptionalAttr e "type" "node"
+        nodeTypeOpt  = readOptionalAttr e "type" "node"
+        nodeType     = case nodeTypeOpt of
+                           [] -> "node"
+                           _  -> nodeTypeOpt
         isJoin       = case (readOptionalAttr e "isJoin" "false" ) of
                            "true" -> True
                            _      -> False
@@ -141,14 +139,14 @@ loadXmlExternalArcs []       = []
 loadXmlExternalArcs (e:rest) =  xmlExternalArc : loadXmlExternalArcs rest
     where
         xmlExternalArc = XmlExternalArc name external inst nodeName arcType
-        name           = readRequiredAttr e "name"
+        name           = readOptionalAttr e "name" ""
         external       = readRequiredAttr e "external"
         inst           = readRequiredAttr e "instance"
         nodeName       = readRequiredAttr e "nodeName"
         arcType        = case (readRequiredAttr e "type" ) of
                              "in"  -> InArc
                              "out" -> OutArc
-                             _     -> wfLoadError $ "Invalid value for external arc 'type' attribute specified. Must be 'in' or 'out'."
+                             _     -> wfError $ "Invalid value for external arc 'type' attribute specified. Must be 'in' or 'out'."
 
 -------------------------------------------------------------------------------
 --             XML Data structures to Engine Data structures                 --
@@ -186,10 +184,11 @@ processXmlWorkflow loader xmlWf =
         externals = concatMap (xmlExternalArcs) xmlNodes
 
 extractNodes :: [LoadNode] -> Map.Map String ([Node],[Arc]) -> [Node]
-extractNodes loadNodes nodeMap = nodes ++ instanceNodes
+extractNodes loadNodes nodeMap = nodes ++ fixedExtNodes
     where
         nodes         = map (loadedNode) loadNodes
         instanceNodes = concatMap (fst) (Map.elems nodeMap)
+        fixedExtNodes = map (\node -> node { nodeIsExternal = True } ) instanceNodes
 
 extractArcs :: [Arc] -> [Arc] -> Map.Map String ([Node],[Arc]) -> [Arc]
 extractArcs arcs extArcs instanceMap = arcs ++ extArcs ++ instanceArcs
@@ -223,10 +222,10 @@ createInternalArcs loader graphId loadNodes =
 
 createInternalArc :: (Loader l) => l -> LoadNode -> Int -> [LoadNode] -> XmlArc -> IO Arc
 createInternalArc loader node graphId loadNodes xmlArc
-    | noTarget       = wfLoadError $ "No node with name " ++ targetName ++
-                                     " found while looking for arc endpoint"
-    | tooManyTargets = wfLoadError $ "Too many nodes with name " ++ targetName ++
-                                     " found while looking for arc endpoint"
+    | noTarget       = wfError $ "No node with name " ++ targetName ++
+                                 " found while looking for arc endpoint"
+    | tooManyTargets = wfError $ "Too many nodes with name " ++ targetName ++
+                                 " found while looking for arc endpoint"
     | otherwise      = createArc loader graphId arcName startNode endNode
     where
         arcName        = xmlArcName xmlArc
@@ -244,12 +243,13 @@ createExternalArcs loader graphId nodes instanceMap = mapM (createExternalArc lo
 
 createExternalArc :: (Loader l) => l -> Int -> Map.Map String ([Node],[Arc]) -> (Node, XmlExternalArc) -> IO Arc
 createExternalArc loader graphId instanceMap (node,extArc)
-    | noTarget       = wfLoadError $ "No node with name " ++ targetName ++
-                                     " found in external " ++ (xmlExtArcExternal extArc) ++
-                                     " while looking for external arc endpoint"
-    | tooManyTargets = wfLoadError $ "Too many nodes with name " ++ targetName ++
-                                     " found in external " ++ (xmlExtArcExternal extArc) ++
-                                     " while looking for external arc endpoint"
+    | not (Map.member instKey instanceMap) = error $ "Instance not found: " ++ instKey
+    | noTarget       = wfError $ "No node with name " ++ targetName ++
+                                 " found in external " ++ (xmlExtArcExternal extArc) ++
+                                 " while looking for external arc endpoint"
+    | tooManyTargets = wfError $ "Too many nodes with name " ++ targetName ++
+                                 " found in external " ++ (xmlExtArcExternal extArc) ++
+                                 " while looking for external arc endpoint"
     | otherwise      = case (xmlExtArcType extArc) of
                             InArc  -> createArc loader graphId extArcName targetNode node
                             OutArc -> createArc loader graphId extArcName node       targetNode
@@ -274,25 +274,12 @@ xmlNodeToNode nodeId xmlNode =
          (xmlNodeGuard xmlNode)
          (xmlNodeExtra xmlNode)
 
-data WfLoadError = WfLoadError String
-  deriving (Show,Typeable)
-
-wfLoadError :: String -> a
-wfLoadError msg = throwDyn $ WfLoadError msg
-
-handleWfLoad :: (WfLoadError -> IO a) -> IO a -> IO a
-handleWfLoad f a = catchDyn a f
-
-xmlErrorToLeft :: XmlError -> IO (Either String a)
-xmlErrorToLeft (XmlError msg) = return $ Left msg
-
-wfErrorToLeft :: WfLoadError -> IO (Either String a)
-wfErrorToLeft (WfLoadError msg) = return $ Left msg
 
 {-
+testLoad :: String -> IO ()
 testLoad f =
     do res <- loadXmlWorkflowFromFile f Map.empty
        case res of
-           Left msg    ->  putStrLn msg
+           Left msg    -> putStrLn msg
            Right wfxml -> putStrLn (show wfxml)
 -}

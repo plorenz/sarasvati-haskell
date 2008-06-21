@@ -25,6 +25,7 @@ import Database.HDBC
 import qualified Workflow.Util.DbUtil as DbUtil
 
 import Workflow.Engine
+import Workflow.Error
 import Workflow.Loader
 
 --------------------------------------------------------------------------------
@@ -121,7 +122,7 @@ getNodeRefId conn newGraphId graphName nodeName instanceName =
                   toSql nodeName,
                   toSql graphId]
        case (null rows) of
-           True -> wfLoadError $ "Node with name " ++ nodeName ++ " for instance " ++ instanceName ++ " not found"
+           True -> wfError $ "Node with name " ++ nodeName ++ " for instance " ++ instanceName ++ " not found"
            False -> return $ (fromSql.head.head) rows
     where
         sql = "select ref.id from wf_node_ref ref " ++
@@ -145,7 +146,7 @@ rowToLoadArc row = LoadArc name refA refZ
         refZ = fromSql $ row !! 2
 -}
 
-data DbLoader = forall conn . IConnection conn => DbLoader conn (Map.Map String (DbLoader -> Int -> XmlNodeExtra -> IO NodeExtra))
+data DbLoader = forall conn . IConnection conn => DbLoader conn (Map.Map String (DbLoader -> Int -> XmlNode -> IO ()))
 
 instance Loader (DbLoader) where
     createWorkflow = createDbWorkflow
@@ -159,10 +160,10 @@ createDbWorkflow (DbLoader conn _) xmlWf = insertNewGraph conn (xmlWfName xmlWf)
 createDbNode :: DbLoader -> Int -> XmlNode -> IO Node
 createDbNode loader@(DbLoader conn funcMap) graphId xmlNode =
     do (nodeId, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin isStart nodeType guard
-       nodeExtra <- case (Map.member nodeType funcMap) of
-                        True  -> (funcMap Map.! nodeType) loader nodeId xmlExtra
-                        False -> return NoNodeExtra
-       return $ xmlNodeToNode nodeRefId xmlNode NoNodeExtra
+       case (Map.member nodeType funcMap) of
+           True  -> (funcMap Map.! nodeType) loader nodeId xmlNode
+           False -> return ()
+       return $ xmlNodeToNode nodeRefId xmlNode
     where
         nodeName = xmlNodeName    xmlNode
         isJoin   = xmlNodeIsJoin  xmlNode

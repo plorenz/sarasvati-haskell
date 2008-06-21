@@ -21,6 +21,7 @@
 
 module Workflow.UI.ConsoleXmlFileUI where
 
+import Workflow.Error
 import Workflow.Engine
 import Workflow.Task.Task
 import IO
@@ -46,36 +47,46 @@ selectWorkflow wfList =
        putStr "\nSelect workflow: "
        wf <- getLine
        if ((not $ null wf) && all (isDigit) wf)
-         then useWorkflow wfList (((read wf)::Int) - 1)
+         then do result <- catchWf $ useWorkflow wfList (((read wf)::Int) - 1)
+                 case (result) of
+                     Left msg -> putStrLn $ "Error: " ++ msg
+                     Right () -> return ()
          else do putStrLn $ "ERROR: " ++ wf ++ " is not a valid workflow"
        selectWorkflow wfList
 
-useWorkflow :: [String] -> Int -> IO ()
+useWorkflow :: [String] -> Int -> IO (Either String ())
 useWorkflow wfList idx
-    | length wfList <= idx = do putStrLn "ERROR: Invalid workflow number"
+    | length wfList <= idx = return $ Left "ERROR: Invalid workflow number"
     | otherwise            = do loader <- newSimpleMemLoader "/home/paul/workspace/wf-haskell/common/test-wf/" funcMap
                                 result <- loadWorkflow loader (wfList !! idx)
                                 case (result) of
-                                    Left msg -> putStrLn $ "ERROR: Could not load workflow: " ++ msg
+                                    Left msg -> return $ Left $ "ERROR: Could not load workflow: " ++ msg
                                     Right graph -> do putStrLn "Running workflow"
                                                       putStrLn (show graph)
                                                       runWorkflow graph
+                                                      return $ Right ()
    where
        funcMap = Map.fromList [ ("task", processTaskElement) ]
 
 runWorkflow :: WfGraph -> IO ()
 runWorkflow graph =
     do engine <- newMemoryWfEngine
-       result <- startWorkflow engine nodeTypeMap Map.empty graph []
+       result <- startWorkflow engine nodeTypeMap predMap graph []
        case (result) of
            Left msg -> putStrLn msg
            Right wf -> processTasks engine wf
 
 nodeTypeMap :: Map.Map String (NodeType [Task])
 nodeTypeMap = Map.fromList
-                [ ( "start", NodeType evalGuardLang completeDefaultExecution ),
-                  ( "node",  NodeType evalGuardLang completeDefaultExecution ),
-                  ( "task",  NodeType evalGuardLang acceptAndCreateTask ) ]
+                [ ( "node",  NodeType evalGuardLang completeDefaultExecution ),
+                  ( "task",  NodeType evalGuardLang acceptAndCreateTask ),
+                  ( "init",  NodeType evalGuardLang acceptInit ),
+                  ( "dump",  NodeType evalGuardLang acceptDump ) ]
+
+predMap :: Map.Map String (NodeToken -> WfProcess a -> IO Bool)
+predMap = Map.fromList [ ("isRandOdd", predIsRandOdd),
+                         ("isRandEven", predIsRandEven),
+                         ("isTenthIteration", predIsTenthIteration) ]
 
 getWorkflowList :: IO [String]
 getWorkflowList =

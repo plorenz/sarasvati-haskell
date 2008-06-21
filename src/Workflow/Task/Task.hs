@@ -52,9 +52,9 @@ data Task =
 processTaskElement :: Element -> NodeExtra
 processTaskElement element = makeNodeExtra $ TaskDef name description
     where
-        taskDefElem = getChildNamed element "task-def"
-        name        = readText taskDefElem "task-name"
-        description = readText taskDefElem "description"
+        taskDefElem = getChildNamed element "ex:task-def"
+        name        = readText taskDefElem  "ex:task-name"
+        description = readText taskDefElem  "ex:description"
 
 showTaskList :: [Task] -> IO ()
 showTaskList tasks =

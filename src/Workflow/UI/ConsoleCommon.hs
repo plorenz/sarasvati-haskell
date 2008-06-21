@@ -22,6 +22,7 @@ module Workflow.UI.ConsoleCommon where
 import Workflow.Engine
 import Workflow.Task.Task
 import Data.Char
+import Random
 
 handleTask :: (WfEngine e) => e -> Task -> WfProcess [Task] -> IO (WfProcess [Task])
 handleTask engine task wf =
@@ -102,3 +103,39 @@ showWorkflows []        _       = return ()
 showWorkflows (wf:rest) counter =
     do putStrLn $ "  " ++ (show counter) ++ ": " ++ wf
        showWorkflows rest (counter + 1)
+
+acceptInit :: (WfEngine engine) => engine -> NodeToken -> WfProcess a -> IO (WfProcess a)
+acceptInit engine token process =
+    do process <- setTokenAttr engine process token "iter" (show newVal)
+       nextRand <- getStdRandom (randomR (1,2))::(IO Int)
+       putStrLn $ "Next random: " ++ (show nextRand)
+       process <- setTokenAttr engine process token "rand" (show nextRand)
+       completeDefaultExecution engine token process
+    where
+        newVal = case (attrValue process token "iter") of
+                     Nothing -> 0
+                     Just x  -> (read x::Int) + 1
+
+acceptDump :: (WfEngine engine) => engine -> NodeToken -> WfProcess a -> IO (WfProcess a)
+acceptDump engine token process =
+    do putStrLn $ "Accepted into " ++ (nodeName node)
+       completeDefaultExecution engine token process
+    where
+       node = nodeForToken token (wfGraph process)
+
+predIsRandOdd :: NodeToken -> WfProcess a -> IO Bool
+predIsRandOdd token process = return isOdd
+    where
+       randVal = attrValueReq process token "rand"
+       isOdd   = (read randVal::Int) `mod` 2 == 0
+
+predIsRandEven :: NodeToken -> WfProcess a -> IO Bool
+predIsRandEven token process =
+    do result <- predIsRandOdd token process
+       return $ not result
+
+predIsTenthIteration :: NodeToken -> WfProcess a -> IO Bool
+predIsTenthIteration token process = return isTenth
+    where
+       iterVal = attrValueReq process token "iter"
+       isTenth = (read iterVal::Int) >= 10

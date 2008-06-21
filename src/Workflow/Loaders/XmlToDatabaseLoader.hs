@@ -29,6 +29,8 @@ import qualified Data.Map as Map
 import Workflow.Util.XmlUtil as XmlUtil
 import qualified Workflow.Util.DbUtil as DbUtil
 import qualified Workflow.Util.ListUtil as ListUtil
+
+import Workflow.Error
 import Workflow.Loaders.WfLoad
 
 --------------------------------------------------------------------------------
@@ -391,10 +393,10 @@ loaderMapWith list = addToMap list initialLoaderMap
 loadWorkflow :: (IConnection conn) => String -> conn -> Map.Map String (Element -> conn -> Int -> IO (Int, String)) -> IO (Either String Int)
 loadWorkflow filename conn funcMap = do handleAll (loadFromXmlToDB filename conn funcMap)
     where
-        handleAll = (handleSql handleDbError).(handleWfLoad handleLoadError).(handleXml handleXmlError)
+        handleAll = (handleSql handleDbError).(handleWf handleLoadError)
 
-handleLoadError :: WfLoadError -> IO (Either String a)
-handleLoadError (WfLoadError msg) =
+handleLoadError :: WfError -> IO (Either String a)
+handleLoadError (WfError msg) =
     do putStrLn msg
        return $ Left msg
 
@@ -404,8 +406,3 @@ handleDbError sqlError =
        return $ Left msg
     where
        msg = "Database error: " ++ (seErrorMsg sqlError)
-
-handleXmlError :: XmlError -> IO (Either String a)
-handleXmlError (XmlError msg) =
-    do putStrLn msg
-       return $ Left msg

@@ -238,7 +238,9 @@ instance Show (NodeExtra) where
 
 
 instance Show (Node) where
-    show a = "|Node id: " ++ (show.nodeId) a ++ " name: " ++ nodeName a ++ "|"
+    show a = "|Node id: " ++ (show.nodeId) a ++ " name: " ++ nodeName a ++ " type: " ++ nodeType a ++
+             "  isJoin: " ++ (show.nodeIsJoin) a ++ "  isStart: " ++ (show.nodeIsStart) a ++
+             "  isExternal: " ++ (show.nodeIsExternal) a ++ "|"
 
 instance Token (NodeToken) where
     tokenId (NodeToken tokId _) = tokId
@@ -334,6 +336,7 @@ startWorkflow :: (WfEngine engine) =>
                    Map.Map String (NodeToken -> WfProcess a -> IO Bool) ->
                    WfGraph -> a -> IO ( Either String (WfProcess a))
 startWorkflow engine nodeTypes predicates graph userData
+    | typesMissing          = return $ Left ("Missing entries in nodeType for: " ++ missingMsg)
     | null startNodes       = return $ Left "Error: Workflow has no start node"
     | length startNodes > 1 = return $ Left "Error: Workflow has more than one start node"
     | otherwise             = do wfRun <- createWfProcess engine graph nodeTypes predicates userData
@@ -341,8 +344,12 @@ startWorkflow engine nodeTypes predicates graph userData
                                  wfRun <- acceptWithGuard engine startToken (wfRun { nodeTokens = [startToken] })
                                  return $ Right wfRun
   where
-    startNodes = filter (\node -> nodeIsStart node) $ Map.elems (graphNodes graph)
-    startNode  = head startNodes
+    startNodes   = filter (\node -> nodeIsStart node) $ Map.elems (graphNodes graph)
+    startNode    = head startNodes
+    typesMissing = (not.null) missingTypes
+    missingTypes = filter (\node-> not (Map.member (nodeType node) nodeTypes)) (Map.elems (graphNodes graph))
+    missingMsg   = concatMap (\node -> nodeType node ++ " ") missingTypes
+
 
 isWfComplete :: WfProcess a -> Bool
 isWfComplete process
