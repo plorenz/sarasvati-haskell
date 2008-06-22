@@ -20,20 +20,19 @@
 
 module Workflow.Task.TaskDB where
 
+import Data.Dynamic
 import Database.HDBC
-import Text.XML.HaXml.Types
-import Workflow.Loaders.WfLoad
-import Workflow.Loaders.XmlToDatabaseLoader
+import Workflow.Loader
+import Workflow.DatabaseLoader
 import Workflow.Task.Task
-import Workflow.Util.XmlUtil
-import Workflow.Util.ListUtil
 import Workflow.Engine
+import Workflow.Error
 
 loadTask :: (IConnection conn) => conn -> Int -> IO NodeExtra
 loadTask conn nodeId =
     do rows <- quickQuery conn sql [toSql nodeId]
        case (null rows) of
-           True  -> wfLoadError $ "No record for wf_node_task found for node with id: " ++ (show nodeId)
+           True  -> wfError $ "No record for wf_node_task found for node with id: " ++ (show nodeId)
            False -> return $ finishTaskLoad (head rows)
     where
         sql = "select name, description from wf_node_task where id = ?"
@@ -44,26 +43,14 @@ finishTaskLoad row = makeNodeExtra $ TaskDef name description
         name        = fromSql (row !! 0)
         description = fromSql (row !! 1)
 
-insertNewNodeTask :: (IConnection a) => a -> Int -> String -> String -> IO ()
-insertNewNodeTask conn nodeId taskName taskDesc =
+insertTaskDef :: DbLoader -> Int -> XmlNode -> IO ()
+insertTaskDef (DbLoader conn _ _) nodeId xmlNode =
     do run conn sql [toSql nodeId,
-                     toSql taskName,
-                     toSql taskDesc]
+                     toSql (taskDefName taskDef),
+                     toSql (taskDefDesc taskDef)]
        return ()
     where
-        sql = "insert into wf_node_task (id, name, description) values ( ?, ?, ? )"
-
-processTask :: (IConnection conn) => Element -> conn -> Int -> IO (Int, String)
-processTask element conn graphId =
-    do (nodeId, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin "task" guard
-       insertNewNodeTask conn nodeId taskName taskDesc
-       return (nodeRefId, nodeName)
-    where
-        nodeName = readRequiredAttr element "name"
-        taskName = readText         element "task-name"
-        taskDesc = readText         element "description"
-        guard    = trim $ readText  element "guard"
-
-        isJoin = case (readOptionalAttr element "isJoin" "false" ) of
-                     "false" -> False
-                     _       -> True
+        sql     = "insert into wf_node_task (id, name, description) values ( ?, ?, ? )"
+        taskDef = case (xmlNodeExtra xmlNode) of
+                      NodeExtra dyn -> fromDyn dyn (TaskDef "default" "default")
+                      NoNodeExtra   -> TaskDef "default" "default"

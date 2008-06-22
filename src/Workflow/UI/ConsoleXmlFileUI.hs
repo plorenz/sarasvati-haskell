@@ -27,7 +27,6 @@ import Workflow.Task.Task
 import IO
 import Data.Char
 import System.Directory
-import Workflow.Loader
 import Workflow.MemoryLoader
 import Workflow.Task.Task
 import qualified Data.Map as Map
@@ -58,7 +57,7 @@ useWorkflow :: [String] -> Int -> IO (Either String ())
 useWorkflow wfList idx
     | length wfList <= idx = return $ Left "ERROR: Invalid workflow number"
     | otherwise            = do loader <- newSimpleMemLoader "/home/paul/workspace/wf-haskell/common/test-wf/" funcMap
-                                result <- loadWorkflow loader (wfList !! idx)
+                                result <- loadMemWorkflow loader (wfList !! idx)
                                 case (result) of
                                     Left msg -> return $ Left $ "ERROR: Could not load workflow: " ++ msg
                                     Right graph -> do putStrLn "Running workflow"

@@ -23,13 +23,13 @@ module Workflow.UI.ConsoleDatabaseUI where
 
 import IO
 import Data.Char
-import Workflow.Loaders.DatabaseToEngineLoader
-import Workflow.Loaders.WfLoad
 import qualified Data.Map as Map
 import qualified Workflow.Util.DbUtil as DbUtil
 import Database.HDBC
 import Database.HDBC.Types
 import Workflow.Engine
+import Workflow.Error
+import Workflow.DatabaseLoader
 import Workflow.DatabaseWfEngine
 import Workflow.Task.Task
 import Workflow.Task.TaskDB
@@ -53,7 +53,7 @@ selectWorkflow wfList =
          else do putStrLn $ "ERROR: " ++ wf ++ " is not a valid workflow"
        selectWorkflow wfList
     where
-        handleAll = (handleSql handleDbError).(handleWfLoad handleLoadError)
+        handleAll = (handleSql handleDbError).(handleWf handleLoadError)
 
 useWorkflow :: [String] -> Int -> IO ()
 useWorkflow wfList idx
@@ -101,8 +101,8 @@ getWorkflowListFromDb conn =
     where
         sql = "select distinct name from wf_graph order by name asc"
 
-handleLoadError :: WfLoadError -> IO ()
-handleLoadError (WfLoadError msg) =
+handleLoadError :: WfError -> IO ()
+handleLoadError (WfError msg) =
     do putStrLn msg
        return $ ()
 
