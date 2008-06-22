@@ -93,6 +93,17 @@ loadXmlWorkflowFromFile filename funcMap =
            Left msg  -> return $ Left msg
            Right doc -> loadXmlWorkflow doc funcMap
 
+loadWfGraphFromFile :: (Loader l) => l -> String -> (Map.Map String (Element -> NodeExtra)) -> IO (Either String WfGraph)
+loadWfGraphFromFile loader filename funcMap =
+    do xmlStr <- readFile filename
+       case (xmlParse' filename xmlStr) of
+           Left msg  -> return $ Left msg
+           Right doc -> do result <- loadXmlWorkflow doc funcMap
+                           case result of
+                               Left msg    -> return $ Left msg
+                               Right xmlWf -> do wfGraph <- processXmlWorkflow loader xmlWf
+                                                 return (Right wfGraph)
+
 loadXmlWorkflow :: Document -> (Map.Map String (Element -> NodeExtra)) -> IO (Either String XmlWorkflow)
 loadXmlWorkflow doc funcMap =
     do catchWf (return xmlWorkflow)
@@ -159,11 +170,10 @@ data LoadNode =
     }
 
 class Loader loader where
-    loadWorkflow   :: loader -> String -> IO (Either String WfGraph)
     createWorkflow :: loader -> XmlWorkflow -> IO Int
     createNode     :: loader -> Int -> XmlNode -> IO Node
     createArc      :: loader -> Int -> String -> Node -> Node -> IO Arc
-    importInstance :: loader -> Int -> String -> IO ([Node],[Arc])
+    importInstance :: loader -> Int -> String -> String -> IO ([Node],[Arc])
 
 class Resolver resolver where
     resolveGraphNameToXmlWorkflow  :: resolver -> String -> IO XmlWorkflow
@@ -202,11 +212,12 @@ importExternal :: (Loader l) => l -> Int -> Map.Map String ([Node],[Arc]) -> Xml
 importExternal loader graphId instanceMap extArc =
     if (Map.member key instanceMap)
         then return instanceMap
-        else do pair <- importInstance loader graphId graphName
+        else do pair <- importInstance loader graphId graphName instanceName
                 return $ Map.insert key pair instanceMap
     where
-        key       = instanceKey extArc
-        graphName = xmlExtArcExternal extArc
+        key          = instanceKey extArc
+        graphName    = xmlExtArcExternal extArc
+        instanceName = xmlExtArcInstance extArc
 
 xmlNodeToLoadNode :: (Loader l) => l -> Int -> XmlNode -> IO LoadNode
 xmlNodeToLoadNode loader graphId xmlNode =
@@ -274,6 +285,22 @@ xmlNodeToNode nodeId xmlNode =
          (xmlNodeGuard xmlNode)
          (xmlNodeExtra xmlNode)
 
+
+data SimpleFileResolver =
+    SimpleFileResolver {
+        basePath :: String,
+        funcMap  :: Map.Map String (Element -> NodeExtra)
+    }
+
+instance Resolver SimpleFileResolver where
+    resolveGraphNameToXmlWorkflow resolver name =
+        do result <- loadXmlWorkflowFromFile path (funcMap resolver)
+           case result of
+               Left msg    -> wfError $ "Failed to load '" ++ name ++ "' from file '" ++ path ++
+                                        "' because: " ++ msg
+               Right xmlWf -> return $ xmlWf
+        where
+            path = (basePath resolver) ++ name ++ ".wf.xml"
 
 {-
 testLoad :: String -> IO ()

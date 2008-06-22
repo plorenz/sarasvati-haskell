@@ -19,6 +19,7 @@
 
 module Workflow.DatabaseLoader where
 
+import Control.Monad
 import qualified Data.Map as Map
 
 import Database.HDBC
@@ -27,6 +28,7 @@ import qualified Workflow.Util.DbUtil as DbUtil
 import Workflow.Engine
 import Workflow.Error
 import Workflow.Loader
+import Workflow.Loaders.DatabaseToEngineLoader
 
 --------------------------------------------------------------------------------
 -- Database Functions
@@ -106,47 +108,11 @@ getMaxGraphVersion conn name =
     where
         sql = "select coalesce( max(version), 0) from wf_graph where name = ?"
 
-getMaxGraphId :: (IConnection a) => a-> String -> IO Int
-getMaxGraphId conn name =
-    do rows <- quickQuery conn sql [toSql name]
-       return $ (fromSql.head.head) rows
-    where
-        sql = "select coalesce( max(id), 0) from wf_graph where name = ?"
 
-getNodeRefId :: (IConnection a) => a-> Int -> String -> String -> String -> IO Int
-getNodeRefId conn newGraphId graphName nodeName instanceName =
-    do graphId <- getMaxGraphId conn graphName
-       rows <- quickQuery conn sql
-                 [toSql newGraphId,
-                  toSql instanceName,
-                  toSql nodeName,
-                  toSql graphId]
-       case (null rows) of
-           True -> wfError $ "Node with name " ++ nodeName ++ " for instance " ++ instanceName ++ " not found"
-           False -> return $ (fromSql.head.head) rows
-    where
-        sql = "select ref.id from wf_node_ref ref " ++
-              "               join wf_node node on (ref.node_id = node.id) " ++
-              "  where ref.graph_id = ? and ref.instance = ? " ++
-              "    and node.name = ? and node.graph_id = ? "
-{-
-getLoadArcs :: (IConnection conn) => conn -> String -> IO [LoadArc]
-getLoadArcs conn graphName =
-    do graphId <- getMaxGraphId conn graphName
-       rows <- quickQuery conn sql [toSql graphId]
-       return $ map (rowToLoadArc) rows
-    where
-        sql = "select name, a_node_ref_id, z_node_ref_id from wf_arc where graph_id = ?"
-
-rowToLoadArc :: [SqlValue] -> LoadArc
-rowToLoadArc row = LoadArc name refA refZ
-    where
-        name = fromSql $ row !! 0
-        refA = fromSql $ row !! 1
-        refZ = fromSql $ row !! 2
--}
-
-data DbLoader = forall conn . IConnection conn => DbLoader conn (Map.Map String (DbLoader -> Int -> XmlNode -> IO ()))
+data DbLoader =
+  forall conn . IConnection conn =>
+    DbLoader conn  (Map.Map String (DbLoader -> Int -> XmlNode -> IO ()))
+                   (Map.Map String (conn -> Int -> IO NodeExtra))
 
 instance Loader (DbLoader) where
     createWorkflow = createDbWorkflow
@@ -155,10 +121,10 @@ instance Loader (DbLoader) where
     importInstance = importDbInstance
 
 createDbWorkflow :: DbLoader -> XmlWorkflow -> IO Int
-createDbWorkflow (DbLoader conn _) xmlWf = insertNewGraph conn (xmlWfName xmlWf)
+createDbWorkflow (DbLoader conn _ _) xmlWf = insertNewGraph conn (xmlWfName xmlWf)
 
 createDbNode :: DbLoader -> Int -> XmlNode -> IO Node
-createDbNode loader@(DbLoader conn funcMap) graphId xmlNode =
+createDbNode loader@(DbLoader conn funcMap _) graphId xmlNode =
     do (nodeId, nodeRefId) <- insertNodeWithRef conn graphId nodeName isJoin isStart nodeType guard
        case (Map.member nodeType funcMap) of
            True  -> (funcMap Map.! nodeType) loader nodeId xmlNode
@@ -173,9 +139,28 @@ createDbNode loader@(DbLoader conn funcMap) graphId xmlNode =
         xmlExtra = xmlNodeExtra   xmlNode
 
 createDbArc :: DbLoader -> Int -> String -> Node -> Node -> IO Arc
-createDbArc (DbLoader conn _) graphId arcName startNode endNode =
+createDbArc (DbLoader conn _ _) graphId arcName startNode endNode =
     do arcId <-insertArc conn graphId (nodeId startNode) (nodeId endNode) arcName
        return $ Arc arcId arcName (nodeId startNode) (nodeId endNode)
 
-importDbInstance :: DbLoader -> Int -> String -> IO ([Node],[Arc])
-importDbInstance (DbLoader conn funcMap) graphId graphName = return ([],[])
+importDbInstance :: DbLoader -> Int -> String -> String -> IO ([Node],[Arc])
+importDbInstance loader@(DbLoader conn _ funcMap) graphId graphName instanceName =
+    do wfGraph <- loadLatestGraph conn graphName funcMap
+       nodeMap <- foldM (importNode loader graphId instanceName) Map.empty (Map.elems $ graphNodes wfGraph)
+       arcs    <- mapM (importArcs loader graphId nodeMap) ((concat.Map.elems) $ graphInputArcs wfGraph)
+       return (Map.elems nodeMap,arcs)
+
+importNode :: DbLoader -> Int -> String -> Map.Map Int Node -> Node -> IO (Map.Map Int Node)
+importNode (DbLoader conn _ _) graphId instanceName nodeMap node =
+    do newNodeId <- insertNodeRef conn graphId (nodeId node) instanceName
+       return $ Map.insert (nodeId node) (node {nodeId = newNodeId}) nodeMap
+
+importArcs :: DbLoader -> Int -> Map.Map Int Node -> Arc -> IO Arc
+importArcs (DbLoader conn _ _) graphId nodeMap arc
+    | not (Map.member (startNodeId arc) nodeMap) = error $ "When importing arc, new node not found"
+    | not (Map.member (endNodeId arc) nodeMap)   = error $ "When importing arc, new node not found"
+    | otherwise = do newArcId <- insertArc conn graphId newStartNodeId newEndNodeId (arcName arc)
+                     return $ Arc newArcId (arcName arc) newStartNodeId newEndNodeId
+    where
+        newStartNodeId = nodeId $ nodeMap Map.! (startNodeId arc)
+        newEndNodeId   = nodeId $ nodeMap Map.! (endNodeId   arc)

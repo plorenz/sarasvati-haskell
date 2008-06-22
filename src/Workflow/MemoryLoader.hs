@@ -32,27 +32,10 @@ import           Workflow.Loader
 data MemLoader = forall resolver . Resolver resolver => MemLoader (IORef Int) resolver
 
 instance Loader (MemLoader) where
-    loadWorkflow   = loadMemWorkflow
     createWorkflow = createMemWorkflow
     createNode     = createMemNode
     createArc      = createMemArc
     importInstance = importMemInstance
-
-data SimpleResolver =
-    SimpleResolver {
-        basePath :: String,
-        funcMap  :: Map.Map String (Element -> NodeExtra)
-    }
-
-instance Resolver SimpleResolver where
-    resolveGraphNameToXmlWorkflow resolver name =
-        do result <- loadXmlWorkflowFromFile path (funcMap resolver)
-           case result of
-               Left msg    -> wfError $ "Failed to load '" ++ name ++ "' from file '" ++ path ++
-                                        "' because: " ++ msg
-               Right xmlWf -> return $ xmlWf
-        where
-            path = (basePath resolver) ++ name ++ ".wf.xml"
 
 newMemLoader :: (Resolver r) => r -> IO MemLoader
 newMemLoader resolver =
@@ -60,7 +43,7 @@ newMemLoader resolver =
        return $ MemLoader counter resolver
 
 newSimpleMemLoader :: String -> Map.Map String (Element -> NodeExtra) -> IO MemLoader
-newSimpleMemLoader basePath funcMap = newMemLoader (SimpleResolver basePath funcMap)
+newSimpleMemLoader basePath funcMap = newMemLoader (SimpleFileResolver basePath funcMap)
 
 nextId :: MemLoader -> IO Int
 nextId (MemLoader counter _) = atomicModifyIORef counter (\t-> (t + 1, t + 1))
@@ -85,8 +68,8 @@ createMemArc loader _ arcName startNode endNode =
     do arcId <- nextId loader
        return $ Arc arcId arcName (nodeId startNode) (nodeId endNode)
 
-importMemInstance :: MemLoader -> a -> String -> IO ([Node],[Arc])
-importMemInstance loader@(MemLoader _ resolver ) _ graphName =
+importMemInstance :: MemLoader -> a -> String -> b -> IO ([Node],[Arc])
+importMemInstance loader@(MemLoader _ resolver ) _ graphName _ =
     do xmlWf   <- resolveGraphNameToXmlWorkflow resolver graphName
        wfGraph <- processXmlWorkflow loader xmlWf
        nodeMap <- importInstanceNodes loader (Map.elems (graphNodes wfGraph))

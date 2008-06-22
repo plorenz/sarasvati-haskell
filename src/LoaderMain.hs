@@ -24,11 +24,18 @@
 
 module Main where
 
+import Data.Map as Map hiding (null)
+import Database.HDBC
 import System
+
 import Workflow.Loaders.XmlToDatabaseLoader
+import Workflow.Task.Task
 import Workflow.Task.TaskDB
 import Workflow.Util.DbUtil
-import Database.HDBC
+import Workflow.Loader
+import Workflow.DatabaseLoader
+
+
 
 main :: IO ()
 main =
@@ -41,13 +48,15 @@ main =
 load :: String -> IO ()
 load filename =
     do conn <- openDbConnection
-       result <- loadWorkflow filename conn funcMap
+       result <- loadWfGraphFromFile (DbLoader conn xmlFuncMap dbFuncMap) filename xmlFuncMap
        disconnect conn
        case result of
            Left msg -> do putStrLn $ "Load of " ++ filename ++ " failed: "
                           putStrLn $ "\t" ++msg
            Right _  -> putStrLn $ "Load of " ++ filename ++ " succeeded."
     where
-        funcMap = loaderMapWith [ ("task", processTask) ]
+        xmlFuncMap = Map.fromList [ ("task", processTaskElement) ]
+        dbFuncMap  = Map.fromList [ ("task", processTask) ]
+        loader = DbLoader
 
 
