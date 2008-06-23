@@ -17,7 +17,7 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.Example.ConsoleCommon where
+module Workflow.Example.ExampleCommon where
 
 import Data.Char
 import Random

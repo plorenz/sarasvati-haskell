@@ -32,7 +32,7 @@ import Workflow.Error
 import Workflow.DatabaseLoader
 import Workflow.DatabaseWfEngine
 import Workflow.Example.Task
-import Workflow.Example.ConsoleCommon
+import Workflow.Example.ExampleCommon
 import Workflow.Util.DbUtil as DbUtil
 
 main :: IO ()

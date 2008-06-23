@@ -27,7 +27,7 @@ import Workflow.MemoryLoader
 import Workflow.MemoryWfEngine
 
 import Workflow.Example.Task
-import Workflow.Example.ConsoleCommon
+import Workflow.Example.ExampleCommon
 
 import Data.Char
 import Data.Map as Map hiding (null, filter, map)
