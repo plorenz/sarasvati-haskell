@@ -40,6 +40,7 @@ instance WfEngine MemoryWfEngine where
     createArcToken      = createMemoryArcToken
     completeNodeToken   = completeMemoryNodeToken
     completeArcToken    = completeMemoryArcToken
+    recordGuardResponse = recordMemGuardResponse
     transactionBoundary = memoryTransactionBoundary
     setTokenAttr        = setMemoryTokenAttr
     removeTokenAttr     = removeMemoryTokenAttr
@@ -68,6 +69,9 @@ completeMemoryNodeToken _ _ = return ()
 
 completeMemoryArcToken :: a -> b -> IO ()
 completeMemoryArcToken _ _ = return ()
+
+recordMemGuardResponse :: a -> b -> c -> IO ()
+recordMemGuardResponse _ _ _ = return ()
 
 memoryTransactionBoundary :: MemoryWfEngine -> IO ()
 memoryTransactionBoundary _ = return ()

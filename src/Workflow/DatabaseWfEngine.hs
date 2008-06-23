@@ -34,6 +34,7 @@ instance WfEngine DatabaseWfEngine where
     createArcToken      = createDatabaseArcToken
     completeNodeToken   = completeDatabaseNodeToken
     completeArcToken    = completeDatabaseArcToken
+    recordGuardResponse = recordDatabaseGuardResponse
     transactionBoundary = databaseTransactionBoundary
     setTokenAttr        = setDatabaseTokenAttr
     removeTokenAttr     = removeDatabaseTokenAttr
@@ -59,8 +60,8 @@ insertArcToken conn wfProcess arc prevToken =
         sql = "insert into wf_arc_token (id, process_id, arc_id, parent_token_id) " ++
               " values ( ?, ?, ?, ? )"
 
-markArcTokenComplete :: (IConnection conn) => conn -> ArcToken -> IO ()
-markArcTokenComplete conn token =
+completeDatabaseArcToken :: DatabaseWfEngine -> ArcToken -> IO ()
+completeDatabaseArcToken (DatabaseWfEngine conn) token =
     do run conn sql [toSql (tokenId token)]
        return ()
     where
@@ -84,12 +85,23 @@ insertNodeTokenParent conn nodeTokenId arcToken =
     where
         sql = "insert into wf_node_token_parent (node_token_id, arc_token_id) values ( ?, ? )"
 
-markNodeTokenComplete :: (IConnection conn) => conn -> NodeToken -> IO ()
-markNodeTokenComplete conn token =
+completeDatabaseNodeToken :: DatabaseWfEngine -> NodeToken -> IO ()
+completeDatabaseNodeToken (DatabaseWfEngine conn) token =
     do run conn sql [toSql (tokenId token)]
        return ()
     where
         sql = "update wf_node_token set complete_date = current_timestamp where id = ?"
+
+recordDatabaseGuardResponse :: DatabaseWfEngine -> NodeToken -> GuardResponse -> IO ()
+recordDatabaseGuardResponse (DatabaseWfEngine conn) token response =
+    do run conn sql [toSql (tokenId token),
+                     toSql (ordinal response::Int)]
+       return ()
+    where
+        sql    = "update wf_node_token set guard_action = ? where id = ?"
+        ordinal AcceptToken  = 0
+        ordinal DiscardToken = 1
+        ordinal (SkipNode _) = 2
 
 updateNodeTokenAttrSet :: (IConnection conn) => conn -> Int -> Int -> IO ()
 updateNodeTokenAttrSet conn tokenId attrSetId =
@@ -147,14 +159,6 @@ createDatabaseArcToken :: DatabaseWfEngine -> WfProcess a -> Arc -> NodeToken ->
 createDatabaseArcToken (DatabaseWfEngine conn) process arc nodeToken =
     do nextTokenId <- insertArcToken conn process arc nodeToken
        return (process, ArcToken nextTokenId arc nodeToken)
-
-completeDatabaseNodeToken :: DatabaseWfEngine -> NodeToken -> IO ()
-completeDatabaseNodeToken (DatabaseWfEngine conn) token =
-    do markNodeTokenComplete conn token
-
-completeDatabaseArcToken :: DatabaseWfEngine -> ArcToken -> IO ()
-completeDatabaseArcToken (DatabaseWfEngine conn) token =
-    do markArcTokenComplete conn token
 
 databaseTransactionBoundary :: DatabaseWfEngine -> IO ()
 databaseTransactionBoundary (DatabaseWfEngine conn) =

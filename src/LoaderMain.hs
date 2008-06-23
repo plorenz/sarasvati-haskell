@@ -28,11 +28,12 @@ import Data.Map as Map hiding (null)
 import Database.HDBC
 import System
 
+import Workflow.Error
+import Workflow.Loader
+import Workflow.DatabaseLoader
 import Workflow.Task.Task
 import Workflow.Task.TaskDB
 import Workflow.Util.DbUtil
-import Workflow.Loader
-import Workflow.DatabaseLoader
 
 
 
@@ -47,12 +48,14 @@ main =
 load :: String -> IO ()
 load filename =
     do conn <- openDbConnection
-       result <- loadWfGraphFromFile (DbLoader conn dbLoadFuncMap dbFuncMap) filename xmlFuncMap
-       disconnect conn
+       result <- catchWf $ loadWfGraphFromFile (DbLoader conn dbLoadFuncMap dbFuncMap) filename xmlFuncMap
        case result of
-           Left msg -> do putStrLn $ "Load of " ++ filename ++ " failed: "
+           Left msg -> do rollback conn
+                          putStrLn $ "Load of " ++ filename ++ " failed: "
                           putStrLn $ "\t" ++msg
-           Right _  -> putStrLn $ "Load of " ++ filename ++ " succeeded."
+           Right _  -> do commit conn
+                          putStrLn $ "Load of " ++ filename ++ " succeeded."
+       disconnect conn
     where
         xmlFuncMap = Map.fromList [ ("task", processTaskElement) ]
         dbFuncMap  = Map.fromList [ ("task", loadTask) ]

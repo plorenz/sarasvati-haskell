@@ -48,10 +48,10 @@ module Workflow.Engine (GuardResponse(..),
                         tokenAttrs
                         ) where
 
-import qualified Data.Map as Map
 import Control.Exception
 import Control.Monad
 import Data.Dynamic
+import qualified Data.Map as Map
 import qualified Workflow.GuardLang as GuardLang
 import qualified Workflow.Util.ListUtil as ListUtil
 
@@ -227,6 +227,7 @@ class WfEngine a where
     createArcToken      :: a -> WfProcess b -> Arc  -> NodeToken  -> IO (WfProcess b, ArcToken)
     completeNodeToken   :: a -> NodeToken   -> IO ()
     completeArcToken    :: a -> ArcToken    -> IO ()
+    recordGuardResponse :: a -> NodeToken -> GuardResponse -> IO ()
     transactionBoundary :: a -> IO ()
     setTokenAttr        :: a -> WfProcess b -> NodeToken -> String -> String -> IO (WfProcess b)
     removeTokenAttr     :: a -> WfProcess b -> NodeToken -> String -> IO (WfProcess b)
