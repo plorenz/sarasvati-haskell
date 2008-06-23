@@ -23,8 +23,8 @@ import Control.Monad
 
 import Data.Map as Map hiding (null, filter, map)
 
+import Text.XML.HaXml
 import Text.XML.HaXml.Parse
-import Text.XML.HaXml.Types
 
 import Workflow.Sarasvati.Engine
 import Workflow.Sarasvati.Error

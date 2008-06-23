@@ -25,7 +25,7 @@ import Data.Map as Map hiding (filter, map, null)
 
 import Database.HDBC
 
-import Text.XML.HaXml.Types
+import Text.XML.HaXml
 
 import Workflow.Sarasvati.DatabaseLoader
 import Workflow.Sarasvati.Error

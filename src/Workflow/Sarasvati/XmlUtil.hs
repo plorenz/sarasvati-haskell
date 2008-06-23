@@ -20,8 +20,8 @@
 
 module Workflow.Sarasvati.XmlUtil where
 
-import Text.XML.HaXml.Combinators
-import Text.XML.HaXml.Types
+import Text.XML.HaXml
+import Text.XML.HaXml
 
 import Workflow.Sarasvati.Error
 import Workflow.Sarasvati.ListUtil

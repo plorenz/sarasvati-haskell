@@ -13,23 +13,27 @@ Data-Files:     README,
                 common/GPLv3.license,
                 common/db/create-schema.sql
                 lang/guard.y
-Extra-Source-Files: src/Workflow/Loaders/WfLoad.hs
-                    src/Workflow/Util/DbUtil.hs,
-                    src/Workflow/Util/ListUtil.hs,
-                    src/Workflow/Util/TokenUtil.hs,
-                    src/Workflow/GuardLang.hs
+Extra-Source-Files: src/Workflow/Sarasvati/DbUtil.hs,
+                    src/Workflow/Sarasvati/GuardLang.hs,
+                    src/Workflow/Sarasvati/ListUtil.hs,
+                    src/Workflow/Sarasvati/TokenUtil.hs,
+                    src/Workflow/Sarasvati/XmlUtil.hs
 
 
 Library
   Build-Depends:	base,
                     containers,
+                    HaXml >= 1.13,
                     HDBC >= 1.1.4,
                     HDBC-postgresql >=1.1.4.1
   Exposed-modules:
-    Workflow.Loaders.DatabaseToEngineLoader,
-    Workflow.DatabaseWfEngine,
-    Workflow.Engine,
-    Workflow.MemoryWfEngine
+    Workflow.Sarasvati.DatabaseLoader,
+    Workflow.Sarasvati.DatabaseWfEngine,
+    Workflow.Sarasvati.Engine,
+    Workflow.Sarasvati.Error,
+    Workflow.Sarasvati.Loader,
+    Workflow.Sarasvati.MemoryLoader,
+    Workflow.Sarasvati.MemoryWfEngine
 
   Hs-Source-Dirs: src
   Extensions:     DeriveDataTypeable, ExistentialQuantification, Rank2Types
