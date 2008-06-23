@@ -32,7 +32,6 @@ import Workflow.Error
 import Workflow.DatabaseLoader
 import Workflow.DatabaseWfEngine
 import Workflow.Task.Task
-import Workflow.Task.TaskDB
 import Workflow.UI.ConsoleCommon
 import Workflow.Util.DbUtil as DbUtil
 

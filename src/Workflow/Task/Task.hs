@@ -20,13 +20,18 @@
 
 module Workflow.Task.Task where
 
-import           Data.Dynamic
-import qualified Data.Map as Map
+import Data.Dynamic
+import Data.Map as Map hiding (null, filter, map)
 
-import           Text.XML.HaXml.Types
+import Database.HDBC
 
-import           Workflow.Engine
-import           Workflow.Util.XmlUtil
+import Text.XML.HaXml.Types
+
+import Workflow.DatabaseLoader
+import Workflow.Error
+import Workflow.Engine
+import Workflow.Loader
+import Workflow.Util.XmlUtil
 
 
 data TaskDef =
@@ -108,3 +113,34 @@ rejectTask :: (WfEngine e) => e -> Task -> WfProcess [Task] -> IO (WfProcess [Ta
 rejectTask engine task wf = completeExecution engine token "reject" (closeTask task wf Rejected)
   where
     token = getNodeTokenForId (getTokId task) wf
+
+---------------------------------------------------------------------------------------------------
+--              Loading Functions                                                                --
+---------------------------------------------------------------------------------------------------
+
+loadTask :: (IConnection conn) => conn -> Int -> IO NodeExtra
+loadTask conn nodeId =
+    do rows <- quickQuery conn sql [toSql nodeId]
+       case (null rows) of
+           True  -> wfError $ "No record for wf_node_task found for node with id: " ++ (show nodeId)
+           False -> return $ finishTaskLoad (head rows)
+    where
+        sql = "select name, description from wf_node_task where id = ?"
+
+finishTaskLoad :: [SqlValue] -> NodeExtra
+finishTaskLoad row = makeNodeExtra $ TaskDef name description
+    where
+        name        = fromSql (row !! 0)
+        description = fromSql (row !! 1)
+
+insertTaskDef :: DbLoader -> Int -> XmlNode -> IO ()
+insertTaskDef (DbLoader conn _ _) nodeId xmlNode =
+    do run conn sql [toSql nodeId,
+                     toSql (taskDefName taskDef),
+                     toSql (taskDefDesc taskDef)]
+       return ()
+    where
+        sql     = "insert into wf_node_task (id, name, description) values ( ?, ?, ? )"
+        taskDef = case (xmlNodeExtra xmlNode) of
+                      NodeExtra dyn -> fromDyn dyn (TaskDef "default" "default")
+                      NoNodeExtra   -> TaskDef "default" "default"
