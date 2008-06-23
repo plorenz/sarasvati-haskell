@@ -21,17 +21,17 @@
 module Workflow.Example.Task where
 
 import Data.Dynamic
-import Data.Map as Map hiding (null, filter, map)
+import Data.Map as Map hiding (filter, map, null)
 
 import Database.HDBC
 
 import Text.XML.HaXml.Types
 
-import Workflow.DatabaseLoader
-import Workflow.Error
-import Workflow.Engine
-import Workflow.Loader
-import Workflow.Util.XmlUtil
+import Workflow.Sarasvati.DatabaseLoader
+import Workflow.Sarasvati.Error
+import Workflow.Sarasvati.Engine
+import Workflow.Sarasvati.Loader
+import Workflow.Sarasvati.XmlUtil
 
 
 data TaskDef =

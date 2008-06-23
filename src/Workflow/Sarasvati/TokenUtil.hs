@@ -17,9 +17,9 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.Util.TokenUtil where
+module Workflow.Sarasvati.TokenUtil where
 
-import Workflow.Engine
+import Workflow.Sarasvati.Engine
 
 parentToken :: ArcToken -> NodeToken
 parentToken (ArcToken _ _ token) = token

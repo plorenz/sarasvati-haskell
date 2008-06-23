@@ -2,7 +2,7 @@
     This file is part of Sarasvati.
 
     Sarasvati is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as 
+    it under the terms of the GNU Lesser General Public License as
     published by the Free Software Foundation, either version 3 of the
     License, or (at your option) any later version.
 
@@ -11,24 +11,28 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public 
+    You should have received a copy of the GNU Lesser General Public
     License along with Sarasvati.  If not, see <http://www.gnu.org/licenses/>.
 
     Copyright 2008 Paul Lorenz
 -}
 
+module Workflow.Sarasvati.Error where
 
-module Workflow.Util.DbUtil where
+import Data.Dynamic
+import Control.Exception
 
-import Database.HDBC
-import Database.HDBC.PostgreSQL
+data WfError = WfError String
+  deriving (Show,Typeable)
 
-openDbConnection :: IO Connection
-openDbConnection = connectPostgreSQL "port=5433"
+wfError :: String -> a
+wfError msg = throwDyn $ WfError msg
 
-nextSeqVal :: (IConnection a) => a -> String -> IO Int
-nextSeqVal conn name =
-    do rows <- quickQuery conn sql [toSql name]
-       return $ (fromSql.head.head) rows
-    where
-        sql = "select nextval( ? )"
+handleWf :: (WfError -> IO a) -> IO a -> IO a
+handleWf f a = catchDyn a f
+
+wfErrorToLeft :: WfError -> IO (Either String a)
+wfErrorToLeft (WfError msg) = return $ Left msg
+
+catchWf :: IO (Either String a) -> IO (Either String a)
+catchWf = handleWf wfErrorToLeft

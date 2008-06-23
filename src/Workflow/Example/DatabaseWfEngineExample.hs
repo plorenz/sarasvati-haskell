@@ -23,17 +23,20 @@ module Main where
 
 import IO
 import Data.Char
-import qualified Data.Map as Map
-import qualified Workflow.Util.DbUtil as DbUtil
+import Data.Map as Map hiding (filter, map, null)
+
 import Database.HDBC
 import Database.HDBC.Types
-import Workflow.Engine
-import Workflow.Error
-import Workflow.DatabaseLoader
-import Workflow.DatabaseWfEngine
+
+import Workflow.Sarasvati.DbUtil as DbUtil
+import Workflow.Sarasvati.Engine
+import Workflow.Sarasvati.Error
+import Workflow.Sarasvati.DatabaseLoader
+import Workflow.Sarasvati.DatabaseWfEngine
+
 import Workflow.Example.Task
 import Workflow.Example.ExampleCommon
-import Workflow.Util.DbUtil as DbUtil
+
 
 main :: IO ()
 main =

@@ -17,12 +17,12 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.MemoryWfEngine where
+module Workflow.Sarasvati.MemoryWfEngine where
 
 import Data.IORef
-import qualified Data.Map as Map
-import Workflow.Engine
-import qualified Workflow.Util.TokenUtil as TokenUtil
+import Data.Map as Map hiding (filter, map, null)
+import Workflow.Sarasvati.Engine
+import Workflow.Sarasvati.TokenUtil as TokenUtil
 
 data MemoryWfEngine =
     MemoryWfEngine {

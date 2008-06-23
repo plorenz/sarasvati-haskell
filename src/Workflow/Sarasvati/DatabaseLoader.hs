@@ -17,17 +17,17 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.DatabaseLoader where
+module Workflow.Sarasvati.DatabaseLoader where
 
 import Control.Monad
 import Data.Map as Map hiding (null, filter, map)
 
 import Database.HDBC
-import Workflow.Util.DbUtil as DbUtil
 
-import Workflow.Engine
-import Workflow.Error
-import Workflow.Loader
+import Workflow.Sarasvati.DbUtil as DbUtil
+import Workflow.Sarasvati.Engine
+import Workflow.Sarasvati.Error
+import Workflow.Sarasvati.Loader
 
 ---------------------------------------------------------------------------------------------------
 --               Database to Engine Loading                                                      --

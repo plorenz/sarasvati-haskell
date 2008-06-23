@@ -17,22 +17,18 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.Error where
 
-import Data.Dynamic
-import Control.Exception
+module Workflow.Sarasvati.DbUtil where
 
-data WfError = WfError String
-  deriving (Show,Typeable)
+import Database.HDBC
+import Database.HDBC.PostgreSQL
 
-wfError :: String -> a
-wfError msg = throwDyn $ WfError msg
+openDbConnection :: IO Connection
+openDbConnection = connectPostgreSQL "port=5433"
 
-handleWf :: (WfError -> IO a) -> IO a -> IO a
-handleWf f a = catchDyn a f
-
-wfErrorToLeft :: WfError -> IO (Either String a)
-wfErrorToLeft (WfError msg) = return $ Left msg
-
-catchWf :: IO (Either String a) -> IO (Either String a)
-catchWf = handleWf wfErrorToLeft
+nextSeqVal :: (IConnection a) => a -> String -> IO Int
+nextSeqVal conn name =
+    do rows <- quickQuery conn sql [toSql name]
+       return $ (fromSql.head.head) rows
+    where
+        sql = "select nextval( ? )"

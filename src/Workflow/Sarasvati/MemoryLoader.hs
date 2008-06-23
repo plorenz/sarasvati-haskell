@@ -17,17 +17,17 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.MemoryLoader where
+module Workflow.Sarasvati.MemoryLoader where
 
-import           Control.Monad
-import           Data.IORef
-import qualified Data.Map as Map
+import Control.Monad
+import Data.IORef
+import Data.Map as Map hiding (null, filter, map)
 
-import           Text.XML.HaXml.Types
+import Text.XML.HaXml.Types
 
-import           Workflow.Engine
-import           Workflow.Error
-import           Workflow.Loader
+import Workflow.Sarasvati.Engine
+import Workflow.Sarasvati.Error
+import Workflow.Sarasvati.Loader
 
 data MemLoader = forall resolver . Resolver resolver => MemLoader (IORef Int) resolver
 

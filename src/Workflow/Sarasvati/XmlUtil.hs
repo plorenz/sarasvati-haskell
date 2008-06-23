@@ -18,13 +18,13 @@
 -}
 
 
-module Workflow.Util.XmlUtil where
+module Workflow.Sarasvati.XmlUtil where
 
 import Text.XML.HaXml.Combinators
 import Text.XML.HaXml.Types
 
-import Workflow.Error
-import Workflow.Util.ListUtil
+import Workflow.Sarasvati.Error
+import Workflow.Sarasvati.ListUtil
 
 readAttr :: Element -> String -> String
 readAttr element name = head $ map (\(val,_)->val) $ attributed name (keep) (CElem element)

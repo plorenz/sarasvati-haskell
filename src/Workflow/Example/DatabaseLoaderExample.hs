@@ -28,12 +28,12 @@ import Data.Map as Map hiding (null)
 import Database.HDBC
 import System
 
-import Workflow.Error
-import Workflow.Loader
-import Workflow.DatabaseLoader
-import Workflow.Example.Task
+import Workflow.Sarasvati.DbUtil
+import Workflow.Sarasvati.Error
+import Workflow.Sarasvati.Loader
+import Workflow.Sarasvati.DatabaseLoader
 
-import Workflow.Util.DbUtil
+import Workflow.Example.Task
 
 
 main :: IO ()

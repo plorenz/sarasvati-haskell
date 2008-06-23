@@ -17,18 +17,18 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.Loader where
+module Workflow.Sarasvati.Loader where
 
-import           Control.Monad
+import Control.Monad
 
-import qualified Data.Map as Map
+import Data.Map as Map hiding (null, filter, map)
 
-import           Text.XML.HaXml.Parse
-import           Text.XML.HaXml.Types
+import Text.XML.HaXml.Parse
+import Text.XML.HaXml.Types
 
-import           Workflow.Engine
-import           Workflow.Error
-import           Workflow.Util.XmlUtil
+import Workflow.Sarasvati.Engine
+import Workflow.Sarasvati.Error
+import Workflow.Sarasvati.XmlUtil
 
 -------------------------------------------------------------------------------
 --             XML Literals to  XML Data Structures                          --

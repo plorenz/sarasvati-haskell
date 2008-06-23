@@ -19,7 +19,8 @@
 
 -- Author: Paul Lorenz
 
-module Workflow.Engine (GuardResponse(..),
+module Workflow.Sarasvati.Engine (
+                        GuardResponse(..),
                         NodeExtra(..),
                         Node(..),
                         NodeType(..),
@@ -52,8 +53,8 @@ import Control.Exception
 import Control.Monad
 import Data.Dynamic
 import qualified Data.Map as Map
-import qualified Workflow.GuardLang as GuardLang
-import qualified Workflow.Util.ListUtil as ListUtil
+import qualified Workflow.Sarasvati.GuardLang as GuardLang
+import qualified Workflow.Sarasvati.ListUtil as ListUtil
 
 -- | Every 'Node' has a guard function which is called when a token arrives
 --   and the node is ready to be activated. Guard functions must return a

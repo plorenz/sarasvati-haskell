@@ -16,7 +16,7 @@
 --
 --    Copyright 2008 Paul Lorenz
 
-module Workflow.GuardLang where
+module Workflow.Sarasvati.GuardLang where
 import Data.Char
 #if __GLASGOW_HASKELL__ >= 503
 import GHC.Exts

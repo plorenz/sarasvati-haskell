@@ -22,7 +22,7 @@ module Workflow.Example.ExampleCommon where
 import Data.Char
 import Random
 
-import Workflow.Engine
+import Workflow.Sarasvati.Engine
 import Workflow.Example.Task
 
 

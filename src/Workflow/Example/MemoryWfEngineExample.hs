@@ -21,10 +21,10 @@
 
 module Main where
 
-import Workflow.Error
-import Workflow.Engine
-import Workflow.MemoryLoader
-import Workflow.MemoryWfEngine
+import Workflow.Sarasvati.Error
+import Workflow.Sarasvati.Engine
+import Workflow.Sarasvati.MemoryLoader
+import Workflow.Sarasvati.MemoryWfEngine
 
 import Workflow.Example.Task
 import Workflow.Example.ExampleCommon
@@ -33,7 +33,6 @@ import Data.Char
 import Data.Map as Map hiding (null, filter, map)
 import IO
 import System.Directory
-
 
 
 main :: IO ()

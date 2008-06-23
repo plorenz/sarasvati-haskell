@@ -17,14 +17,15 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.DatabaseWfEngine where
+module Workflow.Sarasvati.DatabaseWfEngine where
 
 
+import Data.Map as Map hiding (null, filter, map)
 import Database.HDBC
-import qualified Data.Map as Map
-import Workflow.Engine
-import Workflow.Util.DbUtil as DbUtil
-import Workflow.Util.TokenUtil as TokenUtil
+
+import Workflow.Sarasvati.Engine
+import Workflow.Sarasvati.DbUtil as DbUtil
+import Workflow.Sarasvati.TokenUtil as TokenUtil
 
 data DatabaseWfEngine = forall conn. IConnection conn => DatabaseWfEngine conn
 
