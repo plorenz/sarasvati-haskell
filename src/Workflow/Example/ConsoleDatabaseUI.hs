@@ -19,7 +19,7 @@
 
 --Author: Paul Lorenz
 
-module Workflow.UI.ConsoleDatabaseUI where
+module Main where
 
 import IO
 import Data.Char
@@ -31,12 +31,12 @@ import Workflow.Engine
 import Workflow.Error
 import Workflow.DatabaseLoader
 import Workflow.DatabaseWfEngine
-import Workflow.Task.Task
-import Workflow.UI.ConsoleCommon
+import Workflow.Example.Task
+import Workflow.Example.ConsoleCommon
 import Workflow.Util.DbUtil as DbUtil
 
-consoleMain :: IO ()
-consoleMain =
+main :: IO ()
+main =
     do hSetBuffering stdout NoBuffering
        wfList <- getWorkflowList
        selectWorkflow wfList

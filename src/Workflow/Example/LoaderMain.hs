@@ -19,7 +19,7 @@
 
 -- Author: Paul Lorenz
 
--- Loader main. Program arguments are assumed to workflow xml files.
+-- Loader main. Program arguments are assumed to be workflow xml files.
 -- Each workflow will be loaded in the database
 
 module Main where
@@ -31,10 +31,9 @@ import System
 import Workflow.Error
 import Workflow.Loader
 import Workflow.DatabaseLoader
-import Workflow.Task.Task
-import Workflow.Task.TaskDB
-import Workflow.Util.DbUtil
+import Workflow.Example.Task
 
+import Workflow.Util.DbUtil
 
 
 main :: IO ()

@@ -17,12 +17,14 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.UI.ConsoleCommon where
+module Workflow.Example.ConsoleCommon where
 
-import Workflow.Engine
-import Workflow.Task.Task
 import Data.Char
 import Random
+
+import Workflow.Engine
+import Workflow.Example.Task
+
 
 handleTask :: (WfEngine e) => e -> Task -> WfProcess [Task] -> IO (WfProcess [Task])
 handleTask engine task wf =

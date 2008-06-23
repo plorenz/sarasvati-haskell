@@ -19,22 +19,25 @@
 
 -- Author: Paul Lorenz
 
-module Workflow.UI.ConsoleXmlFileUI where
+module Main where
 
 import Workflow.Error
 import Workflow.Engine
-import Workflow.Task.Task
-import IO
-import Data.Char
-import System.Directory
 import Workflow.MemoryLoader
-import Workflow.Task.Task
-import qualified Data.Map as Map
-import Workflow.UI.ConsoleCommon
 import Workflow.MemoryWfEngine
 
-consoleMain :: IO ()
-consoleMain =
+import Workflow.Example.Task
+import Workflow.Example.ConsoleCommon
+
+import Data.Char
+import Data.Map as Map hiding (null, filter, map)
+import IO
+import System.Directory
+
+
+
+main :: IO ()
+main =
     do hSetBuffering stdout NoBuffering
        wfList <- getWorkflowList
        selectWorkflow wfList

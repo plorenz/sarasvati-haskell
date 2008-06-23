@@ -18,7 +18,7 @@
 -}
 
 
-module Workflow.Task.Task where
+module Workflow.Example.Task where
 
 import Data.Dynamic
 import Data.Map as Map hiding (null, filter, map)
