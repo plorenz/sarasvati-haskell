@@ -49,7 +49,7 @@ import Workflow.Sarasvati.Loader
 --    * typeMap - 'Map' of type name to function for loading 'NodeExtra'
 --
 --  If a database error is encounered, a 'SqlError' will be thrown. If a loading error occurs, due
---  to missing or inconsistent data, a 'WfLoadError'will be thrown.
+--  to missing or inconsistent data, a 'WfError'will be thrown.
 
 loadLatestGraph :: (IConnection conn) => conn -> String -> Map.Map String (conn -> Int -> IO NodeExtra) -> IO WfGraph
 loadLatestGraph conn name typeMap =

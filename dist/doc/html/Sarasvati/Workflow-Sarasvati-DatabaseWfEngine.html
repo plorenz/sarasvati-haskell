@@ -1,0 +1,555 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Workflow.Sarasvati.DatabaseWfEngine</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topbar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
+></TD
+><TD CLASS="title"
+>Sarasvati-0.0.1: A graph-based workflow engine for Haskell</TD
+><TD CLASS="topbut"
+><A HREF="index.html"
+>Contents</A
+></TD
+><TD CLASS="topbut"
+><A HREF="doc-index.html"
+>Index</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="modulebar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><FONT SIZE="6"
+>Workflow.Sarasvati.DatabaseWfEngine</FONT
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3ADatabaseWfEngine"
+></A
+><B
+>DatabaseWfEngine</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><SPAN CLASS="keyword"
+>forall</SPAN
+> conn . IConnection conn =&gt; <A NAME="v%3ADatabaseWfEngine"
+></A
+><B
+>DatabaseWfEngine</B
+> conn</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:DatabaseWfEngine')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:DatabaseWfEngine" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AinsertWfProcess"
+></A
+><B
+>insertWfProcess</B
+> :: IConnection conn =&gt; conn -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AinsertArcToken"
+></A
+><B
+>insertArcToken</B
+> :: IConnection conn =&gt; conn -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcompleteDatabaseArcToken"
+></A
+><B
+>completeDatabaseArcToken</B
+> :: <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> ()</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AinsertNodeToken"
+></A
+><B
+>insertNodeToken</B
+> :: IConnection conn =&gt; conn -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AinsertNodeTokenParent"
+></A
+><B
+>insertNodeTokenParent</B
+> :: IConnection conn =&gt; conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> ()</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcompleteDatabaseNodeToken"
+></A
+><B
+>completeDatabaseNodeToken</B
+> :: <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> ()</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3ArecordDatabaseGuardResponse"
+></A
+><B
+>recordDatabaseGuardResponse</B
+> :: <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> ()</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AupdateNodeTokenAttrSet"
+></A
+><B
+>updateNodeTokenAttrSet</B
+> :: IConnection conn =&gt; conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> ()</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AinsertTokenAttr"
+></A
+><B
+>insertTokenAttr</B
+> :: IConnection conn =&gt; conn -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> ()</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AupdateTokenAttr"
+></A
+><B
+>updateTokenAttr</B
+> :: IConnection conn =&gt; conn -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> ()</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AdeleteTokenAttr"
+></A
+><B
+>deleteTokenAttr</B
+> :: IConnection conn =&gt; conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
+>String</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> ()</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateDatabaseWfProcess"
+></A
+><B
+>createDatabaseWfProcess</B
+> :: <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
+>Map</A
+> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
+>String</A
+> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+> a) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
+>Map</A
+> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
+>String</A
+> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
+>Bool</A
+>) -&gt; a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateDatabaseNodeToken"
+></A
+><B
+>createDatabaseNodeToken</B
+> :: <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+>] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a, <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateDatabaseArcToken"
+></A
+><B
+>createDatabaseArcToken</B
+> :: <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a, <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AdatabaseTransactionBoundary"
+></A
+><B
+>databaseTransactionBoundary</B
+> :: <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> ()</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AdatabaseMergeTokenAttrs"
+></A
+><B
+>databaseMergeTokenAttrs</B
+> :: IConnection conn =&gt; conn -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+>] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AupdateAttrId"
+></A
+><B
+>updateAttrId</B
+> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AupdateTokenAttrId"
+></A
+><B
+>updateTokenAttrId</B
+> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+>] -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AsetDatabaseTokenAttr"
+></A
+><B
+>setDatabaseTokenAttr</B
+> :: <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
+>String</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
+>String</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AremoveDatabaseTokenAttr"
+></A
+><B
+>removeDatabaseTokenAttr</B
+> :: <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
+>String</A
+> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="botbar"
+>Produced by <A HREF="http://www.haskell.org/haddock/"
+>Haddock</A
+> version 0.8</TD
+></TR
+></TABLE
+></BODY
+></HTML
+>
