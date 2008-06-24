@@ -18,11 +18,7 @@
 
 module Workflow.Sarasvati.GuardLang where
 import Data.Char
-#if __GLASGOW_HASKELL__ >= 503
 import GHC.Exts
-#else
-import GlaExts
-#endif
 
 -- parser produced by Happy Version 1.16
 
@@ -472,7 +468,7 @@ happyGoto action j tk st = action j j tk (HappyState action)
 
 -- parse error if we are in recovery and we fail again
 happyFail  1# tk old_st _ stk =
---	trace "failing" $
+--  trace "failing" $
       happyError_ tk
 
 {-  We don't need state discarding for our restricted implementation of
@@ -482,7 +478,7 @@ happyFail  1# tk old_st _ stk =
 -- discard a state
 happyFail  1# tk old_st (((HappyState (action))):(sts))
             (saved_tok `HappyStk` _ `HappyStk` stk) =
---	trace ("discarding state, depth " ++ show (length stk))  $
+--  trace ("discarding state, depth " ++ show (length stk))  $
   action 1# 1# tk (HappyState (action)) sts ((saved_tok`HappyStk`stk))
 -}
 
@@ -507,9 +503,9 @@ happyTcHack x y = y
 
 -----------------------------------------------------------------------------
 -- Seq-ing.  If the --strict flag is given, then Happy emits
---	happySeq = happyDoSeq
+--  happySeq = happyDoSeq
 -- otherwise it emits
--- 	happySeq = happyDontSeq
+--   happySeq = happyDontSeq
 
 happyDoSeq, happyDontSeq :: a -> b -> b
 happyDoSeq   a b = a `seq` b

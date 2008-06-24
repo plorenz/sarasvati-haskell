@@ -26,9 +26,9 @@ import Data.Char
 import Data.Map as Map hiding (filter, map, null)
 
 import Database.HDBC
+import Database.HDBC.PostgreSQL
 import Database.HDBC.Types
 
-import Workflow.Sarasvati.DbUtil as DbUtil
 import Workflow.Sarasvati.Engine
 import Workflow.Sarasvati.Error
 import Workflow.Sarasvati.DatabaseLoader
@@ -43,6 +43,9 @@ main =
     do hSetBuffering stdout NoBuffering
        wfList <- getWorkflowList
        selectWorkflow wfList
+
+openDbConnection :: IO Connection
+openDbConnection = connectPostgreSQL "port=5433"
 
 selectWorkflow :: [String] -> IO ()
 selectWorkflow wfList =
@@ -60,8 +63,9 @@ selectWorkflow wfList =
 useWorkflow :: [String] -> Int -> IO ()
 useWorkflow wfList idx
     | length wfList <= idx = do putStrLn "ERROR: Invalid workflow number"
-    | otherwise            = do conn <- DbUtil.openDbConnection
+    | otherwise            = do conn <- openDbConnection
                                 graph <- loadLatestGraph conn (wfList !! idx) typeMap
+                                disconnect conn
                                 putStrLn "Running workflow"
                                 putStrLn (show graph)
                                 runWorkflow graph
@@ -70,7 +74,7 @@ useWorkflow wfList idx
 
 runWorkflow :: WfGraph -> IO ()
 runWorkflow graph =
-    do conn <- DbUtil.openDbConnection
+    do conn <- openDbConnection
        let engine = DatabaseWfEngine conn
        result <- startWorkflow engine nodeTypeMap predMap graph []
        case (result) of
@@ -78,6 +82,7 @@ runWorkflow graph =
                           putStrLn msg
            Right wf -> do commit conn
                           processTasks engine wf
+       disconnect conn
 
 nodeTypeMap :: Map.Map String (NodeType [Task])
 nodeTypeMap = Map.fromList
@@ -93,8 +98,10 @@ predMap = Map.fromList [ ("isRandOdd", predIsRandOdd),
 
 getWorkflowList :: IO [String]
 getWorkflowList =
-    do conn <- DbUtil.openDbConnection
-       withTransaction conn (getWorkflowListFromDb)
+    do conn <- openDbConnection
+       result <- withTransaction conn (getWorkflowListFromDb)
+       disconnect conn
+       return result
 
 getWorkflowListFromDb :: (IConnection conn) => conn -> IO [String]
 getWorkflowListFromDb conn =

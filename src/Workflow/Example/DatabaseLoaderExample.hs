@@ -26,9 +26,9 @@ module Main where
 
 import Data.Map as Map hiding (null)
 import Database.HDBC
+import Database.HDBC.PostgreSQL
 import System
 
-import Workflow.Sarasvati.DbUtil
 import Workflow.Sarasvati.Error
 import Workflow.Sarasvati.Loader
 import Workflow.Sarasvati.DatabaseLoader
@@ -43,6 +43,9 @@ main =
            True  -> putStrLn "No workflow file specified"
            False -> do mapM (load) args
                        return ()
+
+openDbConnection :: IO Connection
+openDbConnection = connectPostgreSQL "port=5433"
 
 load :: String -> IO ()
 load filename =

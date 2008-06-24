@@ -1,0 +1,84 @@
+Name:          Sarasvati-Examples
+Version:       0.1.0
+Cabal-Version: >= 1.2
+License:       LGPL
+License-File:  common/LGPLv3.license
+Author:        Paul Lorenz
+Maintainer:    Paul Lorenz
+Homepage:      http://sarasvati.googlecode.com/
+Category:      Workflow
+Synopsis:      Example code for Sarasvati, a graph-based workflow engine for Haskell
+Description:   Example code for Sarasvati, a graph-based workflow engine for Haskell
+Build-Type:    Simple
+Copyright:     2008 Paul Lorenz
+Data-Files:    common/GPLv3.license,
+               common/db/create-example-schema.sql
+               common/test-wf/embedded-task-rej.wf.xml
+               common/test-wf/example1.wf.xml
+               common/test-wf/not-random-guard.wf.xml
+               common/test-wf/one-node.wf.xml
+               common/test-wf/random-guard.wf.xml
+               common/test-wf/subwf-tasks-rej.wf.xml
+
+---------------------------------------------------------------------------------------------------
+--                    Memory Engine Example                                                      --
+---------------------------------------------------------------------------------------------------
+
+Executable:  wf-mem-engine-example
+Main-Is: Workflow/Example/MemoryWfEngineExample.hs
+Build-Depends:    base,
+                  containers,
+                  directory,
+                  haskell98,
+                  Sarasvati >= 0.1.0,
+                  HaXml >= 1.13,
+                  HDBC >= 1.1.4,
+                  HDBC-postgresql >=1.1.4.1
+
+Other-modules: Workflow.Example.ExampleCommon,
+               Workflow.Example.Task
+
+Hs-Source-Dirs: src
+Extensions:     DeriveDataTypeable, ExistentialQuantification, Rank2Types
+
+---------------------------------------------------------------------------------------------------
+--                    Database Engine Example                                                    --
+---------------------------------------------------------------------------------------------------
+
+
+Executable:  wf-db-engine-example
+Main-Is: Workflow/Example/DatabaseWfEngineExample.hs
+Build-Depends:    base,
+                  containers,
+                  directory,
+                  haskell98,
+                  Sarasvati >= 0.1.0,
+                  HaXml >= 1.13,
+                  HDBC >= 1.1.4,
+                  HDBC-postgresql >=1.1.4.1
+
+Other-modules: Workflow.Example.ExampleCommon,
+               Workflow.Example.Task
+
+Hs-Source-Dirs: src
+Extensions:     DeriveDataTypeable, ExistentialQuantification, Rank2Types
+
+---------------------------------------------------------------------------------------------------
+--                    Database Loader Example                                                    --
+---------------------------------------------------------------------------------------------------
+
+Executable:  wf-db-loader-example
+Main-Is: Workflow/Example/DatabaseLoaderExample.hs
+Build-Depends:    base,
+                  containers,
+                  directory,
+                  haskell98,
+                  Sarasvati >= 0.1.0,
+                  HaXml >= 1.13,
+                  HDBC >= 1.1.4,
+                  HDBC-postgresql >=1.1.4.1
+
+Other-modules: Workflow.Example.Task
+
+Hs-Source-Dirs: src
+Extensions:     DeriveDataTypeable, ExistentialQuantification, Rank2Types

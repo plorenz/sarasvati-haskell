@@ -34,7 +34,8 @@ import Workflow.Sarasvati.Loader
 ---------------------------------------------------------------------------------------------------
 
 -- | Loads latest (with the highest version number) 'WfGraph' from the database with the given name.
---   Take a 'Map' of 'String' types to loaders for those types. Loading of the basic 'Node' information
+--
+--   Takes a 'Map' of 'String' types to loaders for those types. Loading of the basic 'Node' information
 --   is handled automatically. However, if a given 'Node' type has extra information in another table
 --   which should be loaded into the 'NodeExtra', a loader function can be specified. It will be called
 --   with the node id. If no function is specified for a given type, it's 'nodeExtra' will be set to
@@ -46,7 +47,8 @@ import Workflow.Sarasvati.Loader
 --
 --    * name - The name of the 'WfGraph' to load
 --
---    * typeMap - 'Map' of type name to function for loading 'NodeExtra'
+--    * typeMap - 'Map' of type name to function for loading 'NodeExtra'. Function should take an
+--                'IConnection' and the Int id of the 'Node' being loaded.
 --
 --  If a database error is encounered, a 'SqlError' will be thrown. If a loading error occurs, due
 --  to missing or inconsistent data, a 'WfError'will be thrown.
@@ -113,10 +115,6 @@ rowToNode conn typeMap row =
         nodeExtraIO  = case (Map.member nodeType typeMap) of
                            True -> (typeMap Map.! nodeType) conn nodeId
                            False -> return NoNodeExtra
-
-nodeDepth :: String -> Int
-nodeDepth ""           = 0
-nodeDepth instanceName = ((1+).length) $ filter (\c-> c == ':') instanceName
 
 loadArcs :: (IConnection conn) => conn -> Int -> IO [Arc]
 loadArcs conn graphId =
