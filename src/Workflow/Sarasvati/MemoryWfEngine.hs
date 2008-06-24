@@ -17,7 +17,7 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.Sarasvati.MemoryWfEngine where
+module Workflow.Sarasvati.MemoryWfEngine (MemoryWfEngine, newMemoryWfEngine) where
 
 import Data.IORef
 import Data.Map as Map hiding (filter, map, null)

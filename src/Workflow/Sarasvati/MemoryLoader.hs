@@ -17,7 +17,10 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.Sarasvati.MemoryLoader where
+module Workflow.Sarasvati.MemoryLoader (MemLoader,
+                                        newMemLoader,
+                                        newSimpleMemLoader,
+                                        loadMemWorkflow ) where
 
 import Control.Monad
 import Data.IORef

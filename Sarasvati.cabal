@@ -27,11 +27,11 @@ Library
                     HDBC >= 1.1.4,
                     HDBC-postgresql >=1.1.4.1
   Exposed-modules:
+    Workflow.Sarasvati.Engine,
+    Workflow.Sarasvati.Loader,
+    Workflow.Sarasvati.Error,
     Workflow.Sarasvati.DatabaseLoader,
     Workflow.Sarasvati.DatabaseWfEngine,
-    Workflow.Sarasvati.Engine,
-    Workflow.Sarasvati.Error,
-    Workflow.Sarasvati.Loader,
     Workflow.Sarasvati.MemoryLoader,
     Workflow.Sarasvati.MemoryWfEngine
 

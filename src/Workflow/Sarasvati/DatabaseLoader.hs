@@ -17,7 +17,7 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.Sarasvati.DatabaseLoader where
+module Workflow.Sarasvati.DatabaseLoader (loadLatestGraph, loadGraph, DbLoader(..)) where
 
 import Control.Monad
 import Data.Map as Map hiding (null, filter, map)

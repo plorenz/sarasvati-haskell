@@ -17,7 +17,7 @@
     Copyright 2008 Paul Lorenz
 -}
 
-module Workflow.Sarasvati.DatabaseWfEngine where
+module Workflow.Sarasvati.DatabaseWfEngine (DatabaseWfEngine(..)) where
 
 
 import Data.Map as Map hiding (null, filter, map)
