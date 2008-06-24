@@ -35,7 +35,7 @@ Dependencies:
 
 Instructions for building
 -----------------------------------------
-Sarasvati uses Cabal as a build tool.
+Sarasvati uses Cabal as a build tool. It requires at least version 1.4
 
 To see the available options:
 
@@ -43,11 +43,25 @@ To see the available options:
 
 Before running any other commands
 
+  # for global install
   > runhaskell Setup.hs configure
+
+  # for local install
+  > runhaskell Setup.hs configure --user
 
 To build:
 
   > runhaskell Setup.hs build
+
+To install:
+
+  # for global install
+  > sudo runhaskell Setup.hs install
+  > sudo runhaskell Setup.hs register
+
+  # for local install
+  > runhaskell Setup.hs install
+  > runhaskell Setup.hs register
 
 To generate the documentation using Haddock.
 

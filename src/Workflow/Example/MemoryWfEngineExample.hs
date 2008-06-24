@@ -34,6 +34,7 @@ import Data.Map as Map hiding (null, filter, map)
 import IO
 import System.Directory
 
+wfDir = "common/test-wf/"
 
 main :: IO ()
 main =
@@ -58,7 +59,7 @@ selectWorkflow wfList =
 useWorkflow :: [String] -> Int -> IO (Either String ())
 useWorkflow wfList idx
     | length wfList <= idx = return $ Left "ERROR: Invalid workflow number"
-    | otherwise            = do loader <- newSimpleMemLoader "/home/paul/workspace/wf-haskell/common/test-wf/" funcMap
+    | otherwise            = do loader <- newSimpleMemLoader wfDir funcMap
                                 result <- loadMemWorkflow loader (wfList !! idx)
                                 case (result) of
                                     Left msg -> return $ Left $ "ERROR: Could not load workflow: " ++ msg
@@ -94,7 +95,6 @@ getWorkflowList =
     do fileList <- getDirectoryContents wfDir
        return $ (stripExt.filterWfs) fileList
     where
-        wfDir = "/home/paul/workspace/wf-haskell/common/test-wf/"
         filterWfs = (filter (hasExtension ".wf.xml"))
         stripExt = map (reverse.(drop 7).reverse)
 
