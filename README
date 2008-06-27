@@ -8,13 +8,12 @@ Authors:
   Paul lorenz
 
 Homepage:
-  http://code.google.com/p/sarasvati/
+  http://sarasvati.googlecode.com/
 
 License:
   LGPL version 3
 
 Dependencies:
-  The haskell version uses
 
     * HDBC
         Summary : Database connection library
