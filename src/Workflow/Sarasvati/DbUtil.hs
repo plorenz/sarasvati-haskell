@@ -24,7 +24,7 @@ import Database.HDBC
 
 nextSeqVal :: (IConnection a) => a -> String -> IO Int
 nextSeqVal conn name =
-    do rows <- quickQuery conn sql [toSql name]
+    do rows <- quickQuery' conn sql [toSql name]
        return $ (fromSql.head.head) rows
     where
         sql = "select nextval( ? )"

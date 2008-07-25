@@ -69,8 +69,8 @@ showTokens (x:xs) = do putStrLn (show x)
                        showTokens xs
 
 processTasks :: (WfEngine e) => e -> WfProcess [Task] -> IO ()
-processTasks _         (WfProcess _ _ _ [] [] _ _ _    ) = putStrLn "Workflow complete!"
-processTasks engine wf@(WfProcess _ _ _ _  _  _ _ tasks) =
+processTasks _         (WfProcess _ _ _ [] [] _ _ _ _    ) = putStrLn "Workflow complete!"
+processTasks engine wf@(WfProcess _ _ _ _  _  _ _ _ tasks) =
     do putStrLn ""
        showTaskList tasks
        putStr "> "
@@ -114,7 +114,7 @@ acceptInit engine token process =
        process <- setTokenAttr engine process token "rand" (show nextRand)
        completeDefaultExecution engine token process
     where
-        newVal = case (attrValue process token "iter") of
+        newVal = case (tokenAttrValue process token "iter") of
                      Nothing -> 0
                      Just x  -> (read x::Int) + 1
 
@@ -128,7 +128,7 @@ acceptDump engine token process =
 predIsRandOdd :: NodeToken -> WfProcess a -> IO Bool
 predIsRandOdd token process = return isOdd
     where
-       randVal = attrValueReq process token "rand"
+       randVal = tokenAttrValueReq process token "rand"
        isOdd   = (read randVal::Int) `mod` 2 == 0
 
 predIsRandEven :: NodeToken -> WfProcess a -> IO Bool
@@ -139,5 +139,5 @@ predIsRandEven token process =
 predIsTenthIteration :: NodeToken -> WfProcess a -> IO Bool
 predIsTenthIteration token process = return isTenth
     where
-       iterVal = attrValueReq process token "iter"
+       iterVal = tokenAttrValueReq process token "iter"
        isTenth = (read iterVal::Int) >= 10

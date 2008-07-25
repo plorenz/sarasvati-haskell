@@ -37,6 +37,8 @@ instance WfEngine DatabaseWfEngine where
     completeArcToken    = completeDatabaseArcToken
     recordGuardResponse = recordDatabaseGuardResponse
     transactionBoundary = databaseTransactionBoundary
+    setProcessAttr      = setDatabaseProcessAttr
+    removeProcessAttr   = removeDatabaseProcessAttr
     setTokenAttr        = setDatabaseTokenAttr
     removeTokenAttr     = removeDatabaseTokenAttr
 
@@ -119,7 +121,7 @@ insertTokenAttr conn (TokenAttr nodeTokenId name value) =
                      toSql value]
        return ()
     where
-        sql = "insert into wf_token_string_attr (attr_set_id, name, value) values (?, ?, ?)"
+        sql = "insert into wf_token_attr (attr_set_id, name, value) values (?, ?, ?)"
 
 updateTokenAttr :: (IConnection conn) => conn -> TokenAttr -> IO ()
 updateTokenAttr conn (TokenAttr nodeTokenId name value) =
@@ -128,7 +130,7 @@ updateTokenAttr conn (TokenAttr nodeTokenId name value) =
                      toSql name]
        return ()
     where
-        sql = "update wf_token_string_attr set value = ? where attr_set_id = ? and name = ?"
+        sql = "update wf_token_attr set value = ? where attr_set_id = ? and name = ?"
 
 deleteTokenAttr :: (IConnection conn) => conn -> Int -> String -> IO ()
 deleteTokenAttr conn nodeTokenId name =
@@ -136,17 +138,45 @@ deleteTokenAttr conn nodeTokenId name =
                      toSql name]
        return ()
     where
-        sql = "delete from wf_token_string_attr where attr_set_id = ? and name = ?"
+        sql = "delete from wf_token_attr where attr_set_id = ? and name = ?"
+
+insertProcessAttr :: (IConnection conn) => conn -> Int -> String -> String -> IO ()
+insertProcessAttr conn processId name value =
+    do run conn sql [toSql processId,
+                     toSql name,
+                     toSql value]
+       return ()
+    where
+        sql = "insert into wf_process_attr (process_id, name, value) values (?, ?, ?)"
+
+updateProcessAttr :: (IConnection conn) => conn -> Int -> String -> String -> IO ()
+updateProcessAttr conn processId name value =
+    do run conn sql [toSql value,
+                     toSql processId,
+                     toSql name]
+       return ()
+    where
+        sql = "update wf_process_attr set value = ? where process_id = ? and name = ?"
+
+deleteProcessAttr :: (IConnection conn) => conn -> Int -> String -> IO ()
+deleteProcessAttr conn processId name =
+    do run conn sql [toSql processId,
+                     toSql name]
+       return ()
+    where
+        sql = "delete from wf_process_attr where process_id = ? and name = ?"
 
 createDatabaseWfProcess :: DatabaseWfEngine ->
                            WfGraph ->
                            Map.Map String (NodeType a) ->
                            Map.Map String (NodeToken -> WfProcess a -> IO Bool) ->
                            a ->
+                           Map.Map String String ->
                            IO (WfProcess a)
-createDatabaseWfProcess (DatabaseWfEngine conn) graph nodeTypes predicates userData =
-    do wfRunId <- insertWfProcess conn graph
-       return $ WfProcess wfRunId nodeTypes graph [] [] Map.empty predicates userData
+createDatabaseWfProcess (DatabaseWfEngine conn) graph nodeTypes predicates userData attrs =
+    do processId <- insertWfProcess conn graph
+       mapM (uncurry (insertProcessAttr conn processId)) (Map.assocs attrs)
+       return $ WfProcess processId nodeTypes graph [] [] attrs Map.empty predicates userData
 
 createDatabaseNodeToken :: DatabaseWfEngine -> WfProcess a -> Node -> [ArcToken] -> IO (WfProcess a, NodeToken)
 createDatabaseNodeToken (DatabaseWfEngine conn) process node arcTokens =
@@ -189,6 +219,25 @@ updateAttrId newId tokenAttr = tokenAttr { attrSetId = newId }
 
 updateTokenAttrId :: Int -> [TokenAttr] -> [TokenAttr]
 updateTokenAttrId newSetId attrList = map (updateAttrId newSetId) attrList
+
+setDatabaseProcessAttr :: DatabaseWfEngine-> WfProcess a -> String -> String -> IO (WfProcess a)
+setDatabaseProcessAttr (DatabaseWfEngine conn) process key value
+    | isUpdate    = do updateProcessAttr conn (processId process) key value
+                       return newProcess
+    | otherwise   = do insertProcessAttr conn (processId process) key value
+                       return newProcess
+    where
+        newProcess  = process { attrMap = Map.insert key value (attrMap process) }
+        isUpdate    = Map.member key (attrMap process)
+
+removeDatabaseProcessAttr :: DatabaseWfEngine-> WfProcess a -> String -> IO (WfProcess a)
+removeDatabaseProcessAttr (DatabaseWfEngine conn) process key
+    | not hasKey  = return process
+    | otherwise   = do deleteProcessAttr conn (processId process) key
+                       return newProcess
+    where
+        newProcess  = process { attrMap = Map.delete key (attrMap process) }
+        hasKey      = Map.member key (attrMap process)
 
 setDatabaseTokenAttr :: DatabaseWfEngine-> WfProcess a -> NodeToken -> String -> String -> IO (WfProcess a)
 setDatabaseTokenAttr (DatabaseWfEngine conn) process nodeToken key value

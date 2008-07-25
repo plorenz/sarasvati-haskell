@@ -45,7 +45,7 @@ main =
        selectWorkflow wfList
 
 openDbConnection :: IO Connection
-openDbConnection = connectPostgreSQL "port=5433"
+openDbConnection = connectPostgreSQL "port=5432"
 
 selectWorkflow :: [String] -> IO ()
 selectWorkflow wfList =
@@ -65,9 +65,9 @@ useWorkflow wfList idx
     | length wfList <= idx = do putStrLn "ERROR: Invalid workflow number"
     | otherwise            = do conn <- openDbConnection
                                 graph <- loadLatestGraph conn (wfList !! idx) typeMap
-                                disconnect conn
                                 putStrLn "Running workflow"
                                 putStrLn (show graph)
+                                disconnect conn
                                 runWorkflow graph
    where
        typeMap = Map.fromList [ ("task", loadTask) ]
@@ -76,7 +76,7 @@ runWorkflow :: WfGraph -> IO ()
 runWorkflow graph =
     do conn <- openDbConnection
        let engine = DatabaseWfEngine conn
-       result <- startWorkflow engine nodeTypeMap predMap graph []
+       result <- startWorkflow engine nodeTypeMap predMap Map.empty graph []
        case (result) of
            Left msg -> do rollback conn
                           putStrLn msg
@@ -105,7 +105,7 @@ getWorkflowList =
 
 getWorkflowListFromDb :: (IConnection conn) => conn -> IO [String]
 getWorkflowListFromDb conn =
-    do rows <- quickQuery conn sql []
+    do rows <- quickQuery' conn sql []
        return $ map (fromSql.head) rows
     where
         sql = "select distinct name from wf_graph order by name asc"

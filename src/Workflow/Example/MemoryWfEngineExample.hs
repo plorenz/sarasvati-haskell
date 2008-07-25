@@ -34,6 +34,7 @@ import Data.Map as Map hiding (null, filter, map)
 import IO
 import System.Directory
 
+wfDir :: String
 wfDir = "common/test-wf/"
 
 main :: IO ()
@@ -73,7 +74,7 @@ useWorkflow wfList idx
 runWorkflow :: WfGraph -> IO ()
 runWorkflow graph =
     do engine <- newMemoryWfEngine
-       result <- startWorkflow engine nodeTypeMap predMap graph []
+       result <- startWorkflow engine nodeTypeMap predMap Map.empty graph []
        case (result) of
            Left msg -> putStrLn msg
            Right wf -> processTasks engine wf

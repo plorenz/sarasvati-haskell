@@ -45,7 +45,7 @@ main =
                        return ()
 
 openDbConnection :: IO Connection
-openDbConnection = connectPostgreSQL "port=5433"
+openDbConnection = connectPostgreSQL "port=5432"
 
 load :: String -> IO ()
 load filename =

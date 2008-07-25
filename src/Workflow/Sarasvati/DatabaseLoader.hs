@@ -55,7 +55,7 @@ import Workflow.Sarasvati.Loader
 
 loadLatestGraph :: (IConnection conn) => conn -> String -> Map.Map String (conn -> Int -> IO NodeExtra) -> IO WfGraph
 loadLatestGraph conn name typeMap =
-    do rows <- quickQuery conn sql [toSql name]
+    do rows <- quickQuery' conn sql [toSql name]
        if (null rows)
            then wfError $ "No graph found with name " ++ name
            else finishLoad conn (head rows) typeMap
@@ -69,7 +69,7 @@ loadLatestGraph conn name typeMap =
 
 loadGraph :: (IConnection conn) => conn -> String -> Int -> Map.Map String (conn -> Int -> IO NodeExtra) -> IO WfGraph
 loadGraph conn name version typeMap =
-    do rows <- quickQuery conn sql [toSql name, toSql version]
+    do rows <- quickQuery' conn sql [toSql name, toSql version]
        if (null rows)
            then wfError $ "No graph found with name " ++ name ++ " and version " ++ (show version)
            else finishLoad conn (head rows) typeMap
@@ -88,7 +88,7 @@ finishLoad conn row typeMap =
 
 loadNodes :: (IConnection conn) => conn -> Int -> Map.Map String (conn -> Int -> IO NodeExtra) -> IO [Node]
 loadNodes conn graphId typeMap =
-    do rows <- quickQuery conn sql [toSql graphId]
+    do rows <- quickQuery' conn sql [toSql graphId]
        mapM (rowToNode conn typeMap) rows
     where
         sql = "select r.id, n.id, n.name, n.type, n.is_join, n.is_start, coalesce( n.guard, '' ), " ++
@@ -118,7 +118,7 @@ rowToNode conn typeMap row =
 
 loadArcs :: (IConnection conn) => conn -> Int -> IO [Arc]
 loadArcs conn graphId =
-    do rows <- quickQuery conn sql [toSql graphId]
+    do rows <- quickQuery' conn sql [toSql graphId]
        return $ map (rowToArc) rows
     where
         sql = "select id, name, a_node_ref_id, z_node_ref_id " ++
@@ -205,7 +205,7 @@ insertArc conn graphId startNode endNode arcName =
 
 getMaxGraphVersion :: (IConnection a) => a-> String -> IO Int
 getMaxGraphVersion conn name =
-    do rows <- quickQuery conn sql [toSql name]
+    do rows <- quickQuery' conn sql [toSql name]
        return $ (fromSql.head.head) rows
     where
         sql = "select coalesce( max(version), 0) from wf_graph where name = ?"

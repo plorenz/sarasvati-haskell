@@ -33,8 +33,8 @@ module Workflow.Sarasvati.Engine (
                         WfProcess(..),
                         WfEngine(..),
                         WfException(..),
-                        attrValue,
-                        attrValueReq,
+                        tokenAttrValue,
+                        tokenAttrValueReq,
                         completeExecution,
                         completeDefaultExecution,
                         evalGuardLang,
@@ -44,6 +44,7 @@ module Workflow.Sarasvati.Engine (
                         isWfComplete,
                         makeNodeExtra,
                         nodeForToken,
+                        processAttrValue,
                         startWorkflow,
                         replaceTokenAttrs,
                         tokenAttrs
@@ -171,9 +172,9 @@ class Token a where
 
 data TokenAttr =
     TokenAttr {
-        attrSetId      :: Int,
-        tokenAttrKey   :: String,
-        tokenAttrValue :: String
+        attrSetId           :: Int,
+        tokenAttributeKey   :: String,
+        tokenAttributeValue :: String
     }
   deriving (Show)
 
@@ -213,6 +214,7 @@ data WfProcess a =
         wfGraph      :: WfGraph,
         nodeTokens   :: [NodeToken],
         arcTokens    :: [ArcToken],
+        attrMap      :: Map.Map String String,
         tokenAttrMap :: Map.Map Int [TokenAttr],
         predicateMap :: Map.Map String (NodeToken -> WfProcess a -> IO Bool),
         userData     :: a
@@ -220,9 +222,10 @@ data WfProcess a =
 
 class WfEngine a where
     createWfProcess     :: a -> WfGraph ->
-                                Map.Map String (NodeType b) ->
-                                Map.Map String (NodeToken -> WfProcess b -> IO Bool) ->
-                                b ->
+                                Map.Map String (NodeType b) ->                          -- Map of type name to NodeType
+                                Map.Map String (NodeToken -> WfProcess b -> IO Bool) -> -- Map of predicate names to predicate functions. Used by GuardLang
+                                b ->                                                    -- The initial user data
+                                Map.Map String String ->                                -- The initial process attributes
                                 IO (WfProcess b)
     createNodeToken     :: a -> WfProcess b -> Node -> [ArcToken] -> IO (WfProcess b, NodeToken)
     createArcToken      :: a -> WfProcess b -> Arc  -> NodeToken  -> IO (WfProcess b, ArcToken)
@@ -230,6 +233,8 @@ class WfEngine a where
     completeArcToken    :: a -> ArcToken    -> IO ()
     recordGuardResponse :: a -> NodeToken -> GuardResponse -> IO ()
     transactionBoundary :: a -> IO ()
+    setProcessAttr      :: a -> WfProcess b -> String -> String -> IO (WfProcess b)
+    removeProcessAttr   :: a -> WfProcess b -> String -> IO (WfProcess b)
     setTokenAttr        :: a -> WfProcess b -> NodeToken -> String -> String -> IO (WfProcess b)
     removeTokenAttr     :: a -> WfProcess b -> NodeToken -> String -> IO (WfProcess b)
 
@@ -271,19 +276,24 @@ makeNodeExtra extra = NodeExtra $ toDyn extra
 tokenAttrs :: WfProcess a -> NodeToken -> [TokenAttr]
 tokenAttrs wfProcess token = (tokenAttrMap wfProcess) Map.! (tokenId token)
 
-attrValueReq :: WfProcess a -> NodeToken -> String -> String
-attrValueReq process nodeToken key =
+tokenAttrValueReq :: WfProcess a -> NodeToken -> String -> String
+tokenAttrValueReq process nodeToken key =
     case (attr) of (TokenAttr _ _ value) -> value
     where
-        attr  = head $ filter (\tokenAttr -> tokenAttrKey tokenAttr == key) (tokenAttrs process nodeToken)
+        attr  = head $ filter (\tokenAttr -> tokenAttributeKey tokenAttr == key) (tokenAttrs process nodeToken)
 
-attrValue :: WfProcess a -> NodeToken -> String -> Maybe String
-attrValue process nodeToken key =
+tokenAttrValue :: WfProcess a -> NodeToken -> String -> Maybe String
+tokenAttrValue process nodeToken key =
     case (attr) of
         [(TokenAttr _ _ value)] -> Just value
         _                       -> Nothing
     where
-        attr  = filter (\tokenAttr -> tokenAttrKey tokenAttr == key) (tokenAttrs process nodeToken)
+        attr  = filter (\tokenAttr -> tokenAttributeKey tokenAttr == key) (tokenAttrs process nodeToken)
+
+processAttrValue :: WfProcess a -> String -> Maybe String
+processAttrValue process key
+    | Map.member key (attrMap process) = Just $ (attrMap process) Map.! key
+    | otherwise                        = Nothing
 
 replaceTokenAttrs :: WfProcess a -> NodeToken -> [TokenAttr] -> WfProcess a
 replaceTokenAttrs process token attrList =
@@ -336,12 +346,13 @@ startWorkflow :: (WfEngine engine) =>
                    engine ->
                    Map.Map String (NodeType a) ->
                    Map.Map String (NodeToken -> WfProcess a -> IO Bool) ->
+                   Map.Map String String ->
                    WfGraph -> a -> IO ( Either String (WfProcess a))
-startWorkflow engine nodeTypes predicates graph userData
+startWorkflow engine nodeTypes predicates attrs graph userData
     | typesMissing          = return $ Left ("Missing entries in nodeType for: " ++ missingMsg)
     | null startNodes       = return $ Left "Error: Workflow has no start node"
     | length startNodes > 1 = return $ Left "Error: Workflow has more than one start node"
-    | otherwise             = do wfRun <- createWfProcess engine graph nodeTypes predicates userData
+    | otherwise             = do wfRun <- createWfProcess engine graph nodeTypes predicates userData attrs
                                  (wfRun,startToken) <- createNodeToken engine wfRun startNode []
                                  wfRun <- acceptWithGuard engine startToken (wfRun { nodeTokens = [startToken] })
                                  return $ Right wfRun

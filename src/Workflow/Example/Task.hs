@@ -76,9 +76,12 @@ showTasks (task:rest) counter =
 
 acceptAndCreateTask :: (WfEngine e) => e -> NodeToken -> WfProcess [Task] -> IO (WfProcess [Task])
 acceptAndCreateTask engine token process =
-    do process <- case (attrValue process token key) of
+    do process <- case (tokenAttrValue process token key) of
                       Just val -> setTokenAttr engine process token key $ show $ (1 + (read val)::Int)
                       Nothing  -> setTokenAttr engine process token key "1"
+       process <- case (processAttrValue process key) of
+                      Just val -> setProcessAttr engine process key $ show $ (1 + (read val)::Int)
+                      Nothing  -> setProcessAttr engine process key "1"
        return process { userData = task: (userData process) }
     where
         task = newTask process token
@@ -120,7 +123,7 @@ rejectTask engine task wf = completeExecution engine token "reject" (closeTask t
 
 loadTask :: (IConnection conn) => conn -> Int -> IO NodeExtra
 loadTask conn nodeId =
-    do rows <- quickQuery conn sql [toSql nodeId]
+    do rows <- quickQuery' conn sql [toSql nodeId]
        case (null rows) of
            True  -> wfError $ "No record for wf_node_task found for node with id: " ++ (show nodeId)
            False -> return $ finishTaskLoad (head rows)

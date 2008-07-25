@@ -42,6 +42,8 @@ instance WfEngine MemoryWfEngine where
     completeArcToken    = completeMemoryArcToken
     recordGuardResponse = recordMemGuardResponse
     transactionBoundary = memoryTransactionBoundary
+    setProcessAttr      = setMemoryProcessAttr
+    removeProcessAttr   = removeMemoryProcessAttr
     setTokenAttr        = setMemoryTokenAttr
     removeTokenAttr     = removeMemoryTokenAttr
 
@@ -50,8 +52,9 @@ createMemoryWfProcess :: (WfEngine engine) => engine ->
                          Map.Map String (NodeType a) ->
                          Map.Map String (NodeToken -> WfProcess a -> IO Bool) ->
                          a ->
+                         Map.Map String String ->
                          IO (WfProcess a)
-createMemoryWfProcess _ graph nodeTypes predicates userData = return $ WfProcess 1 nodeTypes graph [] [] Map.empty predicates userData
+createMemoryWfProcess _ graph nodeTypes predicates userData attrs = return $ WfProcess 1 nodeTypes graph [] [] attrs Map.empty predicates userData
 
 createMemoryNodeToken :: MemoryWfEngine -> WfProcess a -> Node -> [ArcToken] -> IO (WfProcess a, NodeToken)
 createMemoryNodeToken engine process node parentTokens =
@@ -75,6 +78,12 @@ recordMemGuardResponse _ _ _ = return ()
 
 memoryTransactionBoundary :: MemoryWfEngine -> IO ()
 memoryTransactionBoundary _ = return ()
+
+setMemoryProcessAttr :: MemoryWfEngine-> WfProcess a -> String -> String -> IO (WfProcess a)
+setMemoryProcessAttr _ process key value = return $ process { attrMap = Map.insert key value (attrMap process) }
+
+removeMemoryProcessAttr :: MemoryWfEngine-> WfProcess a -> String -> IO (WfProcess a)
+removeMemoryProcessAttr _ process key = return $ process { attrMap = Map.delete key (attrMap process) }
 
 setMemoryTokenAttr :: MemoryWfEngine-> WfProcess a -> NodeToken -> String -> String -> IO (WfProcess a)
 setMemoryTokenAttr _ process nodeToken key value = return newProcess
