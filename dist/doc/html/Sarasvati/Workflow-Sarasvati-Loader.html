@@ -19,7 +19,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->Sarasvati-0.1.0: A graph-based workflow engine for Haskell</TD
+>Sarasvati-0.2.0: A graph-based workflow engine for Haskell</TD
 ><TD CLASS="topbut"
 ><A HREF="index.html"
 >Contents</A
@@ -76,9 +76,7 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlWfName"
 >xmlWfName</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
@@ -108,41 +106,31 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlNodeName"
 >xmlNodeName</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlNodeType"
 >xmlNodeType</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlNodeIsJoin"
 >xmlNodeIsJoin</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlNodeIsStart"
 >xmlNodeIsStart</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlNodeGuard"
 >xmlNodeGuard</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
@@ -188,17 +176,13 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlArcName"
 >xmlArcName</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlArcTo"
 >xmlArcTo</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ></TABLE
 >}</TD
@@ -256,33 +240,25 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlExtArcName"
 >xmlExtArcName</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlExtArcExternal"
 >xmlExtArcExternal</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlExtArcInstance"
 >xmlExtArcInstance</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AxmlExtArcNodeName"
 >xmlExtArcNodeName</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
@@ -303,21 +279,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AloadXmlWorkflowFromFile"
 >loadXmlWorkflowFromFile</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: String -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
 >)</TD
 ></TR
@@ -331,21 +295,9 @@
 >loadWfGraphFromFile</A
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> l =&gt; l -&gt; String -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 >)</TD
 ></TR
@@ -357,19 +309,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AloadXmlWorkflow"
 >loadXmlWorkflow</A
-> :: Document -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: Document -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
 >)</TD
 ></TR
@@ -381,11 +323,7 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AloadXmlNodes"
 >loadXmlNodes</A
-> :: [Element] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: [Element] -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 >) -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
@@ -470,23 +408,15 @@
 >createWorkflow</A
 > :: loader -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> -&gt; IO Int</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
 ><A HREF="#v%3AcreateNode"
 >createNode</A
-> :: loader -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+> :: loader -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 ></TD
 ></TR
@@ -494,17 +424,11 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AcreateArc"
 >createArc</A
-> :: loader -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> :: loader -&gt; Int -&gt; String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 ></TD
 ></TR
@@ -512,15 +436,7 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AimportInstance"
 >importInstance</A
-> :: loader -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> :: loader -&gt; Int -&gt; String -&gt; String -&gt; IO ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -550,11 +466,7 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AresolveGraphNameToXmlWorkflow"
 >resolveGraphNameToXmlWorkflow</A
-> :: resolver -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+> :: resolver -&gt; String -&gt; IO <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
 ></TD
 ></TR
@@ -573,9 +485,7 @@
 >Loader</A
 > l =&gt; l -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 ></TD
 ></TR
@@ -589,11 +499,7 @@
 >extractNodes</A
 > :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -613,11 +519,7 @@
 >Arc</A
 >] -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -635,9 +537,7 @@
 >instanceKey</A
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
 >XmlExternalArc</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> -&gt; String</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -649,25 +549,13 @@
 >importExternal</A
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> l =&gt; l -&gt; Int -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >]) -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
 >XmlExternalArc</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> -&gt; IO (Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -683,13 +571,9 @@
 >xmlNodeToLoadNode</A
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+> l =&gt; l -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
 ></TD
 ></TR
@@ -703,13 +587,9 @@
 >createInternalArcs</A
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+> l =&gt; l -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>] -&gt; IO [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >]</TD
 ></TR
@@ -725,15 +605,11 @@
 >Loader</A
 > l =&gt; l -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+> -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
 >] -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
 >XmlArc</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 ></TD
 ></TR
@@ -747,21 +623,13 @@
 >createExternalArcs</A
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+> l =&gt; l -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
->]) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>]) -&gt; IO [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >]</TD
 ></TR
@@ -775,13 +643,7 @@
 >createExternalArc</A
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> l =&gt; l -&gt; Int -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -789,9 +651,7 @@
 >Node</A
 >, <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
 >XmlExternalArc</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>) -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 ></TD
 ></TR
@@ -803,9 +663,7 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AxmlNodeToNode"
 >xmlNodeToNode</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+> :: Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
@@ -828,19 +686,13 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AbasePath"
 >basePath</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AfuncMap"
 >funcMap</A
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: (Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 >))</TD
 ></TR
@@ -901,9 +753,7 @@
 ></A
 ><B
 >xmlWfName</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -936,9 +786,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
 ></TD
 ></TR
@@ -1003,9 +851,7 @@
 ></A
 ><B
 >xmlNodeName</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1015,9 +861,7 @@
 ></A
 ><B
 >xmlNodeType</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1027,9 +871,7 @@
 ></A
 ><B
 >xmlNodeIsJoin</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1039,9 +881,7 @@
 ></A
 ><B
 >xmlNodeIsStart</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1051,9 +891,7 @@
 ></A
 ><B
 >xmlNodeGuard</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1110,9 +948,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
 ></TD
 ></TR
@@ -1177,9 +1013,7 @@
 ></A
 ><B
 >xmlArcName</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1189,9 +1023,7 @@
 ></A
 ><B
 >xmlArcTo</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1212,9 +1044,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
 >XmlArc</A
 ></TD
 ></TR
@@ -1290,9 +1120,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArcType"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArcType"
 >XmlExternalArcType</A
 ></TD
 ></TR
@@ -1352,9 +1180,7 @@
 ></A
 ><B
 >xmlExtArcName</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1364,9 +1190,7 @@
 ></A
 ><B
 >xmlExtArcExternal</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1376,9 +1200,7 @@
 ></A
 ><B
 >xmlExtArcInstance</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1388,9 +1210,7 @@
 ></A
 ><B
 >xmlExtArcNodeName</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1423,9 +1243,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
 >XmlExternalArc</A
 ></TD
 ></TR
@@ -1446,21 +1264,9 @@
 ></A
 ><B
 >loadXmlWorkflowFromFile</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: String -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
 >)</TD
 ></TR
@@ -1476,21 +1282,9 @@
 >loadWfGraphFromFile</B
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> l =&gt; l -&gt; String -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 >)</TD
 ></TR
@@ -1504,19 +1298,9 @@
 ></A
 ><B
 >loadXmlWorkflow</B
-> :: Document -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: Document -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
 >)</TD
 ></TR
@@ -1530,11 +1314,7 @@
 ></A
 ><B
 >loadXmlNodes</B
-> :: [Element] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: [Element] -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 >) -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
@@ -1676,11 +1456,7 @@
 >createWorkflow</B
 > :: loader -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> -&gt; IO Int</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -1692,13 +1468,9 @@
 ></A
 ><B
 >createNode</B
-> :: loader -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+> :: loader -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 ></TD
 ></TR
@@ -1712,17 +1484,11 @@
 ></A
 ><B
 >createArc</B
-> :: loader -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> :: loader -&gt; Int -&gt; String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 ></TD
 ></TR
@@ -1736,15 +1502,7 @@
 ></A
 ><B
 >importInstance</B
-> :: loader -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> :: loader -&gt; Int -&gt; String -&gt; String -&gt; IO ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -1825,11 +1583,7 @@
 ></A
 ><B
 >resolveGraphNameToXmlWorkflow</B
-> :: resolver -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+> :: resolver -&gt; String -&gt; IO <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
 ></TD
 ></TR
@@ -1878,9 +1632,7 @@
 >Loader</A
 > l =&gt; l -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
 >XmlWorkflow</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 ></TD
 ></TR
@@ -1896,11 +1648,7 @@
 >extractNodes</B
 > :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -1922,11 +1670,7 @@
 >Arc</A
 >] -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -1946,9 +1690,7 @@
 >instanceKey</B
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
 >XmlExternalArc</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> -&gt; String</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -1962,25 +1704,13 @@
 >importExternal</B
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> l =&gt; l -&gt; Int -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >]) -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
 >XmlExternalArc</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> -&gt; IO (Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -1998,13 +1728,9 @@
 >xmlNodeToLoadNode</B
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+> l =&gt; l -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
 ></TD
 ></TR
@@ -2020,13 +1746,9 @@
 >createInternalArcs</B
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+> l =&gt; l -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>] -&gt; IO [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >]</TD
 ></TR
@@ -2044,15 +1766,11 @@
 >Loader</A
 > l =&gt; l -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+> -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
 >] -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
 >XmlArc</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 ></TD
 ></TR
@@ -2068,21 +1786,13 @@
 >createExternalArcs</B
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+> l =&gt; l -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
 >LoadNode</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
->]) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>]) -&gt; IO [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >]</TD
 ></TR
@@ -2098,13 +1808,7 @@
 >createExternalArc</B
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
 >Loader</A
-> l =&gt; l -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> l =&gt; l -&gt; Int -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -2112,9 +1816,7 @@
 >Node</A
 >, <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
 >XmlExternalArc</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>) -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 ></TD
 ></TR
@@ -2128,9 +1830,7 @@
 ></A
 ><B
 >xmlNodeToNode</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+> :: Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
@@ -2179,9 +1879,7 @@
 ></A
 ><B
 >basePath</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2191,11 +1889,7 @@
 ></A
 ><B
 >funcMap</B
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: (Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 >))</TD
 ><TD CLASS="rdoc"

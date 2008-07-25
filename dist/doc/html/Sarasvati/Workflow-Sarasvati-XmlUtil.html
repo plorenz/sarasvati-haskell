@@ -19,7 +19,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->Sarasvati-0.1.0: A graph-based workflow engine for Haskell</TD
+>Sarasvati-0.2.0: A graph-based workflow engine for Haskell</TD
 ><TD CLASS="topbut"
 ><A HREF="index.html"
 >Contents</A
@@ -70,11 +70,7 @@
 ></A
 ><B
 >readAttr</B
-> :: Element -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: Element -&gt; String -&gt; String</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -86,11 +82,7 @@
 ></A
 ><B
 >missingAttr</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; a</TD
+> :: String -&gt; String -&gt; a</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -102,11 +94,7 @@
 ></A
 ><B
 >readRequiredAttr</B
-> :: Element -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: Element -&gt; String -&gt; String</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -118,13 +106,7 @@
 ></A
 ><B
 >readOptionalAttr</B
-> :: Element -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: Element -&gt; String -&gt; String -&gt; String</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -148,9 +130,7 @@
 ></A
 ><B
 >elementName</B
-> :: Element -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: Element -&gt; String</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -174,9 +154,7 @@
 ></A
 ><B
 >getChildrenNamed</B
-> :: Element -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; [Element]</TD
+> :: Element -&gt; String -&gt; [Element]</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -188,9 +166,7 @@
 ></A
 ><B
 >getChildNamed</B
-> :: Element -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; Element</TD
+> :: Element -&gt; String -&gt; Element</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -214,11 +190,7 @@
 ></A
 ><B
 >readText</B
-> :: Element -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: Element -&gt; String -&gt; String</TD
 ></TR
 ><TR
 ><TD CLASS="s15"

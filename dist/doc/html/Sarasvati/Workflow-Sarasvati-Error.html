@@ -19,7 +19,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->Sarasvati-0.1.0: A graph-based workflow engine for Haskell</TD
+>Sarasvati-0.2.0: A graph-based workflow engine for Haskell</TD
 ><TD CLASS="topbut"
 ><A HREF="index.html"
 >Contents</A
@@ -90,9 +90,7 @@
 ></A
 ><B
 >WfError</B
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -110,17 +108,13 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Error.html#t%3AWfError"
+>Show <A HREF="Workflow-Sarasvati-Error.html#t%3AWfError"
 >WfError</A
 ></TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Typeable.html#t%3ATypeable"
->Typeable</A
-> <A HREF="Workflow-Sarasvati-Error.html#t%3AWfError"
+>Typeable <A HREF="Workflow-Sarasvati-Error.html#t%3AWfError"
 >WfError</A
 ></TD
 ></TR
@@ -141,9 +135,7 @@
 ></A
 ><B
 >wfError</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; a</TD
+> :: String -&gt; a</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -157,13 +149,7 @@
 >handleWf</B
 > :: (<A HREF="Workflow-Sarasvati-Error.html#t%3AWfError"
 >WfError</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> a) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> a</TD
+> -&gt; IO a) -&gt; IO a -&gt; IO a</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -177,13 +163,7 @@
 >wfErrorToLeft</B
 > :: <A HREF="Workflow-Sarasvati-Error.html#t%3AWfError"
 >WfError</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> a)</TD
+> -&gt; IO (Either String a)</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -195,19 +175,7 @@
 ></A
 ><B
 >catchWf</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> a) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> a)</TD
+> :: IO (Either String a) -&gt; IO (Either String a)</TD
 ></TR
 ><TR
 ><TD CLASS="s15"

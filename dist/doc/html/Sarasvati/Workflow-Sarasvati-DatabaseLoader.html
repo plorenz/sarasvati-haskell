@@ -19,7 +19,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->Sarasvati-0.1.0: A graph-based workflow engine for Haskell</TD
+>Sarasvati-0.2.0: A graph-based workflow engine for Haskell</TD
 ><TD CLASS="topbut"
 ><A HREF="index.html"
 >Contents</A
@@ -67,21 +67,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AloadLatestGraph"
 >loadLatestGraph</A
-> :: IConnection conn =&gt; conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: IConnection conn =&gt; conn -&gt; String -&gt; Map String (conn -&gt; Int -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>) -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 ></TD
 ></TR
@@ -93,23 +81,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AloadGraph"
 >loadGraph</A
-> :: IConnection conn =&gt; conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: IConnection conn =&gt; conn -&gt; String -&gt; Int -&gt; Map String (conn -&gt; Int -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>) -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 ></TD
 ></TR
@@ -127,27 +101,11 @@
 >forall</SPAN
 > conn . IConnection conn =&gt; <A HREF="#v%3ADbLoader"
 >DbLoader</A
-> conn (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-DatabaseLoader.html#t%3ADbLoader"
+> conn (Map String (<A HREF="Workflow-Sarasvati-DatabaseLoader.html#t%3ADbLoader"
 >DbLoader</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+> -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ())) (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> -&gt; IO ())) (Map String (conn -&gt; Int -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 >))</TD
 ></TR
@@ -172,21 +130,9 @@
 ></A
 ><B
 >loadLatestGraph</B
-> :: IConnection conn =&gt; conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: IConnection conn =&gt; conn -&gt; String -&gt; Map String (conn -&gt; Int -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>) -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 ></TD
 ></TR
@@ -200,15 +146,7 @@
 > from the database with the given name.
 </P
 ><P
->Takes a <TT
-><A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-></TT
-> of <TT
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TT
-> types to loaders for those types. Loading of the basic <TT
+>Takes a Map of String types to loaders for those types. Loading of the basic <TT
 ><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 ></TT
@@ -249,11 +187,7 @@
 > to load
 </LI
 ><LI
-> typeMap - <TT
-><A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-></TT
-> of type name to function for loading <TT
+> typeMap - Map of type name to function for loading <TT
 ><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 ></TT
@@ -285,23 +219,9 @@
 ></A
 ><B
 >loadGraph</B
-> :: IConnection conn =&gt; conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: IConnection conn =&gt; conn -&gt; String -&gt; Int -&gt; Map String (conn -&gt; Int -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>) -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 ></TD
 ></TR
@@ -351,27 +271,11 @@
 ></A
 ><B
 >DbLoader</B
-> conn (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-DatabaseLoader.html#t%3ADbLoader"
+> conn (Map String (<A HREF="Workflow-Sarasvati-DatabaseLoader.html#t%3ADbLoader"
 >DbLoader</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+> -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
 >XmlNode</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ())) (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (conn -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> -&gt; IO ())) (Map String (conn -&gt; Int -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 >))</TD
 ><TD CLASS="rdoc"

@@ -19,7 +19,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->Sarasvati-0.1.0: A graph-based workflow engine for Haskell</TD
+>Sarasvati-0.2.0: A graph-based workflow engine for Haskell</TD
 ><TD CLASS="topbut"
 ><A HREF="index.html"
 >Contents</A
@@ -93,9 +93,7 @@
 ><TD CLASS="decl"
 >| <A HREF="#v%3ASkipNode"
 >SkipNode</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> String</TD
 ></TR
 ></TABLE
 ></TD
@@ -131,9 +129,7 @@
 ><TD CLASS="decl"
 >| <A HREF="#v%3ANodeExtra"
 >NodeExtra</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Dynamic.html#t%3ADynamic"
->Dynamic</A
-></TD
+> Dynamic</TD
 ></TR
 ></TABLE
 ></TD
@@ -158,57 +154,43 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AnodeId"
 >nodeId</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AnodeType"
 >nodeType</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AnodeName"
 >nodeName</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AnodeIsJoin"
 >nodeIsJoin</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AnodeIsStart"
 >nodeIsStart</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AnodeIsExternal"
 >nodeIsExternal</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AnodeGuard"
 >nodeGuard</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
@@ -242,9 +224,7 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+> a -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
 >GuardResponse</A
 >)</TD
 ></TR
@@ -258,9 +238,7 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a))</TD
 ></TR
@@ -284,33 +262,25 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AarcId"
 >arcId</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AarcName"
 >arcName</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AstartNodeId"
 >startNodeId</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AendNodeId"
 >endNodeId</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ></TR
 ></TABLE
 >}</TD
@@ -336,9 +306,7 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AtokenId"
 >tokenId</A
-> :: a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: a -&gt; Int</TD
 ></TR
 ></TABLE
 ></TD
@@ -360,25 +328,19 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AattrSetId"
 >attrSetId</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
-><A HREF="#v%3AtokenAttrKey"
->tokenAttrKey</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+><A HREF="#v%3AtokenAttributeKey"
+>tokenAttributeKey</A
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
-><A HREF="#v%3AtokenAttrValue"
->tokenAttrValue</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+><A HREF="#v%3AtokenAttributeValue"
+>tokenAttributeValue</A
+> :: String</TD
 ></TR
 ></TABLE
 >}</TD
@@ -395,11 +357,7 @@
 >NodeToken</A
 >  = <A HREF="#v%3ANodeToken"
 >NodeToken</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> Int Int</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -413,9 +371,7 @@
 >ArcToken</A
 >  = <A HREF="#v%3AArcToken"
 >ArcToken</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> Int <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 > <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
@@ -438,27 +394,19 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AgraphId"
 >graphId</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AgraphName"
 >graphName</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AgraphNodes"
 >graphNodes</A
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> :: (Map Int <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >)</TD
 ></TR
@@ -466,11 +414,7 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AgraphInputArcs"
 >graphInputArcs</A
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >])</TD
 ></TR
@@ -478,11 +422,7 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AgraphOutputArcs"
 >graphOutputArcs</A
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >])</TD
 ></TR
@@ -506,19 +446,13 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3AprocessId"
 >processId</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
 ><A HREF="#v%3AnodeTypes"
 >nodeTypes</A
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+> :: (Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
 >NodeType</A
 > a))</TD
 ></TR
@@ -548,13 +482,15 @@
 ></TR
 ><TR
 ><TD CLASS="recfield"
+><A HREF="#v%3AattrMap"
+>attrMap</A
+> :: (Map String String)</TD
+></TR
+><TR
+><TD CLASS="recfield"
 ><A HREF="#v%3AtokenAttrMap"
 >tokenAttrMap</A
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
 >TokenAttr</A
 >])</TD
 ></TR
@@ -562,19 +498,11 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3ApredicateMap"
 >predicateMap</A
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+> :: (Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
->))</TD
+> a -&gt; IO Bool))</TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
@@ -608,27 +536,13 @@
 >createWfProcess</A
 > :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+> -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
 >NodeType</A
-> b) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+> b) -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> b -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
->) -&gt; b -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> b -&gt; IO Bool) -&gt; b -&gt; Map String String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b)</TD
 ></TR
@@ -642,9 +556,7 @@
 >Node</A
 > -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
 >ArcToken</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>] -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b, <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
@@ -660,9 +572,7 @@
 >Arc</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b, <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
 >ArcToken</A
@@ -674,9 +584,7 @@
 >completeNodeToken</A
 > :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ()</TD
+> -&gt; IO ()</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
@@ -684,9 +592,7 @@
 >completeArcToken</A
 > :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
 >ArcToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ()</TD
+> -&gt; IO ()</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
@@ -696,17 +602,33 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
 >GuardResponse</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ()</TD
+> -&gt; IO ()</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
 ><A HREF="#v%3AtransactionBoundary"
 >transactionBoundary</A
-> :: a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ()</TD
+> :: a -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AsetProcessAttr"
+>setProcessAttr</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; String -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AremoveProcessAttr"
+>removeProcessAttr</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
@@ -716,13 +638,7 @@
 >WfProcess</A
 > b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; String -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b)</TD
 ></TR
@@ -734,11 +650,7 @@
 >WfProcess</A
 > b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b)</TD
 ></TR
@@ -757,9 +669,7 @@
 >WfException</A
 >  = <A HREF="#v%3AWfException"
 >WfException</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> String</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -767,19 +677,13 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="#v%3AattrValue"
->attrValue</A
+><A HREF="#v%3AtokenAttrValue"
+>tokenAttrValue</A
 > :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> -&gt; String -&gt; Maybe String</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -787,17 +691,13 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="#v%3AattrValueReq"
->attrValueReq</A
+><A HREF="#v%3AtokenAttrValueReq"
+>tokenAttrValueReq</A
 > :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> -&gt; String -&gt; String</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -811,13 +711,9 @@
 >WfEngine</A
 > e =&gt; e -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a)</TD
 ></TR
@@ -835,9 +731,7 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a)</TD
 ></TR
@@ -853,9 +747,7 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+> a -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
 >GuardResponse</A
 ></TD
 ></TR
@@ -867,9 +759,7 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AgetNodeTokenForId"
 >getNodeTokenForId</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> :: Int -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
@@ -883,11 +773,7 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AgraphFromArcs"
 >graphFromArcs</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> :: Int -&gt; String -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >] -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -905,13 +791,7 @@
 >handleWfError</A
 > :: (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
 >WfException</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> a) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> a</TD
+> -&gt; IO a) -&gt; IO a -&gt; IO a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -923,9 +803,7 @@
 >isWfComplete</A
 > :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> a -&gt; Bool</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -935,9 +813,7 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AmakeNodeExtra"
 >makeNodeExtra</A
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Typeable.html#t%3ATypeable"
->Typeable</A
-> a =&gt; a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: Typeable a =&gt; a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 ></TD
 ></TR
@@ -963,37 +839,31 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AprocessAttrValue"
+>processAttrValue</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; String -&gt; Maybe String</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AstartWorkflow"
 >startWorkflow</A
 > :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
 >WfEngine</A
-> engine =&gt; engine -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+> engine =&gt; engine -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
 >NodeType</A
-> a) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+> a) -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
->) -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+> a -&gt; IO Bool) -&gt; Map String String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
-> -&gt; a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; a -&gt; IO (Either String (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a))</TD
 ></TR
@@ -1156,9 +1026,7 @@
 ></A
 ><B
 >SkipNode</B
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1176,9 +1044,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
 >GuardResponse</A
 ></TD
 ></TR
@@ -1217,16 +1083,8 @@
 >Node</A
 ></TT
 > may
- require. The only requirement is that the 'extra data' be a <TT
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Typeable.html#t%3ATypeable"
->Typeable</A
-></TT
->
- so it can encapsulated in a <TT
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Dynamic.html#t%3ADynamic"
->Dynamic</A
-></TT
->.
+ require. The only requirement is that the 'extra data' be a Typeable
+ so it can encapsulated in a Dynamic.
 </TD
 ></TR
 ><TR
@@ -1252,9 +1110,7 @@
 ></A
 ><B
 >NodeExtra</B
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Dynamic.html#t%3ADynamic"
->Dynamic</A
-></TD
+> Dynamic</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1272,9 +1128,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 ></TD
 ></TR
@@ -1438,11 +1292,7 @@
 ><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 ></TT
->, which may be nothing, or something <TT
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Typeable.html#t%3ATypeable"
->Typeable</A
-></TT
->, which the guard or accept
+>, which may be nothing, or something Typeable, which the guard or accept
                      functions may use to do their work.
 </LI
 ></UL
@@ -1474,9 +1324,7 @@
 ></A
 ><B
 >nodeId</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1486,9 +1334,7 @@
 ></A
 ><B
 >nodeType</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1498,9 +1344,7 @@
 ></A
 ><B
 >nodeName</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1510,9 +1354,7 @@
 ></A
 ><B
 >nodeIsJoin</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1522,9 +1364,7 @@
 ></A
 ><B
 >nodeIsStart</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1534,9 +1374,7 @@
 ></A
 ><B
 >nodeIsExternal</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> :: Bool</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1546,9 +1384,7 @@
 ></A
 ><B
 >nodeGuard</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1581,9 +1417,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 ></TD
 ></TR
@@ -1709,9 +1543,7 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+> a -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
 >GuardResponse</A
 >)</TD
 ><TD CLASS="rdoc"
@@ -1729,9 +1561,7 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a))</TD
 ><TD CLASS="rdoc"
@@ -1847,9 +1677,7 @@
 ></A
 ><B
 >arcId</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1859,9 +1687,7 @@
 ></A
 ><B
 >arcName</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1871,9 +1697,7 @@
 ></A
 ><B
 >startNodeId</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1883,9 +1707,7 @@
 ></A
 ><B
 >endNodeId</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -1906,9 +1728,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 ></TD
 ></TR
@@ -1955,9 +1775,7 @@
 ></A
 ><B
 >tokenId</B
-> :: a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: a -&gt; Int</TD
 ></TR
 ></TABLE
 ></TD
@@ -2041,33 +1859,27 @@
 ></A
 ><B
 >attrSetId</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
 ><TR
 ><TD CLASS="arg"
-><A NAME="v%3AtokenAttrKey"
+><A NAME="v%3AtokenAttributeKey"
 ></A
 ><B
->tokenAttrKey</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+>tokenAttributeKey</B
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
 ><TR
 ><TD CLASS="arg"
-><A NAME="v%3AtokenAttrValue"
+><A NAME="v%3AtokenAttributeValue"
 ></A
 ><B
->tokenAttrValue</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+>tokenAttributeValue</B
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2088,9 +1900,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
 >TokenAttr</A
 ></TD
 ></TR
@@ -2131,11 +1941,7 @@
 ></A
 ><B
 >NodeToken</B
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> Int Int</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2153,17 +1959,13 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Eq.html#t%3AEq"
->Eq</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>Eq <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
 ></TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
 ></TD
 ></TR
@@ -2212,9 +2014,7 @@
 ></A
 ><B
 >ArcToken</B
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> Int <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 > <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
@@ -2236,17 +2036,13 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Eq.html#t%3AEq"
->Eq</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>Eq <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
 >ArcToken</A
 ></TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
 >ArcToken</A
 ></TD
 ></TR
@@ -2308,9 +2104,7 @@
 ></A
 ><B
 >graphId</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2320,9 +2114,7 @@
 ></A
 ><B
 >graphName</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> :: String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2332,11 +2124,7 @@
 ></A
 ><B
 >graphNodes</B
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> :: (Map Int <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >)</TD
 ><TD CLASS="rdoc"
@@ -2348,11 +2136,7 @@
 ></A
 ><B
 >graphInputArcs</B
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >])</TD
 ><TD CLASS="rdoc"
@@ -2364,11 +2148,7 @@
 ></A
 ><B
 >graphOutputArcs</B
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
 >])</TD
 ><TD CLASS="rdoc"
@@ -2391,9 +2171,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 ></TD
 ></TR
@@ -2447,9 +2225,7 @@
 ></A
 ><B
 >processId</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-></TD
+> :: Int</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2459,11 +2235,7 @@
 ></A
 ><B
 >nodeTypes</B
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+> :: (Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
 >NodeType</A
 > a))</TD
 ><TD CLASS="rdoc"
@@ -2507,15 +2279,21 @@
 ></TR
 ><TR
 ><TD CLASS="arg"
+><A NAME="v%3AattrMap"
+></A
+><B
+>attrMap</B
+> :: (Map String String)</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
 ><A NAME="v%3AtokenAttrMap"
 ></A
 ><B
 >tokenAttrMap</B
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
 >TokenAttr</A
 >])</TD
 ><TD CLASS="rdoc"
@@ -2527,19 +2305,11 @@
 ></A
 ><B
 >predicateMap</B
-> :: (<A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+> :: (Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
->))</TD
+> a -&gt; IO Bool))</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2600,27 +2370,13 @@
 >createWfProcess</B
 > :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+> -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
 >NodeType</A
-> b) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+> b) -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> b -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
->) -&gt; b -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> b -&gt; IO Bool) -&gt; b -&gt; Map String String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b)</TD
 ></TR
@@ -2640,9 +2396,7 @@
 >Node</A
 > -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
 >ArcToken</A
->] -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>] -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b, <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
@@ -2664,9 +2418,7 @@
 >Arc</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b, <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
 >ArcToken</A
@@ -2684,9 +2436,7 @@
 >completeNodeToken</B
 > :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ()</TD
+> -&gt; IO ()</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -2700,9 +2450,7 @@
 >completeArcToken</B
 > :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
 >ArcToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ()</TD
+> -&gt; IO ()</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -2718,9 +2466,7 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
 >GuardResponse</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ()</TD
+> -&gt; IO ()</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -2732,9 +2478,39 @@
 ></A
 ><B
 >transactionBoundary</B
-> :: a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> ()</TD
+> :: a -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AsetProcessAttr"
+></A
+><B
+>setProcessAttr</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; String -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AremoveProcessAttr"
+></A
+><B
+>removeProcessAttr</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -2750,13 +2526,7 @@
 >WfProcess</A
 > b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; String -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b)</TD
 ></TR
@@ -2774,11 +2544,7 @@
 >WfProcess</A
 > b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > b)</TD
 ></TR
@@ -2851,9 +2617,7 @@
 ></A
 ><B
 >WfException</B
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> String</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2871,17 +2635,13 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
 >WfException</A
 ></TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Typeable.html#t%3ATypeable"
->Typeable</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
+>Typeable <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
 >WfException</A
 ></TD
 ></TR
@@ -2898,21 +2658,15 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A NAME="v%3AattrValue"
+><A NAME="v%3AtokenAttrValue"
 ></A
 ><B
->attrValue</B
+>tokenAttrValue</B
 > :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> -&gt; String -&gt; Maybe String</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -2920,19 +2674,15 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A NAME="v%3AattrValueReq"
+><A NAME="v%3AtokenAttrValueReq"
 ></A
 ><B
->attrValueReq</B
+>tokenAttrValueReq</B
 > :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-></TD
+> -&gt; String -&gt; String</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -2948,13 +2698,9 @@
 >WfEngine</A
 > e =&gt; e -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a)</TD
 ></TR
@@ -2974,9 +2720,7 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a)</TD
 ></TR
@@ -2994,9 +2738,7 @@
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+> a -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
 >GuardResponse</A
 ></TD
 ></TR
@@ -3010,9 +2752,7 @@
 ></A
 ><B
 >getNodeTokenForId</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> :: Int -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
@@ -3028,11 +2768,7 @@
 ></A
 ><B
 >graphFromArcs</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+> :: Int -&gt; String -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
 >Node</A
 >] -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
 >Arc</A
@@ -3062,13 +2798,7 @@
 >handleWfError</B
 > :: (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
 >WfException</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> a) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> a</TD
+> -&gt; IO a) -&gt; IO a -&gt; IO a</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3082,9 +2812,7 @@
 >isWfComplete</B
 > :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
+> a -&gt; Bool</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3096,9 +2824,7 @@
 ></A
 ><B
 >makeNodeExtra</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Typeable.html#t%3ATypeable"
->Typeable</A
-> a =&gt; a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: Typeable a =&gt; a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
 ></TD
 ></TR
@@ -3126,39 +2852,35 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A NAME="v%3AprocessAttrValue"
+></A
+><B
+>processAttrValue</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; String -&gt; Maybe String</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A NAME="v%3AstartWorkflow"
 ></A
 ><B
 >startWorkflow</B
 > :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
 >WfEngine</A
-> engine =&gt; engine -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+> engine =&gt; engine -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
 >NodeType</A
-> a) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+> a) -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
 >NodeToken</A
 > -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
-> a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Bool.html#t%3ABool"
->Bool</A
->) -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+> a -&gt; IO Bool) -&gt; Map String String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
-> -&gt; a -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+> -&gt; a -&gt; IO (Either String (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
 >WfProcess</A
 > a))</TD
 ></TR

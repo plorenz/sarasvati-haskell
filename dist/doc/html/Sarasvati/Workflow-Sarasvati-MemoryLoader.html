@@ -19,7 +19,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->Sarasvati-0.1.0: A graph-based workflow engine for Haskell</TD
+>Sarasvati-0.2.0: A graph-based workflow engine for Haskell</TD
 ><TD CLASS="topbut"
 ><A HREF="index.html"
 >Contents</A
@@ -113,9 +113,7 @@
 >newMemLoader</B
 > :: <A HREF="Workflow-Sarasvati-Loader.html#t%3AResolver"
 >Resolver</A
-> r =&gt; r -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-MemoryLoader.html#t%3AMemLoader"
+> r =&gt; r -&gt; IO <A HREF="Workflow-Sarasvati-MemoryLoader.html#t%3AMemLoader"
 >MemLoader</A
 ></TD
 ></TR
@@ -129,17 +127,9 @@
 ></A
 ><B
 >newSimpleMemLoader</B
-> :: <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/containers/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+> :: String -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
 >NodeExtra</A
->) -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="Workflow-Sarasvati-MemoryLoader.html#t%3AMemLoader"
+>) -&gt; IO <A HREF="Workflow-Sarasvati-MemoryLoader.html#t%3AMemLoader"
 >MemLoader</A
 ></TD
 ></TR
@@ -155,15 +145,7 @@
 >loadMemWorkflow</B
 > :: <A HREF="Workflow-Sarasvati-MemoryLoader.html#t%3AMemLoader"
 >MemLoader</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> -&gt; <A HREF="/usr/share/doc/ghc6-doc/libraries/base/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Either.html#t%3AEither"
->Either</A
-> <A HREF="/usr/share/doc/ghc6-doc/libraries/base/Data-Char.html#t%3AString"
->String</A
-> <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+> -&gt; String -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
 >WfGraph</A
 >)</TD
 ></TR
