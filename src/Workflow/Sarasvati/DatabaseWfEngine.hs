@@ -49,7 +49,7 @@ insertWfProcess conn graph =
                      toSql (graphId graph)]
        return nextId
     where
-        sql = "insert into wf_process (id, graph_id) values ( ?, ? )"
+        sql = "insert into wf_process (id, state, graph_id) values ( ?, 0, ? )"
 
 insertArcToken :: (IConnection conn) => conn -> WfProcess a -> Arc -> NodeToken -> IO Int
 insertArcToken conn wfProcess arc prevToken =

@@ -121,7 +121,7 @@ loadArcs conn graphId =
     do rows <- quickQuery' conn sql [toSql graphId]
        return $ map (rowToArc) rows
     where
-        sql = "select id, name, a_node_ref_id, z_node_ref_id " ++
+        sql = "select id, coalesce( name, '' ), a_node_ref_id, z_node_ref_id " ++
               " from wf_arc where graph_id = ?"
 
 rowToArc :: [SqlValue] -> Arc
@@ -197,7 +197,7 @@ insertArc conn graphId startNode endNode arcName =
                   toSql graphId,
                   toSql startNode,
                   toSql endNode,
-                  toSql arcName]
+                  if (null arcName) then toSql arcName else SqlNull]
        return nextArcId
     where
         sql = "insert into wf_arc (id, graph_id, a_node_ref_id, z_node_ref_id, name ) " ++
