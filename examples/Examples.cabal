@@ -1,5 +1,5 @@
-Name:          Sarasvati-Examples
-Version:       0.2.0
+Name:          sarasvati-haskell-examples
+Version:       0.3.0
 Cabal-Version: >= 1.4
 License:       LGPL
 License-File:  common/LGPLv3.license
@@ -30,7 +30,7 @@ Build-Depends:    base,
                   containers,
                   directory,
                   haskell98,
-                  Sarasvati >= 0.2.0,
+                  sarasvati-haskell >= 0.3.0,
                   HaXml >= 1.13,
                   HDBC >= 1.1.4,
                   HDBC-postgresql >=1.1.4.1
@@ -52,7 +52,7 @@ Build-Depends:    base,
                   containers,
                   directory,
                   haskell98,
-                  Sarasvati >= 0.2.0,
+                  sarasvati-haskell >= 0.3.0,
                   HaXml >= 1.13,
                   HDBC >= 1.1.4,
                   HDBC-postgresql >=1.1.4.1
@@ -73,7 +73,7 @@ Build-Depends:    base,
                   containers,
                   directory,
                   haskell98,
-                  Sarasvati >= 0.2.0,
+                  sarasvati-haskell >= 0.3.0,
                   HaXml >= 1.13,
                   HDBC >= 1.1.4,
                   HDBC-postgresql >=1.1.4.1

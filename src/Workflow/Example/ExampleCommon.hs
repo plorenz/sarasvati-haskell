@@ -69,8 +69,9 @@ showTokens (x:xs) = do putStrLn (show x)
                        showTokens xs
 
 processTasks :: (WfEngine e) => e -> WfProcess [Task] -> IO ()
-processTasks _         (WfProcess _ _ _ [] [] _ _ _ _    ) = putStrLn "Workflow complete!"
-processTasks engine wf@(WfProcess _ _ _ _  _  _ _ _ tasks) =
+processTasks engine wf
+    | isWfComplete wf = putStrLn "Workflow complete!"
+    | otherwise =
     do putStrLn ""
        showTaskList tasks
        putStr "> "
@@ -90,6 +91,8 @@ processTasks engine wf@(WfProcess _ _ _ _  _  _ _ _ tasks) =
            BadCmd -> do putStrLn $ cmd ++ " is not a valid command or task entry"
                         processTasks engine wf
            NoCmd  -> processTasks engine wf
+    where
+       tasks = (userData wf)
 
 data CmdType = ShowTokenCmd | TaskCmd | BadCmd | NoCmd
 

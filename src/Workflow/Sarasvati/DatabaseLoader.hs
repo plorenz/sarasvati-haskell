@@ -197,7 +197,7 @@ insertArc conn graphId startNode endNode arcName =
                   toSql graphId,
                   toSql startNode,
                   toSql endNode,
-                  if (null arcName) then toSql arcName else SqlNull]
+                  if (null arcName) then SqlNull else toSql arcName]
        return nextArcId
     where
         sql = "insert into wf_arc (id, graph_id, a_node_ref_id, z_node_ref_id, name ) " ++

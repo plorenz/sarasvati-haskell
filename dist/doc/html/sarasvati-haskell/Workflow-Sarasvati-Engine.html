@@ -1,0 +1,3131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Workflow.Sarasvati.Engine</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topbar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
+></TD
+><TD CLASS="title"
+>sarasvati-haskell-0.3.0: A graph-based workflow engine for Haskell</TD
+><TD CLASS="topbut"
+><A HREF="index.html"
+>Contents</A
+></TD
+><TD CLASS="topbut"
+><A HREF="doc-index.html"
+>Index</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="modulebar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><FONT SIZE="6"
+>Workflow.Sarasvati.Engine</FONT
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Synopsis</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AGuardResponse"
+>GuardResponse</A
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>= <A HREF="#v%3AAcceptToken"
+>AcceptToken</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>| <A HREF="#v%3ADiscardToken"
+>DiscardToken</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>| <A HREF="#v%3ASkipNode"
+>SkipNode</A
+> String</TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3ANodeExtra"
+>NodeExtra</A
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>= <A HREF="#v%3ANoNodeExtra"
+>NoNodeExtra</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>| <A HREF="#v%3ANodeExtra"
+>NodeExtra</A
+> Dynamic</TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3ANode"
+>Node</A
+>  = <A HREF="#v%3ANode"
+>Node</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeId"
+>nodeId</A
+> :: Int</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeType"
+>nodeType</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeName"
+>nodeName</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeIsJoin"
+>nodeIsJoin</A
+> :: Bool</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeIsStart"
+>nodeIsStart</A
+> :: Bool</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeIsExternal"
+>nodeIsExternal</A
+> :: Bool</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeGuard"
+>nodeGuard</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeExtra"
+>nodeExtra</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+></TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3ANodeType"
+>NodeType</A
+> a = <A HREF="#v%3ANodeType"
+>NodeType</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AguardFunction"
+>guardFunction</A
+> :: (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+>)</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AacceptFunction"
+>acceptFunction</A
+> :: (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> engine =&gt; engine -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a))</TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AArc"
+>Arc</A
+>  = <A HREF="#v%3AArc"
+>Arc</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AarcId"
+>arcId</A
+> :: Int</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AarcName"
+>arcName</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AstartNodeId"
+>startNodeId</A
+> :: Int</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AendNodeId"
+>endNodeId</A
+> :: Int</TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> <A HREF="#t%3AToken"
+>Token</A
+> a  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AtokenId"
+>tokenId</A
+> :: a -&gt; Int</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3ATokenAttr"
+>TokenAttr</A
+>  = <A HREF="#v%3ATokenAttr"
+>TokenAttr</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AattrSetId"
+>attrSetId</A
+> :: Int</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AtokenAttributeKey"
+>tokenAttributeKey</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AtokenAttributeValue"
+>tokenAttributeValue</A
+> :: String</TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3ANodeToken"
+>NodeToken</A
+>  = <A HREF="#v%3ANodeToken"
+>NodeToken</A
+> Int Int</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AArcToken"
+>ArcToken</A
+>  = <A HREF="#v%3AArcToken"
+>ArcToken</A
+> Int <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AWfGraph"
+>WfGraph</A
+>  = <A HREF="#v%3AWfGraph"
+>WfGraph</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AgraphId"
+>graphId</A
+> :: Int</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AgraphName"
+>graphName</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AgraphNodes"
+>graphNodes</A
+> :: (Map Int <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>)</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AgraphInputArcs"
+>graphInputArcs</A
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>])</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AgraphOutputArcs"
+>graphOutputArcs</A
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>])</TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AProcessState"
+>ProcessState</A
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>= <A HREF="#v%3AProcessCreated"
+>ProcessCreated</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>| <A HREF="#v%3AProcessExecuting"
+>ProcessExecuting</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>| <A HREF="#v%3AProcessComplete"
+>ProcessComplete</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>| <A HREF="#v%3AProcessCanceled"
+>ProcessCanceled</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AWfProcess"
+>WfProcess</A
+> a = <A HREF="#v%3AWfProcess"
+>WfProcess</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AprocessId"
+>processId</A
+> :: Int</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AprocessState"
+>processState</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AProcessState"
+>ProcessState</A
+></TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeTypes"
+>nodeTypes</A
+> :: (Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+> a))</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AwfGraph"
+>wfGraph</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+></TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AnodeTokens"
+>nodeTokens</A
+> :: [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+>]</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AarcTokens"
+>arcTokens</A
+> :: [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+>]</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AattrMap"
+>attrMap</A
+> :: (Map String String)</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AtokenAttrMap"
+>tokenAttrMap</A
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+>])</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3ApredicateMap"
+>predicateMap</A
+> :: (Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO Bool))</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AuserData"
+>userData</A
+> :: a</TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> <A HREF="#t%3AWfEngine"
+>WfEngine</A
+> a  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateWfProcess"
+>createWfProcess</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+> -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+> b) -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; IO Bool) -&gt; b -&gt; Map String String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateNodeToken"
+>createNodeToken</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+>] -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b, <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+>)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateArcToken"
+>createArcToken</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b, <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+>)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcompleteNodeToken"
+>completeNodeToken</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcompleteArcToken"
+>completeArcToken</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+> -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ArecordGuardResponse"
+>recordGuardResponse</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+> -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AtransactionBoundary"
+>transactionBoundary</A
+> :: a -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AsetProcessAttr"
+>setProcessAttr</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; String -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AremoveProcessAttr"
+>removeProcessAttr</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AsetTokenAttr"
+>setTokenAttr</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AremoveTokenAttr"
+>removeTokenAttr</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AsetProcessState"
+>setProcessState</A
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AProcessState"
+>ProcessState</A
+> -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AWfException"
+>WfException</A
+>  = <A HREF="#v%3AWfException"
+>WfException</A
+> String</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AtokenAttrValue"
+>tokenAttrValue</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; Maybe String</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AtokenAttrValueReq"
+>tokenAttrValueReq</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; String</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcompleteExecution"
+>completeExecution</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> e =&gt; e -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcompleteDefaultExecution"
+>completeDefaultExecution</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> engine =&gt; engine -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AevalGuardLang"
+>evalGuardLang</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetNodeTokenForId"
+>getNodeTokenForId</A
+> :: Int -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgraphFromArcs"
+>graphFromArcs</A
+> :: Int -&gt; String -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>] -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>] -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AhandleWfError"
+>handleWfError</A
+> :: (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
+>WfException</A
+> -&gt; IO a) -&gt; IO a -&gt; IO a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AisWfComplete"
+>isWfComplete</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; Bool</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AmakeNodeExtra"
+>makeNodeExtra</A
+> :: Typeable a =&gt; a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AnodeForToken"
+>nodeForToken</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AprocessAttrValue"
+>processAttrValue</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; String -&gt; Maybe String</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AstartWorkflow"
+>startWorkflow</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> engine =&gt; engine -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+> a) -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO Bool) -&gt; Map String String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+> -&gt; a -&gt; IO (Either String (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a))</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AreplaceTokenAttrs"
+>replaceTokenAttrs</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+>] -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AtokenAttrs"
+>tokenAttrs</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+>]</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AGuardResponse"
+></A
+><B
+>GuardResponse</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+><P
+>Every <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TT
+> has a guard function which is called when a token arrives
+   and the node is ready to be activated. Guard functions must return a
+   <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+></TT
+>. Guard functions are contained in <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+></TT
+> instances.
+   The nodeType attribute of a <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TT
+> is mapped to a <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+></TT
+> via the
+   nodeTypes map in a <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+></TT
+>.
+</P
+><UL
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AAcceptToken"
+>AcceptToken</A
+></TT
+>  - The token is passed on to the accept function
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3ADiscardToken"
+>DiscardToken</A
+></TT
+> - The token is discarded and the accept function is not called
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3ASkipNode"
+>SkipNode</A
+></TT
+> arcName - The accept function is not called. The token is not discarded,
+                          the <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AcompleteExecution"
+>completeExecution</A
+></TT
+> function is called instead with the
+                          given arc name
+</LI
+></UL
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AAcceptToken"
+></A
+><B
+>AcceptToken</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ADiscardToken"
+></A
+><B
+>DiscardToken</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ASkipNode"
+></A
+><B
+>SkipNode</B
+> String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:GuardResponse')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:GuardResponse" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3ANodeExtra"
+></A
+><B
+>NodeExtra</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+><TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+></TT
+> is a place to store any extra data that a given <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TT
+> may
+ require. The only requirement is that the 'extra data' be a Typeable
+ so it can encapsulated in a Dynamic.
+</TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ANoNodeExtra"
+></A
+><B
+>NoNodeExtra</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ANodeExtra"
+></A
+><B
+>NodeExtra</B
+> Dynamic</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:NodeExtra')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:NodeExtra" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3ANode"
+></A
+><B
+>Node</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+><P
+>Represents a node in a workflow graph. A Node is part of a process definition, as stored in
+   a <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+></TT
+>. The <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TT
+> type models connections between Nodes.
+</P
+><P
+>Members:
+</P
+><UL
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AnodeId"
+>nodeId</A
+></TT
+>   - An Int id, which should be unique across all workflows. Used for testing equality.
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AnodeType"
+>nodeType</A
+></TT
+> - String which used to get the associated <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+></TT
+> stored in the <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+></TT
+>
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AnodeName"
+>nodeName</A
+></TT
+> - String identifier which should be unique within a single process definition.
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AnodeIsJoin"
+>nodeIsJoin</A
+></TT
+> - If true, when an <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+></TT
+> arrives at a <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TT
+>, the node will wait for an <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+></TT
+> to
+                      be waiting on every <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TT
+> that shares the name of the <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TT
+> that the current, incoming
+                      <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+></TT
+> points to. If false, every incoming <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+></TT
+> will immediately generate a new
+                      <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TT
+> upon which the approprate guard function will be called.
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AnodeIsStart"
+>nodeIsStart</A
+></TT
+> - If true a <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TT
+> will e placed in this <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TT
+> when the workflow is started.
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AnodeIsExternal"
+>nodeIsExternal</A
+></TT
+> - True if this <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TT
+> was defined in an external process definition, False otherwise.
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AnodeGuard"
+>nodeGuard</A
+></TT
+> - May contain a string which can be interpreted by the guard function. For example, it may
+                     be a GuardLang script, which can be evaluated by the <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AevalGuardLang"
+>evalGuardLang</A
+></TT
+> guard function.
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AnodeExtra"
+>nodeExtra</A
+></TT
+> - A <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+></TT
+>, which may be nothing, or something Typeable, which the guard or accept
+                     functions may use to do their work.
+</LI
+></UL
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ANode"
+></A
+><B
+>Node</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeId"
+></A
+><B
+>nodeId</B
+> :: Int</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeType"
+></A
+><B
+>nodeType</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeName"
+></A
+><B
+>nodeName</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeIsJoin"
+></A
+><B
+>nodeIsJoin</B
+> :: Bool</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeIsStart"
+></A
+><B
+>nodeIsStart</B
+> :: Bool</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeIsExternal"
+></A
+><B
+>nodeIsExternal</B
+> :: Bool</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeGuard"
+></A
+><B
+>nodeGuard</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeExtra"
+></A
+><B
+>nodeExtra</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:Node')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:Node" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3ANodeType"
+></A
+><B
+>NodeType</B
+> a</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+><P
+>Encapsulates the behavior for a specific <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TT
+> type. Each type of <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TT
+> can have
+   different behaviour for guards and for accept.
+</P
+><UL
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AguardFunction"
+>guardFunction</A
+></TT
+> - Called when a <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TT
+> is created in a <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TT
+>. The <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+></TT
+>
+                       result determines if the related <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AacceptFunction"
+>acceptFunction</A
+></TT
+> is called, if the
+                       token is discarded, if accept is skipped and <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AcompleteExecution"
+>completeExecution</A
+></TT
+> is
+                       is called.
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AacceptFunction"
+>acceptFunction</A
+></TT
+> - Called if <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AguardFunction"
+>guardFunction</A
+></TT
+> returns <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AAcceptToken"
+>AcceptToken</A
+></TT
+>. The function may
+                        end with a call to <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AcompleteExecution"
+>completeExecution</A
+></TT
+>, or it may be called later.
+</LI
+></UL
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ANodeType"
+></A
+><B
+>NodeType</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AguardFunction"
+></A
+><B
+>guardFunction</B
+> :: (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+>)</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AacceptFunction"
+></A
+><B
+>acceptFunction</B
+> :: (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> engine =&gt; engine -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a))</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AArc"
+></A
+><B
+>Arc</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+><P
+>An <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TT
+> represents an directed edge in a workflow graph.
+   It has an id, a label and two node id endpoints.
+</P
+><UL
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AarcId"
+>arcId</A
+></TT
+> - *Int* id, which should be unique for that process definition.
+</LI
+><LI
+> <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AarcName"
+>arcName</A
+></TT
+> - Every <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TT
+> has a name, though that name will often be the default name,
+               which is just the empty string. When <TT
+><A HREF="Workflow-Sarasvati-Engine.html#v%3AcompleteExecution"
+>completeExecution</A
+></TT
+> is called on a
+               <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TT
+> an arc name must be specified. More than one <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TT
+> may have
+               the same name. Every arc with the given name will have an <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+></TT
+>
+               placed on it. There may also be no arcs with that name.
+</LI
+><LI
+> startNodeId - The id of the *Node* at the beginning of this arc.
+</LI
+><LI
+> endNodeId   - The id of the *Node* at the end of this arc.
+</LI
+></UL
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AArc"
+></A
+><B
+>Arc</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AarcId"
+></A
+><B
+>arcId</B
+> :: Int</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AarcName"
+></A
+><B
+>arcName</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AstartNodeId"
+></A
+><B
+>startNodeId</B
+> :: Int</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AendNodeId"
+></A
+><B
+>endNodeId</B
+> :: Int</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:Arc')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:Arc" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> <A NAME="t%3AToken"
+></A
+><B
+>Token</B
+> a  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Methods</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AtokenId"
+></A
+><B
+>tokenId</B
+> :: a -&gt; Int</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:Token')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:Token" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AToken"
+>Token</A
+> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AToken"
+>Token</A
+> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3ATokenAttr"
+></A
+><B
+>TokenAttr</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ATokenAttr"
+></A
+><B
+>TokenAttr</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AattrSetId"
+></A
+><B
+>attrSetId</B
+> :: Int</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AtokenAttributeKey"
+></A
+><B
+>tokenAttributeKey</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AtokenAttributeValue"
+></A
+><B
+>tokenAttributeValue</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:TokenAttr')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:TokenAttr" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3ANodeToken"
+></A
+><B
+>NodeToken</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ANodeToken"
+></A
+><B
+>NodeToken</B
+> Int Int</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:NodeToken')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:NodeToken" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Eq <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AToken"
+>Token</A
+> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AArcToken"
+></A
+><B
+>ArcToken</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AArcToken"
+></A
+><B
+>ArcToken</B
+> Int <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+> <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:ArcToken')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:ArcToken" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Eq <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AToken"
+>Token</A
+> <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AWfGraph"
+></A
+><B
+>WfGraph</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AWfGraph"
+></A
+><B
+>WfGraph</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AgraphId"
+></A
+><B
+>graphId</B
+> :: Int</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AgraphName"
+></A
+><B
+>graphName</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AgraphNodes"
+></A
+><B
+>graphNodes</B
+> :: (Map Int <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>)</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AgraphInputArcs"
+></A
+><B
+>graphInputArcs</B
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>])</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AgraphOutputArcs"
+></A
+><B
+>graphOutputArcs</B
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>])</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:WfGraph')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:WfGraph" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AProcessState"
+></A
+><B
+>ProcessState</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AProcessCreated"
+></A
+><B
+>ProcessCreated</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AProcessExecuting"
+></A
+><B
+>ProcessExecuting</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AProcessComplete"
+></A
+><B
+>ProcessComplete</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AProcessCanceled"
+></A
+><B
+>ProcessCanceled</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:ProcessState')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:ProcessState" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Eq <A HREF="Workflow-Sarasvati-Engine.html#t%3AProcessState"
+>ProcessState</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AProcessState"
+>ProcessState</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AWfProcess"
+></A
+><B
+>WfProcess</B
+> a</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AWfProcess"
+></A
+><B
+>WfProcess</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AprocessId"
+></A
+><B
+>processId</B
+> :: Int</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AprocessState"
+></A
+><B
+>processState</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AProcessState"
+>ProcessState</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeTypes"
+></A
+><B
+>nodeTypes</B
+> :: (Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+> a))</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AwfGraph"
+></A
+><B
+>wfGraph</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AnodeTokens"
+></A
+><B
+>nodeTokens</B
+> :: [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+>]</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AarcTokens"
+></A
+><B
+>arcTokens</B
+> :: [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+>]</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AattrMap"
+></A
+><B
+>attrMap</B
+> :: (Map String String)</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AtokenAttrMap"
+></A
+><B
+>tokenAttrMap</B
+> :: (Map Int [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+>])</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ApredicateMap"
+></A
+><B
+>predicateMap</B
+> :: (Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO Bool))</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AuserData"
+></A
+><B
+>userData</B
+> :: a</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> <A NAME="t%3AWfEngine"
+></A
+><B
+>WfEngine</B
+> a  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Methods</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateWfProcess"
+></A
+><B
+>createWfProcess</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+> -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+> b) -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; IO Bool) -&gt; b -&gt; Map String String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateNodeToken"
+></A
+><B
+>createNodeToken</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+>] -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b, <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateArcToken"
+></A
+><B
+>createArcToken</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b, <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcompleteNodeToken"
+></A
+><B
+>completeNodeToken</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcompleteArcToken"
+></A
+><B
+>completeArcToken</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AArcToken"
+>ArcToken</A
+> -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3ArecordGuardResponse"
+></A
+><B
+>recordGuardResponse</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+> -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AtransactionBoundary"
+></A
+><B
+>transactionBoundary</B
+> :: a -&gt; IO ()</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AsetProcessAttr"
+></A
+><B
+>setProcessAttr</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; String -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AremoveProcessAttr"
+></A
+><B
+>removeProcessAttr</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AsetTokenAttr"
+></A
+><B
+>setTokenAttr</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AremoveTokenAttr"
+></A
+><B
+>removeTokenAttr</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AsetProcessState"
+></A
+><B
+>setProcessState</B
+> :: a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AProcessState"
+>ProcessState</A
+> -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> b)</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:WfEngine')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:WfEngine" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> <A HREF="Workflow-Sarasvati-DatabaseWfEngine.html#t%3ADatabaseWfEngine"
+>DatabaseWfEngine</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> <A HREF="Workflow-Sarasvati-MemoryWfEngine.html#t%3AMemoryWfEngine"
+>MemoryWfEngine</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AWfException"
+></A
+><B
+>WfException</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AWfException"
+></A
+><B
+>WfException</B
+> String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:WfException')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:WfException" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
+>WfException</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>Typeable <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
+>WfException</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AtokenAttrValue"
+></A
+><B
+>tokenAttrValue</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; Maybe String</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AtokenAttrValueReq"
+></A
+><B
+>tokenAttrValueReq</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; String</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcompleteExecution"
+></A
+><B
+>completeExecution</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> e =&gt; e -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcompleteDefaultExecution"
+></A
+><B
+>completeDefaultExecution</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> engine =&gt; engine -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AevalGuardLang"
+></A
+><B
+>evalGuardLang</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AGuardResponse"
+>GuardResponse</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AgetNodeTokenForId"
+></A
+><B
+>getNodeTokenForId</B
+> :: Int -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AgraphFromArcs"
+></A
+><B
+>graphFromArcs</B
+> :: Int -&gt; String -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>] -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>] -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Given a name, version, and lists of nodes and arcs, builds the lookup lists
+   and returns a <TT
+><A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AhandleWfError"
+></A
+><B
+>handleWfError</B
+> :: (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfException"
+>WfException</A
+> -&gt; IO a) -&gt; IO a -&gt; IO a</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AisWfComplete"
+></A
+><B
+>isWfComplete</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; Bool</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AmakeNodeExtra"
+></A
+><B
+>makeNodeExtra</B
+> :: Typeable a =&gt; a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AnodeForToken"
+></A
+><B
+>nodeForToken</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AprocessAttrValue"
+></A
+><B
+>processAttrValue</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; String -&gt; Maybe String</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AstartWorkflow"
+></A
+><B
+>startWorkflow</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfEngine"
+>WfEngine</A
+> engine =&gt; engine -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeType"
+>NodeType</A
+> a) -&gt; Map String (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; IO Bool) -&gt; Map String String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+> -&gt; a -&gt; IO (Either String (<A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a))</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AreplaceTokenAttrs"
+></A
+><B
+>replaceTokenAttrs</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+>] -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AtokenAttrs"
+></A
+><B
+>tokenAttrs</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfProcess"
+>WfProcess</A
+> a -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeToken"
+>NodeToken</A
+> -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ATokenAttr"
+>TokenAttr</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="botbar"
+>Produced by <A HREF="http://www.haskell.org/haddock/"
+>Haddock</A
+> version 0.8</TD
+></TR
+></TABLE
+></BODY
+></HTML
+>

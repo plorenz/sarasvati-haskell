@@ -30,6 +30,7 @@ module Workflow.Sarasvati.Engine (
                         NodeToken(..),
                         ArcToken(..),
                         WfGraph(..),
+                        ProcessState(..),
                         WfProcess(..),
                         WfEngine(..),
                         WfException(..),
@@ -204,12 +205,16 @@ data WfGraph =
        graphOutputArcs :: Map.Map Int [Arc]
     }
 
+data ProcessState = ProcessCreated | ProcessExecuting | ProcessComplete | ProcessCanceled
+    deriving (Eq, Show)
+
 -- A WfProcess tracks the current state of the workflow. It has the workflow graph as well
 -- as the tokens representing the current state. A slot for user data is also defined.
 
 data WfProcess a =
     WfProcess {
         processId    :: Int,
+        processState :: ProcessState,
         nodeTypes    :: Map.Map String (NodeType a),
         wfGraph      :: WfGraph,
         nodeTokens   :: [NodeToken],
@@ -237,6 +242,7 @@ class WfEngine a where
     removeProcessAttr   :: a -> WfProcess b -> String -> IO (WfProcess b)
     setTokenAttr        :: a -> WfProcess b -> NodeToken -> String -> String -> IO (WfProcess b)
     removeTokenAttr     :: a -> WfProcess b -> NodeToken -> String -> IO (WfProcess b)
+    setProcessState     :: a -> WfProcess b -> ProcessState -> IO (WfProcess b)
 
 
 instance Show (NodeExtra) where
@@ -352,10 +358,14 @@ startWorkflow engine nodeTypes predicates attrs graph userData
     | typesMissing          = return $ Left ("Missing entries in nodeType for: " ++ missingMsg)
     | null startNodes       = return $ Left "Error: Workflow has no start node"
     | length startNodes > 1 = return $ Left "Error: Workflow has more than one start node"
-    | otherwise             = do wfRun <- createWfProcess engine graph nodeTypes predicates userData attrs
-                                 (wfRun,startToken) <- createNodeToken engine wfRun startNode []
-                                 wfRun <- acceptWithGuard engine startToken (wfRun { nodeTokens = [startToken] })
-                                 return $ Right wfRun
+    | otherwise             = do wf <- createWfProcess engine graph nodeTypes predicates userData attrs
+                                 (wf,startToken) <- createNodeToken engine wf startNode []
+                                 wf <- setProcessState engine wf ProcessExecuting
+                                 wf <- acceptWithGuard engine startToken (wf { nodeTokens = [startToken] })
+                                 wf <- if (isWfComplete wf)
+                                           then setProcessState engine wf ProcessComplete
+                                           else return wf
+                                 return $ Right wf
   where
     startNodes   = filter (\node -> nodeIsStart node) $ Map.elems (graphNodes graph)
     startNode    = head startNodes
@@ -365,9 +375,7 @@ startWorkflow engine nodeTypes predicates attrs graph userData
 
 
 isWfComplete :: WfProcess a -> Bool
-isWfComplete process
-    | null (nodeTokens process) && null (arcTokens process) = True
-    | otherwise                                             = False
+isWfComplete process = null (nodeTokens process) && null (arcTokens process)
 
 -- removeNodeToken
 --   Removes the node token from the list of active node tokens in the given process
@@ -384,8 +392,13 @@ completeDefaultExecution engine token wf = completeExecution engine token [] wf
 
 completeExecution :: (WfEngine e) => e -> NodeToken -> String -> WfProcess a -> IO (WfProcess a)
 completeExecution engine token outputArcName wf =
-  do completeNodeToken engine token
-     foldM (split) newWf outputArcs
+  if ( processState wf /= ProcessExecuting )
+      then return wf
+      else do completeNodeToken engine token
+              newWf <- foldM (split) newWf outputArcs
+              if (isWfComplete newWf)
+                 then setProcessState engine newWf ProcessComplete
+                 else return newWf
   where
     graph        = wfGraph wf
     currentNode  = nodeForToken token graph

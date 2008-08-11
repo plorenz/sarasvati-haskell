@@ -1,20 +1,20 @@
-Name:      Sarasvati
-Version:    0.2.0
-Cabal-Version:  >= 1.4
-License:    LGPL
+Name:          sarasvati-haskell
+Version:       0.3.0
+Cabal-Version: >= 1.4
+License:       LGPL
 License-File:  common/LGPLv3.license
-Author:      Paul Lorenz
-Maintainer:     Paul Lorenz
-Homepage:    http://sarasvati.googlecode.com/
-Category:    Workflow
+Author:        Paul Lorenz
+Maintainer:    Paul Lorenz
+Homepage:      http://sarasvati.googlecode.com/
+Category:      Workflow
 Synopsis:      A graph-based workflow engine for Haskell
-Description:    A graph-based workflow engine for Haskell
-Build-Type:     Simple
-Copyright:      2008 Paul Lorenz
-Data-Files:     README,
-                common/GPLv3.license,
-                common/db/create-schema.sql
-                lang/guard.y
+Description:   A graph-based workflow engine for Haskell
+Build-Type:    Simple
+Copyright:     2008 Paul Lorenz
+Data-Files:    README,
+               common/GPLv3.license,
+               common/db/create-schema.sql
+               lang/guard.y
 
 Library
   Build-Depends:  base,

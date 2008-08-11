@@ -1,0 +1,1941 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Workflow.Sarasvati.Loader</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topbar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
+></TD
+><TD CLASS="title"
+>sarasvati-haskell-0.3.0: A graph-based workflow engine for Haskell</TD
+><TD CLASS="topbut"
+><A HREF="index.html"
+>Contents</A
+></TD
+><TD CLASS="topbut"
+><A HREF="doc-index.html"
+>Index</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="modulebar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><FONT SIZE="6"
+>Workflow.Sarasvati.Loader</FONT
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Synopsis</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AXmlWorkflow"
+>XmlWorkflow</A
+>  = <A HREF="#v%3AXmlWorkflow"
+>XmlWorkflow</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlWfName"
+>xmlWfName</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlWfNodes"
+>xmlWfNodes</A
+> :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+>]</TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AXmlNode"
+>XmlNode</A
+>  = <A HREF="#v%3AXmlNode"
+>XmlNode</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlNodeName"
+>xmlNodeName</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlNodeType"
+>xmlNodeType</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlNodeIsJoin"
+>xmlNodeIsJoin</A
+> :: Bool</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlNodeIsStart"
+>xmlNodeIsStart</A
+> :: Bool</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlNodeGuard"
+>xmlNodeGuard</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlArcs"
+>xmlArcs</A
+> :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
+>XmlArc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlExternalArcs"
+>xmlExternalArcs</A
+> :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlNodeExtra"
+>xmlNodeExtra</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+></TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AXmlArc"
+>XmlArc</A
+>  = <A HREF="#v%3AXmlArc"
+>XmlArc</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlArcName"
+>xmlArcName</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlArcTo"
+>xmlArcTo</A
+> :: String</TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AXmlExternalArcType"
+>XmlExternalArcType</A
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>= <A HREF="#v%3AInArc"
+>InArc</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>| <A HREF="#v%3AOutArc"
+>OutArc</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3AXmlExternalArc"
+>XmlExternalArc</A
+>  = <A HREF="#v%3AXmlExternalArc"
+>XmlExternalArc</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlExtArcName"
+>xmlExtArcName</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlExtArcExternal"
+>xmlExtArcExternal</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlExtArcInstance"
+>xmlExtArcInstance</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlExtArcNodeName"
+>xmlExtArcNodeName</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlExtArcType"
+>xmlExtArcType</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArcType"
+>XmlExternalArcType</A
+></TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AloadXmlWorkflowFromFile"
+>loadXmlWorkflowFromFile</A
+> :: String -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AloadWfGraphFromFile"
+>loadWfGraphFromFile</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; String -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AloadXmlWorkflow"
+>loadXmlWorkflow</A
+> :: Document -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AloadXmlNodes"
+>loadXmlNodes</A
+> :: [Element] -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>) -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AloadXmlArcs"
+>loadXmlArcs</A
+> :: [Element] -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
+>XmlArc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AloadXmlExternalArcs"
+>loadXmlExternalArcs</A
+> :: [Element] -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3ALoadNode"
+>LoadNode</A
+>  = <A HREF="#v%3ALoadNode"
+>LoadNode</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AloadedNode"
+>loadedNode</A
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AxmlNode"
+>xmlNode</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+></TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> <A HREF="#t%3ALoader"
+>Loader</A
+> loader  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateWorkflow"
+>createWorkflow</A
+> :: loader -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+> -&gt; IO Int</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateNode"
+>createNode</A
+> :: loader -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateArc"
+>createArc</A
+> :: loader -&gt; Int -&gt; String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AimportInstance"
+>importInstance</A
+> :: loader -&gt; Int -&gt; String -&gt; String -&gt; IO ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>])</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> <A HREF="#t%3AResolver"
+>Resolver</A
+> resolver  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AresolveGraphNameToXmlWorkflow"
+>resolveGraphNameToXmlWorkflow</A
+> :: resolver -&gt; String -&gt; IO <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AprocessXmlWorkflow"
+>processXmlWorkflow</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AextractNodes"
+>extractNodes</A
+> :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AextractArcs"
+>extractArcs</A
+> :: [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>] -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AinstanceKey"
+>instanceKey</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+> -&gt; String</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AimportExternal"
+>importExternal</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+> -&gt; IO (Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]))</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AxmlNodeToLoadNode"
+>xmlNodeToLoadNode</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateInternalArcs"
+>createInternalArcs</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+>] -&gt; IO [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateInternalArc"
+>createInternalArc</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+> -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+>] -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
+>XmlArc</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateExternalArcs"
+>createExternalArcs</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; IO [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcreateExternalArc"
+>createExternalArc</A
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>, <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+>) -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AxmlNodeToNode"
+>xmlNodeToNode</A
+> :: Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A HREF="#t%3ASimpleFileResolver"
+>SimpleFileResolver</A
+>  = <A HREF="#v%3ASimpleFileResolver"
+>SimpleFileResolver</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AbasePath"
+>basePath</A
+> :: String</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AfuncMap"
+>funcMap</A
+> :: (Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>))</TD
+></TR
+></TABLE
+>}</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AXmlWorkflow"
+></A
+><B
+>XmlWorkflow</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AXmlWorkflow"
+></A
+><B
+>XmlWorkflow</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlWfName"
+></A
+><B
+>xmlWfName</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlWfNodes"
+></A
+><B
+>xmlWfNodes</B
+> :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+>]</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:XmlWorkflow')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:XmlWorkflow" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AXmlNode"
+></A
+><B
+>XmlNode</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+>An <TT
+><A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+></TT
+> stores the data from a <A HREF="node"
+>node</A
+> element.
+</TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AXmlNode"
+></A
+><B
+>XmlNode</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlNodeName"
+></A
+><B
+>xmlNodeName</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlNodeType"
+></A
+><B
+>xmlNodeType</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlNodeIsJoin"
+></A
+><B
+>xmlNodeIsJoin</B
+> :: Bool</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlNodeIsStart"
+></A
+><B
+>xmlNodeIsStart</B
+> :: Bool</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlNodeGuard"
+></A
+><B
+>xmlNodeGuard</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlArcs"
+></A
+><B
+>xmlArcs</B
+> :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
+>XmlArc</A
+>]</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlExternalArcs"
+></A
+><B
+>xmlExternalArcs</B
+> :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+>]</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlNodeExtra"
+></A
+><B
+>xmlNodeExtra</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:XmlNode')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:XmlNode" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AXmlArc"
+></A
+><B
+>XmlArc</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+>An <TT
+><A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
+>XmlArc</A
+></TT
+> stores the data from an <A HREF="arc"
+>arc</A
+> element.
+</TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AXmlArc"
+></A
+><B
+>XmlArc</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlArcName"
+></A
+><B
+>xmlArcName</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlArcTo"
+></A
+><B
+>xmlArcTo</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:XmlArc')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:XmlArc" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
+>XmlArc</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AXmlExternalArcType"
+></A
+><B
+>XmlExternalArcType</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+>Enumerates the kind of external arcs allowed, which are just outgoing arcs and incoming arcs.
+   Internal arcs are all defined as outgoing, but because external arcs must add arcs to
+   nodes not in the same workflow, they are allowed both.
+</TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AInArc"
+></A
+><B
+>InArc</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AOutArc"
+></A
+><B
+>OutArc</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:XmlExternalArcType')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:XmlExternalArcType" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArcType"
+>XmlExternalArcType</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3AXmlExternalArc"
+></A
+><B
+>XmlExternalArc</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+>Contains all the information we need to load an external referenced workflow and
+   import it into the currently loading workflow.
+</TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AXmlExternalArc"
+></A
+><B
+>XmlExternalArc</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlExtArcName"
+></A
+><B
+>xmlExtArcName</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlExtArcExternal"
+></A
+><B
+>xmlExtArcExternal</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlExtArcInstance"
+></A
+><B
+>xmlExtArcInstance</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlExtArcNodeName"
+></A
+><B
+>xmlExtArcNodeName</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlExtArcType"
+></A
+><B
+>xmlExtArcType</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArcType"
+>XmlExternalArcType</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:XmlExternalArc')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:XmlExternalArc" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>Show <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AloadXmlWorkflowFromFile"
+></A
+><B
+>loadXmlWorkflowFromFile</B
+> :: String -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AloadWfGraphFromFile"
+></A
+><B
+>loadWfGraphFromFile</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; String -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AloadXmlWorkflow"
+></A
+><B
+>loadXmlWorkflow</B
+> :: Document -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>) -&gt; IO (Either String <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AloadXmlNodes"
+></A
+><B
+>loadXmlNodes</B
+> :: [Element] -&gt; Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>) -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AloadXmlArcs"
+></A
+><B
+>loadXmlArcs</B
+> :: [Element] -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
+>XmlArc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AloadXmlExternalArcs"
+></A
+><B
+>loadXmlExternalArcs</B
+> :: [Element] -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3ALoadNode"
+></A
+><B
+>LoadNode</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ALoadNode"
+></A
+><B
+>LoadNode</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AloadedNode"
+></A
+><B
+>loadedNode</B
+> :: <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AxmlNode"
+></A
+><B
+>xmlNode</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> <A NAME="t%3ALoader"
+></A
+><B
+>Loader</B
+> loader  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Methods</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateWorkflow"
+></A
+><B
+>createWorkflow</B
+> :: loader -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+> -&gt; IO Int</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateNode"
+></A
+><B
+>createNode</B
+> :: loader -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateArc"
+></A
+><B
+>createArc</B
+> :: loader -&gt; Int -&gt; String -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AimportInstance"
+></A
+><B
+>importInstance</B
+> :: loader -&gt; Int -&gt; String -&gt; String -&gt; IO ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>])</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:Loader')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:Loader" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> <A HREF="Workflow-Sarasvati-DatabaseLoader.html#t%3ADbLoader"
+>DbLoader</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> <A HREF="Workflow-Sarasvati-MemoryLoader.html#t%3AMemLoader"
+>MemLoader</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> <A NAME="t%3AResolver"
+></A
+><B
+>Resolver</B
+> resolver  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Methods</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AresolveGraphNameToXmlWorkflow"
+></A
+><B
+>resolveGraphNameToXmlWorkflow</B
+> :: resolver -&gt; String -&gt; IO <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:Resolver')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:Resolver" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Loader.html#t%3AResolver"
+>Resolver</A
+> <A HREF="Workflow-Sarasvati-Loader.html#t%3ASimpleFileResolver"
+>SimpleFileResolver</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AprocessXmlWorkflow"
+></A
+><B
+>processXmlWorkflow</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlWorkflow"
+>XmlWorkflow</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AWfGraph"
+>WfGraph</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AextractNodes"
+></A
+><B
+>extractNodes</B
+> :: [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AextractArcs"
+></A
+><B
+>extractArcs</B
+> :: [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>] -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AinstanceKey"
+></A
+><B
+>instanceKey</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+> -&gt; String</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AimportExternal"
+></A
+><B
+>importExternal</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+> -&gt; IO (Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]))</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AxmlNodeToLoadNode"
+></A
+><B
+>xmlNodeToLoadNode</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateInternalArcs"
+></A
+><B
+>createInternalArcs</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+>] -&gt; IO [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateInternalArc"
+></A
+><B
+>createInternalArc</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+> -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+>] -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlArc"
+>XmlArc</A
+> -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateExternalArcs"
+></A
+><B
+>createExternalArcs</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; [<A HREF="Workflow-Sarasvati-Loader.html#t%3ALoadNode"
+>LoadNode</A
+>] -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; IO [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AcreateExternalArc"
+></A
+><B
+>createExternalArc</B
+> :: <A HREF="Workflow-Sarasvati-Loader.html#t%3ALoader"
+>Loader</A
+> l =&gt; l -&gt; Int -&gt; Map String ([<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>], [<A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+>]) -&gt; (<A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+>, <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlExternalArc"
+>XmlExternalArc</A
+>) -&gt; IO <A HREF="Workflow-Sarasvati-Engine.html#t%3AArc"
+>Arc</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A NAME="v%3AxmlNodeToNode"
+></A
+><B
+>xmlNodeToNode</B
+> :: Int -&gt; <A HREF="Workflow-Sarasvati-Loader.html#t%3AXmlNode"
+>XmlNode</A
+> -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANode"
+>Node</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+> <A NAME="t%3ASimpleFileResolver"
+></A
+><B
+>SimpleFileResolver</B
+> </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3ASimpleFileResolver"
+></A
+><B
+>SimpleFileResolver</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AbasePath"
+></A
+><B
+>basePath</B
+> :: String</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v%3AfuncMap"
+></A
+><B
+>funcMap</B
+> :: (Map String (Element -&gt; <A HREF="Workflow-Sarasvati-Engine.html#t%3ANodeExtra"
+>NodeExtra</A
+>))</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:SimpleFileResolver')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:SimpleFileResolver" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="Workflow-Sarasvati-Loader.html#t%3AResolver"
+>Resolver</A
+> <A HREF="Workflow-Sarasvati-Loader.html#t%3ASimpleFileResolver"
+>SimpleFileResolver</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="botbar"
+>Produced by <A HREF="http://www.haskell.org/haddock/"
+>Haddock</A
+> version 0.8</TD
+></TR
+></TABLE
+></BODY
+></HTML
+>

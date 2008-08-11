@@ -41,6 +41,7 @@ instance WfEngine DatabaseWfEngine where
     removeProcessAttr   = removeDatabaseProcessAttr
     setTokenAttr        = setDatabaseTokenAttr
     removeTokenAttr     = removeDatabaseTokenAttr
+    setProcessState     = setDatabaseProcessState
 
 insertWfProcess :: (IConnection conn) => conn -> WfGraph -> IO Int
 insertWfProcess conn graph =
@@ -50,6 +51,18 @@ insertWfProcess conn graph =
        return nextId
     where
         sql = "insert into wf_process (id, state, graph_id) values ( ?, 0, ? )"
+
+updateWfProcess :: (IConnection conn) => conn -> WfProcess a -> ProcessState -> IO (WfProcess a)
+updateWfProcess conn wf state =
+    do run conn sql [toSql (processStateId state),
+                     toSql (processId wf)]
+       return wf {processState = state}
+    where
+        sql = "update wf_process set state = ? where id = ?"
+        processStateId ProcessCreated         = 0::Int
+        processStateId ProcessExecuting       = 1
+        processStateId ProcessComplete        = 3
+        processStateId ProcessCanceled        = 5
 
 insertArcToken :: (IConnection conn) => conn -> WfProcess a -> Arc -> NodeToken -> IO Int
 insertArcToken conn wfProcess arc prevToken =
@@ -176,7 +189,13 @@ createDatabaseWfProcess :: DatabaseWfEngine ->
 createDatabaseWfProcess (DatabaseWfEngine conn) graph nodeTypes predicates userData attrs =
     do processId <- insertWfProcess conn graph
        mapM (uncurry (insertProcessAttr conn processId)) (Map.assocs attrs)
-       return $ WfProcess processId nodeTypes graph [] [] attrs Map.empty predicates userData
+       return $ WfProcess processId ProcessCreated nodeTypes graph [] [] attrs Map.empty predicates userData
+
+setDatabaseProcessState :: DatabaseWfEngine ->
+                           WfProcess a ->
+                           ProcessState ->
+                           IO (WfProcess a)
+setDatabaseProcessState (DatabaseWfEngine conn) wf state = updateWfProcess conn wf state
 
 createDatabaseNodeToken :: DatabaseWfEngine -> WfProcess a -> Node -> [ArcToken] -> IO (WfProcess a, NodeToken)
 createDatabaseNodeToken (DatabaseWfEngine conn) process node arcTokens =
